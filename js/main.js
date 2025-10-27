@@ -1,0 +1,2153 @@
+import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import { RGBELoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/RGBELoader.js";
+import { DRACOLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/DRACOLoader.js";
+import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
+// import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
+
+
+import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
+
+
+// Global Default
+let swingEnabled = false;
+let swingSpeed = 0.5;
+let returningToCenter = false;
+let swingTime = 0;
+let swingAngle = 0;
+let currentAntialias = false;
+let gridFadeTarget = 1;
+let fadeSpeed = 0.05;
+let hdrTexture = null;
+let bloomComposer, finalComposer;
+let bloomPass;
+let renderScene, finalPass;
+let renderCamera;
+let autoRotateEnabled = false;
+let autoRotateSpeed = 6.0; 
+let initialCameraPosition = new THREE.Vector3();
+let initialCameraTarget = new THREE.Vector3();
+let isReturningCamera = false;
+let cameraFadeAlpha = 1;
+let userIsInteracting = false;
+let isInSolidMode = false;
+let autoRotateDirection = 1;
+let lastAzimuthalAngle = 0;
+let lastHorizontalDelta = 0;
+let lastInteractionTime = 0;
+
+
+let bloomParams = {
+  strength: 2.6,
+  radius: 0.6,
+  threshold: 0.0
+};
+
+// Scene setup
+const scene = new THREE.Scene();
+const clock = new THREE.Clock();
+scene.environment = null;
+
+// Camera
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(5, 4, 5);
+camera.lookAt(new THREE.Vector3(0, 2, 0));
+renderCamera = camera;
+
+let currentCameraMode = 'perspective';
+let orthoCamera;
+
+function switchCameraMode(mode) {
+  const aspect = window.innerWidth / window.innerHeight;
+
+  if (mode === 'ortho') {
+    const frustumSize = 10;
+    const height = frustumSize;
+    const width = frustumSize * aspect;
+
+    orthoCamera = new THREE.OrthographicCamera(
+      -width / 2, width / 2,
+      height / 2, -height / 2,
+      0.1, 1000
+    );
+
+    orthoCamera.position.copy(camera.position);
+    orthoCamera.lookAt(new THREE.Vector3(0, 2, 0));
+    renderCamera = orthoCamera;
+    currentCameraMode = 'ortho';
+
+    currentAntialias = false; // Disable antialiasing for orthographic mode
+    initRenderer(false); // Initialize without antialiasing
+    setOrthoZoomLimits(0.7, 2.0); // Set zoom limits for orthographic mode
+
+  } else {
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
+    renderCamera = camera;
+    currentCameraMode = 'perspective';
+
+    currentAntialias = false; // Disable antialiasing for perspective mode
+    initRenderer(false); // Initialize without antialiasing
+  }
+
+  if (controls) {
+    controls.object = renderCamera;
+    controls.update();
+  }
+
+  if (renderScene) renderScene.camera = renderCamera;
+  if (bloomComposer) bloomComposer.setSize(window.innerWidth, window.innerHeight);
+}
+
+document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.classList.contains('per-mode') ? 'perspective' : 'ortho';
+    switchCameraMode(mode);
+    updateActiveCameraClassByMode(mode);
+  });
+});
+
+function updateActiveCameraClassByMode(mode) {
+  document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
+    const isActive = (mode === 'perspective' && btn.classList.contains('per-mode')) ||
+                     (mode === 'ortho' && btn.classList.contains('orto-mode'));
+    btn.classList.toggle('active-camera', isActive);
+  });
+}
+
+function updateModelCredit(modelName) {
+  const credit = modelCredits[modelName];
+  if (!credit) return;
+
+  const modelNameEls = document.querySelectorAll(".model-kjul");
+  const creatorLinks = document.querySelectorAll(".link-yt");
+
+  modelNameEls.forEach(el => {
+    el.textContent = modelName;
+  });
+
+  creatorLinks.forEach(link => {
+    const icon = link.querySelector("i"); // cari icon di dalam link
+    const creatorText = document.createTextNode(" " + credit.creator); // tambahkan spasi dan teks
+
+    // kosongkan isi link, lalu tambahkan kembali icon dan teksnya
+    link.innerHTML = "";
+    if (icon) link.appendChild(icon);
+    link.appendChild(creatorText);
+    link.href = credit.url;
+  });
+}
+
+
+let renderer;
+let controls;
+
+let composer;
+const bloomLayer = new THREE.Layers();
+bloomLayer.set(1);
+
+const darkMaterial = new THREE.MeshBasicMaterial({
+  color: "black",
+  depthWrite: true,
+  depthTest: true
+});
+const materials = {};
+
+const AdditiveBlendShader = {
+  uniforms: {
+    'tDiffuse': { value: null }, // rendered normal scene
+    'tAdd': { value: null }  // bloom result
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform sampler2D tAdd;
+    varying vec2 vUv;
+
+    void main() {
+      vec4 color = texture2D(tDiffuse, vUv);
+      vec4 bloom = texture2D(tAdd, vUv);
+      gl_FragColor = vec4(mix(color.rgb, color.rgb + bloom.rgb, bloom.a), color.a);
+    }
+  `
+};
+
+
+  // const stats = new Stats();
+  // stats.dom.style.position = 'fixed';
+  // stats.dom.style.right = '10px';
+  // stats.dom.style.top = '10px';
+  // stats.dom.style.zIndex = '9999';
+  // document.body.appendChild(stats.dom);
+
+function initRenderer(antialias = false) {
+  const previousTarget = controls?.target?.clone();
+  const shadowWasEnabled = renderer?.shadowMap?.enabled ?? false;
+
+  if (renderer) {
+    renderer.dispose();
+    const oldCanvas = renderer.domElement;
+    oldCanvas?.remove();
+  }
+
+  // Hanya menggunakan WebGLMultisampleRenderTarget jika antialiasing aktif
+  const renderTarget = antialias
+    ? new THREE.WebGLMultisampleRenderTarget(window.innerWidth, window.innerHeight, {
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+      })
+    : new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+      });
+
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias, powerPreference: "high-performance"  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.shadowMap.enabled = shadowWasEnabled;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  document.getElementById("container3D").appendChild(renderer.domElement);
+
+  // Setup controls
+  if (controls) {
+    controls.dispose();
+  }
+
+  controls = new OrbitControls(renderCamera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.maxPolarAngle = Math.PI / 2.2;
+  controls.minDistance = 5;
+  controls.maxDistance = 20;
+  controls.enablePan = false;
+  controls.autoRotate = autoRotateEnabled;
+
+  controls.autoRotateSpeed = autoRotateSpeed * autoRotateDirection;
+
+  controls.addEventListener('start', () => {
+    userIsInteracting = true;
+    isReturningCamera = false;
+    lastAzimuthalAngle = controls.getAzimuthalAngle();
+  });
+
+  controls.addEventListener('change', () => {
+    const currentAzimuthalAngle = controls.getAzimuthalAngle();
+    const delta = currentAzimuthalAngle - lastAzimuthalAngle;
+    lastAzimuthalAngle = currentAzimuthalAngle;
+
+    lastHorizontalDelta = delta;
+    lastInteractionTime = performance.now();
+  });
+
+  controls.addEventListener('end', () => {
+    userIsInteracting = false;
+  });
+
+  if (previousTarget) {
+    controls.target.copy(previousTarget);
+  }
+
+  if (currentCameraMode === 'ortho' && renderCamera.isOrthographicCamera) {
+    setOrthoZoomLimits(0.7, 2.0);
+  }
+
+  updateEnvMap();
+  controls.update();
+
+  const DPR = window.devicePixelRatio || 1;
+  const width = window.innerWidth * DPR;
+  const height = window.innerHeight * DPR;
+
+  const size = new THREE.Vector2(width, height);
+
+  // === Gunakan AA khusus untuk bloomComposer saat mode ortho ===
+  const bloomRenderTarget = currentCameraMode === 'ortho'
+    ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+      })
+    : (antialias
+        ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
+            format: THREE.RGBAFormat,
+            encoding: THREE.sRGBEncoding,
+          })
+        : new THREE.WebGLRenderTarget(size.x, size.y, {
+            format: THREE.RGBAFormat,
+            encoding: THREE.sRGBEncoding,
+          })
+      );
+
+  const finalRenderTarget = antialias
+    ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+      })
+    : new THREE.WebGLRenderTarget(size.x, size.y, {
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+      });
+
+  renderScene = new RenderPass(scene, renderCamera);
+  bloomPass = new UnrealBloomPass(
+    size,
+    bloomParams.strength,
+    bloomParams.radius,
+    bloomParams.threshold
+  );
+  bloomPass.setSize(size.x, size.y);
+  bloomPass.renderToScreen = false;
+  bloomPass.clearColor = new THREE.Color(0x000000);
+
+  bloomComposer = new EffectComposer(renderer, bloomRenderTarget);
+  bloomComposer.renderToScreen = false;
+  bloomComposer.addPass(renderScene);
+  bloomComposer.addPass(bloomPass);
+  bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+  bloomComposer.setSize(window.innerWidth, window.innerHeight);
+  bloomComposer.renderTarget1.depthBuffer = true;
+  bloomComposer.renderTarget2.depthBuffer = true;
+
+  finalPass = new ShaderPass(AdditiveBlendShader);
+  finalPass.uniforms['tAdd'].value = bloomComposer.renderTarget2.texture;
+
+  finalComposer = new EffectComposer(renderer, finalRenderTarget.clone());
+  finalComposer.renderToScreen = true;
+  finalComposer.addPass(new RenderPass(scene, renderCamera));
+  finalComposer.addPass(finalPass);
+  finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+  finalComposer.setSize(window.innerWidth, window.innerHeight);
+}
+
+initRenderer(false);
+
+setupBloomSliderControls();
+
+const bloomToggles = document.querySelectorAll('.bloom-toggle');
+let bloomEnabled = false;
+bloomToggles.forEach(toggle => {
+  toggle.checked = false;
+  toggle.addEventListener('change', (e) => {
+    if (isInSolidMode && e.target.checked) {
+      showErrorToast("Effect Not Allowed", "Bloom effects is not supported ");
+      e.target.checked = false;
+      bloomToggles.forEach(t => t.checked = false);
+      return;
+    }
+
+    bloomEnabled = e.target.checked;
+    bloomToggles.forEach(t => t.checked = bloomEnabled);
+    updateBloomLayerState();
+  });
+});
+
+// Grid
+const gridHelper = new THREE.GridHelper(30, 20);
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 1;
+gridHelper.position.y = 0;
+scene.add(gridHelper);
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 10, 7.5);
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.set(512, 512);
+directionalLight.shadow.bias = -0.002;
+directionalLight.shadow.radius = 4;
+directionalLight.shadow.camera.left = -10;
+directionalLight.shadow.camera.right = 10;
+directionalLight.shadow.camera.top = 10;
+directionalLight.shadow.camera.bottom = -10;
+directionalLight.shadow.camera.near = 1;
+directionalLight.shadow.camera.far = 50;
+
+scene.add(directionalLight);
+
+const shadowQualityMap = {
+  "Low": 512,
+  "Medium": 1024,
+  "High": 2048,
+  "Ultra": 4096
+};
+
+const shadowTypeMap = {
+  "Basic": THREE.BasicShadowMap,
+  "Soft": THREE.PCFSoftShadowMap
+};
+
+let currentShadowType = "Basic";
+
+let currentShadowQuality = "Low";
+
+function setShadowType(type) {
+  currentShadowType = type;
+  renderer.shadowMap.type = shadowTypeMap[type] || THREE.PCFShadowMap;
+  renderer.shadowMap.needsUpdate = true;
+  renderer.compile(scene, camera);
+  updateActiveShadowTypeButton(type);
+}
+
+function updateActiveShadowTypeButton(type) {
+  document.querySelectorAll('.basic-shadow-btn, .soft-shadow-btn').forEach(btn => {
+    const isActive = btn.classList.contains(`${type.toLowerCase()}-shadow-btn`);
+    btn.classList.toggle('active-qual', isActive);
+  });
+}
+
+document.querySelectorAll('.basic-shadow-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setShadowType("Basic");
+    updateActiveShadowTypeButton("Basic");
+  });
+});
+
+document.querySelectorAll('.soft-shadow-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setShadowType("Soft");
+    updateActiveShadowTypeButton("Soft");
+  });
+});
+
+
+// HDRI environment
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+let envMapGlobal = null;
+
+new RGBELoader()
+  .setPath('./hdr/')
+  .load('paul_lobe_haus_2k.hdr', (texture) => {
+    hdrTexture = texture;
+
+    const newPMREM = new THREE.PMREMGenerator(renderer);
+    envMapGlobal = newPMREM.fromEquirectangular(hdrTexture).texture;
+
+    // HANYA AKTIFKAN scene.environment jika toggle HDRI aktif
+    if (hdriToggles && hdriToggles.checked) {
+      scene.environment = envMapGlobal;
+    } else {
+      scene.environment = null; // pastikan nonaktif
+    }
+
+    // Kalau objek sudah ada, perbarui materialnya sesuai toggle
+    if (object) {
+      applyEnvMapToMaterials(object, hdriToggles && hdriToggles.checked ? envMapGlobal : null);
+    }
+
+    hdrTexture.dispose();
+    newPMREM.dispose();
+  });
+
+
+// Load model
+let object;
+
+function normalizeModel(model, targetSize = 8) {
+  const box = new THREE.Box3().setFromObject(model);
+  const size = new THREE.Vector3();
+  const center = new THREE.Vector3();
+  box.getSize(size);
+  box.getCenter(center);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const scale = targetSize / maxDim;
+  model.scale.setScalar(scale);
+
+  model.position.x -= center.x;
+  model.position.z -= center.z;
+
+  const newBox = new THREE.Box3().setFromObject(model);
+  model.position.y -= newBox.min.y;
+}
+
+function applyEnvMapToMaterials(model, envMap, intensity = 0.3) {
+  model.traverse((child) => {
+    if (child.isMesh && child.material) {
+      child.material.envMap = envMap;
+      child.material.envMapIntensity = intensity;
+      child.material.needsUpdate = true;
+    }
+  });
+}
+
+function applyGlassAndMetalMaterial(child) {
+  if (!child.isMesh || !child.material) return;
+
+  const matName = child.material.name?.toLowerCase() || "";
+
+  const isGlass = matName.includes("glass") || matName.includes("kaca");
+  const isMetal = matName.includes("metal") || child.material.metalness > 0;
+  const isBloom = child.userData?.isBloom === true || matName === "bloom_effect";
+
+  // === Handle efek bloom ===
+  if (isBloom) {
+    child.userData.isBloom = true;
+
+    if (bloomEnabled) {
+      child.layers.enable(1);
+    } else {
+      child.layers.disable(1);
+    }
+
+    if (!child.material.emissive || child.material.emissive.equals(new THREE.Color(0x000000))) {
+      child.material.emissive = child.material.color.clone();
+    }
+    child.material.emissiveIntensity = bloomEnabled ? 1.0 : 0.3;
+    child.material.needsUpdate = true;
+  } else {
+    child.userData.isBloom = false;
+    child.layers.disable(1);
+  }
+
+  const useEnvMap = envMapGlobal ?? null;
+
+  // === 💎 MATERIAL GLASS ===
+  // Hanya ganti jika tidak punya texture apapun
+  if (
+    isGlass &&
+    !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
+  ) {
+    child.material = new THREE.MeshPhysicalMaterial({
+      color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
+      metalness: 0,
+      roughness: 0,
+      transmission: 1.0,
+      ior: 1.52,
+      thickness: 0.01,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      reflectivity: 0.15,
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide,
+      envMap: useEnvMap,
+      envMapIntensity: useEnvMap ? 1.0 : 0,
+      depthWrite: false
+    });
+  }
+
+  // === ⚙️ MATERIAL METAL ===
+  // Hanya ganti jika tidak punya texture juga
+  else if (
+    isMetal &&
+    !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
+  ) {
+    child.material = new THREE.MeshPhysicalMaterial({
+      color: child.material.color || 0xffffff,
+      metalness: 0.5,
+      roughness: 0.05,
+      reflectivity: 0.8,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      side: THREE.DoubleSide,
+      envMap: useEnvMap,
+      envMapIntensity: useEnvMap ? 1.0 : 0
+    });
+  }
+
+  // Simpan salinan original untuk restore nanti
+  child.userData.originalMaterial = child.material.clone();
+}
+
+function updateBloomLayerState() {
+  if (!object) return;
+  object.traverse(child => {
+    if (child.isMesh && child.userData.isBloom) {
+      if (bloomEnabled) {
+        child.layers.enable(1);
+        child.material.emissiveIntensity = 1.0;
+      } else {
+        child.layers.disable(1);
+        child.material.emissiveIntensity = 0.3; // kembalikan ke normal
+      }
+      child.material.needsUpdate = true;
+    }
+  });
+}
+
+
+function setCameraFrontTop(model) {
+  const box = new THREE.Box3().setFromObject(model);
+  const center = new THREE.Vector3();
+  const size = new THREE.Vector3();
+  box.getCenter(center);
+  box.getSize(size);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const distance = maxDim * 1.0;
+
+  const x = center.x;
+  const y = center.y + distance * 0.6;
+  const z = center.z + distance;
+
+  renderCamera.position.set(x, y, z);
+  renderCamera.lookAt(center);
+
+  controls.object = renderCamera;
+  controls.update();
+
+  controls.target.copy(center);
+  controls.update();
+
+  initialCameraPosition.copy(renderCamera.position);
+  initialCameraTarget.copy(center);
+}
+
+const loader = new GLTFLoader();
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
+
+loader.setDRACOLoader(dracoLoader);
+
+
+const objToRender = 'Soccer Icon';
+
+window.addEventListener("DOMContentLoaded", () => {
+  showLoader();
+
+  setTimeout(() => {
+    loader.load(`./models/${objToRender}/scene.glb`, (gltf) => {
+      object = gltf.scene;
+      normalizeModel(object, 9);
+
+      object.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = false;
+          child.receiveShadow = false;
+
+          child.frustumCulled = true;     // hanya render yang terlihat
+          child.matrixAutoUpdate = false; // tidak hitung ulang transform setiap frame
+          child.updateMatrix();     
+
+          child.userData.originalMaterial = child.material.clone();
+
+          const matName = child.material?.name?.toLowerCase() || "";
+          if (matName.startsWith("bloom_effect")) {
+            child.userData.isBloom = true;
+          }
+          applyGlassAndMetalMaterial(child);
+        }
+      });
+
+      scene.add(object);
+      populateObjectDropdown(object);
+      setCameraFrontTop(object);
+      updateMeshDataDisplay(object);
+
+      const useEnvMap = (hdriToggles && hdriToggles.checked) ? envMapGlobal : null;
+      applyEnvMapToMaterials(object, useEnvMap);
+
+      directionalLight.target = object;
+      scene.add(directionalLight.target);
+
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(100, 100),
+        new THREE.ShadowMaterial({ opacity: 0.25 })
+      );
+
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = 0.01;
+      ground.receiveShadow = false;
+      scene.add(ground);
+
+      hideLoader();
+    }, undefined, (error) => {
+      console.error("Failed to load default model:", error);
+      hideLoader();
+
+      if (!navigator.onLine) {
+        showErrorToast("No Internet Connection", "Failed to load the default model. You are currently offline.");
+      } else {
+        showErrorToast("Default Model Load Failed", "Could not load the default model. Please check if the model exists.");
+      }
+    });
+  }, 5000);
+});
+
+const animationToggle = document.getElementById('animationToggle');
+const levelSelector = document.querySelector('.vertical-level-selector');
+const vCircles = levelSelector.querySelectorAll('.v-circle');
+const vLines = levelSelector.querySelectorAll('.v-line');
+
+// === ANIMASI SWING ===
+function swingModel(deltaTime) {
+  if (!swingEnabled || !object || returningToCenter) return;
+
+  const angleLimit = Math.PI / 8; // batas kiri-kanan max
+  swingTime += deltaTime * swingSpeed;
+
+  const angle = Math.sin(swingTime) * angleLimit;
+  object.rotation.y = angle;
+}
+
+document.querySelectorAll('.vertical-level-selector').forEach(wrapper => {
+  const defaultLevel = wrapper.dataset.default;
+  const circles = wrapper.querySelectorAll('.v-circle');
+  const lines = wrapper.querySelectorAll('.v-line');
+
+  function updateLevelUI(level) {
+    document.querySelectorAll('.vertical-level-selector').forEach(otherWrapper => {
+      const otherCircles = otherWrapper.querySelectorAll('.v-circle');
+      const otherLines = otherWrapper.querySelectorAll('.v-line');
+
+      let activeIndex = -1;
+      otherCircles.forEach((c, i) => {
+        const isActive = c.dataset.level === level;
+        c.classList.toggle('active-level-speed', isActive);
+        if (isActive) activeIndex = i;
+      });
+
+      otherLines.forEach((line, i) => {
+        line.style.transform = i < activeIndex ? 'scaleX(1)' : 'scaleX(0)';
+      });
+    });
+
+    // ✅ Tambahkan logika swingSpeed di sini:
+    swingSpeed = parseFloat(level);
+  }
+
+  circles.forEach((circle) => {
+    circle.addEventListener('click', () => {
+      const level = circle.dataset.level;
+      updateLevelUI(level);
+    });
+
+    if (circle.dataset.level === defaultLevel) {
+      setTimeout(() => circle.click(), 10);
+    }
+  });
+});
+
+function animateCameraBack(deltaTime) {
+  if (!isReturningCamera || userIsInteracting) return;
+
+  const cam = renderCamera; // gunakan kamera aktif saat ini
+  const lerpSpeed = 2.0 * deltaTime;
+
+  cam.position.lerp(initialCameraPosition, lerpSpeed);
+  controls.target.lerp(initialCameraTarget, lerpSpeed);
+  controls.update();
+
+  cameraFadeAlpha = THREE.MathUtils.lerp(cameraFadeAlpha, 1, lerpSpeed);
+
+  if (cam.position.distanceTo(initialCameraPosition) < 0.01 &&
+      controls.target.distanceTo(initialCameraTarget) < 0.01) {
+    cam.position.copy(initialCameraPosition);
+    controls.target.copy(initialCameraTarget);
+    controls.update();
+    isReturningCamera = false;
+    cameraFadeAlpha = 1;
+  }
+}
+
+// Animation
+function animate() {
+  requestAnimationFrame(animate);
+  // stats.update();
+  const deltaTime = clock.getDelta();
+  controls.update();
+  swingModel(deltaTime);
+  returnToCenter();
+  animateCameraBack(deltaTime);
+  
+
+  if (autoRotateEnabled && controls) {
+    const now = performance.now();
+    const timeSinceLastInteraction = now - lastInteractionTime;
+
+    // Ubah arah jika user baru saja geser horizontal
+    if (timeSinceLastInteraction < 300 && Math.abs(lastHorizontalDelta) > 0.001) {
+      autoRotateDirection = lastHorizontalDelta > 0 ? -1 : 1;
+      controls.autoRotateSpeed = autoRotateSpeed * autoRotateDirection;
+    }
+
+    controls.autoRotate = true; // pastikan aktif
+  }
+
+
+
+  if (gridHelper.material.opacity !== gridFadeTarget) {
+    const diff = gridFadeTarget - gridHelper.material.opacity;
+    const delta = Math.sign(diff) * fadeSpeed;
+    gridHelper.material.opacity = THREE.MathUtils.clamp(
+      gridHelper.material.opacity + delta,
+      0, 1
+    );
+    if (gridHelper.material.opacity <= 0) {
+      gridHelper.visible = false;
+    }
+  }
+
+  if (bloomEnabled) {
+    renderer.autoClear = false;
+    darkenNonBloomed(scene);
+    renderCamera.layers.set(1);
+    bloomComposer.render();
+    renderCamera.layers.set(0);
+    restoreMaterials(scene);
+    finalComposer.render();
+    renderer.autoClear = true;
+  } else {
+    renderer.render(scene, renderCamera);
+  }
+}
+
+animate();
+
+function updateActiveMaterialClassByMode(mode) {
+  document.querySelectorAll('.colourfull-material, .solid-material').forEach(btn => {
+    const isActive = (mode === 'colourfull' && btn.classList.contains('colourfull-material')) ||
+                     (mode === 'solid' && btn.classList.contains('solid-material'));
+    btn.classList.toggle('active-material', isActive);
+  });
+}
+
+document.querySelectorAll('.solid-material').forEach(btn => {
+  btn.addEventListener('click', () => {
+    fadeTransitionMaterial('solid');
+  });
+});
+
+function applySolidMaterial() {
+  isInSolidMode = true;
+  updateActiveMaterialClassByMode('solid');
+
+  const useHDRI = Array.from(hdriToggles).some(t => t.checked);
+  const useEnvMap = useHDRI ? envMapGlobal : null;
+
+  if (object) {
+    object.traverse(child => {
+      if (child.isMesh) {
+        child.material = new THREE.MeshStandardMaterial({
+          color: 0x808080,
+          roughness: 0.3,
+          metalness: 0.0,
+          side: THREE.DoubleSide,
+          flatShading: false,
+          transparent: true,
+          opacity: 0
+        });
+
+        // Tambahkan envMap jika HDRI masih aktif
+        child.material.envMap = useEnvMap;
+        child.material.envMapIntensity = 0.3;
+        child.material.needsUpdate = true;
+
+        child.userData.isBloom = false;
+        child.layers.disable(1);
+      }
+    });
+  }
+
+  bloomEnabled = false;
+  bloomToggles.forEach(t => t.checked = false);
+
+  scene.environment = useEnvMap;
+}
+
+
+
+document.querySelectorAll('.colourfull-material').forEach(btn => {
+  btn.addEventListener('click', () => {
+    isInSolidMode = false;
+    updateActiveMaterialClassByMode('colourfull');
+    fadeTransitionMaterial('colourfull');
+  });
+});
+
+if (isReturningCamera) {
+  renderer.domElement.style.opacity = cameraFadeAlpha.toFixed(2);
+} else {
+  renderer.domElement.style.opacity = '1';
+}
+
+window.addEventListener("resize", () => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const aspect = width / height;
+
+  if (currentCameraMode === 'ortho' && orthoCamera) {
+    const frustumSize = 10;
+    const newHeight = frustumSize;
+    const newWidth = frustumSize * aspect;
+
+    orthoCamera.left = -newWidth / 2;
+    orthoCamera.right = newWidth / 2;
+    orthoCamera.top = newHeight / 2;
+    orthoCamera.bottom = -newHeight / 2;
+    orthoCamera.updateProjectionMatrix();
+  } else {
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
+  }
+
+  renderer.setSize(width, height);
+  bloomComposer.setSize(width, height);
+  finalComposer.setSize(width, height);
+});
+
+// === TOGGLE ANIMASI ===
+const animationToggles = document.querySelectorAll('.animation-toggle');
+animationToggles.forEach(toggle => {
+  toggle.checked = false;
+  toggle.addEventListener('change', (e) => {
+    swingEnabled = e.target.checked;
+    animationToggles.forEach(t => t.checked = swingEnabled);
+    if (!swingEnabled && object) {
+      returningToCenter = true;
+      swingTime = 0;
+    }
+  });
+});
+
+// === PILIH LEVEL KECEPATAN ===
+vCircles.forEach((circle, index) => {
+  circle.addEventListener('click', () => {
+    // 1. Set nilai kecepatan
+    swingSpeed = parseFloat(circle.dataset.level);
+
+    // 2. Update kelas aktif
+    vCircles.forEach(c => c.classList.remove('active-level-speed'));
+    circle.classList.add('active-level-speed');
+
+    // 3. Aktifkan garis progress
+    vLines.forEach((line, i) => {
+      if (i < index) {
+        line.style.transform = 'scaleX(1)';
+      } else {
+        line.style.transform = 'scaleX(0)';
+      }
+    });
+  });
+
+  // Set default saat load
+  if (circle.dataset.level === levelSelector.dataset.default) {
+    circle.click(); // trigger klik default
+  }
+});
+
+function returnToCenter() {
+  if (!object || !returningToCenter) return;
+
+  const currentY = object.rotation.y;
+  const lerpSpeed = 0.05; // kecepatan kembali (semakin kecil = makin halus)
+  const newY = THREE.MathUtils.lerp(currentY, 0, lerpSpeed);
+
+  object.rotation.y = newY;
+
+  // Jika sudah sangat dekat ke 0, hentikan
+  if (Math.abs(newY) < 0.001) {
+    object.rotation.y = 0;
+    swingAngle = 0;
+    returningToCenter = false;
+  }
+}
+
+
+const shadowToggles = document.querySelectorAll('.shadow-toggle');
+shadowToggles.forEach(toggle => {
+  toggle.checked = false;
+  toggle.addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+    shadowToggles.forEach(t => t.checked = enabled);
+    renderer.shadowMap.enabled = enabled;
+    directionalLight.castShadow = enabled;
+
+    if (enabled) {
+      const res = shadowQualityMap[currentShadowQuality];
+      directionalLight.shadow.mapSize.set(res, res);
+      directionalLight.shadow.map?.dispose();
+      directionalLight.shadow.map = null;
+      directionalLight.shadow.camera.updateProjectionMatrix();
+      renderer.shadowMap.needsUpdate = true;
+      renderer.compile(scene, camera);
+
+      object?.traverse(child => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+    } else {
+      object?.traverse(child => {
+        if (child.isMesh) {
+          child.castShadow = false;
+          child.receiveShadow = false;
+        }
+      });
+    }
+  });
+});
+
+
+document.querySelectorAll('.vertical-level-shadow').forEach(wrapper => {
+  const defaultShadow = wrapper.dataset.default;
+  const circles = wrapper.querySelectorAll('.v-circle-shadow');
+  const lines = wrapper.querySelectorAll('.v-line-shadow');
+
+  function updateShadowUI(level) {
+    document.querySelectorAll('.vertical-level-shadow').forEach(otherWrapper => {
+      const otherCircles = otherWrapper.querySelectorAll('.v-circle-shadow');
+      const otherLines = otherWrapper.querySelectorAll('.v-line-shadow');
+
+      let activeIndex = -1;
+      otherCircles.forEach((c, i) => {
+        const isActive = c.dataset.level === level;
+        c.classList.toggle('active-level-shadow', isActive);
+        if (isActive) activeIndex = i;
+      });
+
+      otherLines.forEach((line, i) => {
+        // Hanya nyalakan line sebelum index aktif
+        line.style.transform = i < activeIndex ? 'scaleX(1)' : 'scaleX(0)';
+      });
+    });
+  }
+
+  circles.forEach((circle) => {
+    circle.addEventListener('click', () => {
+      const level = circle.dataset.level;
+      currentShadowQuality = level;
+      updateShadowUI(level);
+
+      // Terapkan kualitas shadow jika aktif
+      if (renderer?.shadowMap?.enabled) {
+        const res = shadowQualityMap[level];
+        directionalLight.shadow.mapSize.set(res, res);
+        directionalLight.shadow.map?.dispose();
+        directionalLight.shadow.map = null;
+        directionalLight.shadow.camera.updateProjectionMatrix();
+        renderer.shadowMap.needsUpdate = true;
+        renderer.compile(scene, camera);
+      }
+    });
+
+    if (circle.dataset.level === defaultShadow) {
+      setTimeout(() => circle.click(), 10);
+    }
+  });
+});
+
+const modelCards = document.querySelectorAll('.model-sdfr');
+const loaderWrapper = document.querySelector('.loader-wrapper');
+let isModelLoading = false;
+
+function showLoader() {
+  loaderWrapper.classList.add('active');
+}
+
+function hideLoader() {
+  loaderWrapper.classList.remove('active');
+}
+
+function removeCurrentModel() {
+  if (object) {
+    scene.remove(object);
+    object.traverse(child => {
+      if (child.isMesh) {
+        child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach(m => m.dispose());
+        } else {
+          child.material.dispose();
+        }
+      }
+    });
+    object = null;
+  }
+}
+
+function loadNewModel(modelName) {
+  isModelLoading = true;
+  showLoader();
+  removeCurrentModel();
+
+  if (renderCamera?.isOrthographicCamera) {
+    switchCameraMode('perspective');
+    updateActiveCameraClassByMode('perspective');
+  }
+
+  bloomToggles.checked = false;
+  bloomEnabled = false;
+  setShadowType("Basic");
+
+  const aaButton = document.getElementById('aa-toggle');
+  aaButton.classList.remove('active-exf');
+  aaToggles.forEach(toggle => {
+    toggle.checked = false; 
+  });
+  currentAntialias = false;
+  initRenderer(false);
+
+  if (autoRotateEnabled) {
+    autoRotateEnabled = false;
+    rotateToggles.forEach(t => t.checked = false);
+    isReturningCamera = true;
+    cameraFadeAlpha = 0;
+  }
+
+  controls.autoRotate = autoRotateEnabled;
+  controls.autoRotateSpeed = autoRotateSpeed * autoRotateDirection;
+
+  resetSettingsToDefault(); 
+
+  const gridButton = document.getElementById('grid-view');
+  gridButton.classList.add('active-exf'); 
+
+
+  setTimeout(() => {
+    const newLoader = new GLTFLoader();
+    const newDracoLoader = new DRACOLoader();
+    newDracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
+    newLoader.setDRACOLoader(newDracoLoader);
+
+    newLoader.load(`./models/${modelName}/scene.glb`, (gltf) => {
+      object = gltf.scene;
+      normalizeModel(object, 9);
+
+      object.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = renderer.shadowMap.enabled;
+          child.receiveShadow = renderer.shadowMap.enabled;
+
+          child.frustumCulled = true;     // hanya render yang terlihat
+          child.matrixAutoUpdate = false; // tidak hitung ulang transform setiap frame
+          child.updateMatrix();     
+
+          child.userData.originalMaterial = child.material.clone();
+
+          // 🌟 Tandai bloom layer jika material name cocok
+          const matName = child.material?.name?.toLowerCase() || "";
+          if (matName.startsWith("bloom_effect")) {
+            child.userData.isBloom = true;
+          }
+
+          applyGlassAndMetalMaterial(child); // <- akan membaca userData.isBloom dan aktifkan efeknya
+        }
+      });
+
+      scene.add(object);
+      populateObjectDropdown(object);
+      setCameraFrontTop(object);
+      updateMeshDataDisplay(object);
+      updateTitleWithAnimation(modelName);
+      updateModelCredit(modelName);
+
+      // 🌍 HDRI
+      const useEnvMap = hdriToggles.checked ? envMapGlobal : null;
+      applyEnvMapToMaterials(object, useEnvMap);
+
+      directionalLight.target = object;
+      scene.add(directionalLight.target);
+
+      // 🪨 Ground
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(100, 100),
+        new THREE.ShadowMaterial({ opacity: 0.25 })
+      );
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = 0.01;
+      ground.receiveShadow = false;
+      scene.add(ground);
+
+      // ✅ Pastikan bloom layer diaktifkan ulang
+      if (bloomEnabled) {
+        object.traverse((child) => {
+          if (child.isMesh && child.userData?.isBloom) {
+            child.layers.enable(1);
+          }
+        });
+      }
+
+      isInSolidMode = false;
+      updateActiveMaterialClassByMode('colourfull');
+      restoreOriginalMaterial();
+
+      hideLoader();
+      isModelLoading = false;
+    }, undefined, (error) => {
+      console.error("Failed to load model:", error);
+      hideLoader();
+
+      if (!navigator.onLine) {
+        showErrorToast("No Internet Connection", "Please check your network and try again.");
+      } else {
+        showErrorToast("Model Load Failed", `The model "${modelName}" is not available.`);
+      }
+    });
+  }, 5000);
+}
+
+function removeActiveFree() {
+  const toggleSkjButton = document.getElementById('toggleSkj');
+  if (toggleSkjButton) {
+    toggleSkjButton.classList.remove('active-free');
+    toggleSkjButton.style.backgroundColor = ''; // kembalikan warna default
+  }
+}
+
+function removeActiveFreeAni() {
+  const toggleAniButton = document.getElementById('toggleAni');
+  if (toggleAniButton) {
+    toggleAniButton.classList.remove('active-free');
+    toggleAniButton.style.backgroundColor = ''; // kembalikan warna default
+  }
+}
+
+function closeAllPopups() {
+    const popups = [document.getElementById('popup2'), document.getElementById('popup3'), document.getElementById('popup4'), document.getElementById('popup5'),  document.getElementById('popup6'), document.getElementById('popup7')];
+
+    popups.forEach(popup => {
+        if (popup.classList.contains('show')) {
+            closePopup(popup);
+        }
+    });
+}
+
+function removeActiveBottom() {
+  const buttons = document.querySelectorAll('.bottom-navbar button:not(.plus)');
+  buttons.forEach(button => {
+    button.classList.remove('active-bottom');
+    button.style.backgroundColor = '';  // Kembalikan warna tombol semula
+  });
+}
+
+function populateObjectDropdown(model) {
+  const dropdown = document.querySelector('.dropdown-object');
+  const menu = dropdown.querySelector('.menu-by-object');
+  const select = dropdown.querySelector('.select-by-object');
+
+  const newSelect = select.cloneNode(true);
+  select.parentNode.replaceChild(newSelect, select);
+
+  const freshSelect = dropdown.querySelector('.select-by-object');
+  const selected = dropdown.querySelector('.selected-object');
+  const caret = dropdown.querySelector('.caret');
+
+  menu.innerHTML = '';
+
+  const allItem = document.createElement('li');
+  allItem.textContent = 'Show All Object';
+  allItem.classList.add('active-view');
+  menu.appendChild(allItem);
+
+  model.children.forEach((child, i) => {
+    if (child.isMesh || child.type === "Group" || child.type === "Object3D") {
+      const li = document.createElement('li');
+      li.textContent = child.name || `Object ${i + 1}`;
+      li.dataset.objectName = child.name || `Object_${i + 1}`;
+      menu.appendChild(li);
+    }
+  });
+
+  const options = menu.querySelectorAll('li');
+
+  freshSelect.addEventListener('click', () => {
+    caret.classList.toggle('caret-rotate');
+    menu.classList.toggle('buka-menu');
+  });
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+
+      selected.innerText = option.innerText;
+      selected.classList.add("text-fade-in");
+      setTimeout(() => selected.classList.remove("text-fade-in"), 300);
+
+      caret.classList.remove('caret-rotate');
+      menu.classList.remove('buka-menu');
+
+      options.forEach(opt => opt.classList.remove('active-view'));
+      option.classList.add('active-view');
+
+      const chosen = option.dataset.objectName || 'default';
+      if (option.innerText === 'Show All Object') {
+        isolateObjectByName('default');
+      } else {
+        isolateObjectByName(chosen);
+      }
+    });
+  });
+
+  window.onclick = (e) => {
+    if (!dropdown.contains(e.target)) {
+      caret.classList.remove('caret-rotate');
+      menu.classList.remove('buka-menu');
+    }
+  };
+
+  selected.innerText = "Show All Object";
+  options.forEach(opt => opt.classList.remove('active-view'));
+  if (allItem) allItem.classList.add('active-view');
+}
+
+// === CLOSE POPUP 2, 4, 6, 7 SAAT DROPDOWN DIKLIK ===
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdownObject = document.querySelector('.dropdown-object');
+
+  if (dropdownObject) {
+    dropdownObject.addEventListener('click', () => {
+      // Ambil popup yang ingin dicek
+      const popup2 = document.getElementById('popup2');
+      const popup4 = document.getElementById('popup4');
+      const popup6 = document.getElementById('popup6');
+      const popup7 = document.getElementById('popup7');
+
+      // Jika salah satu popup sedang terbuka → tutup semuanya
+      if (
+        (popup2 && popup2.classList.contains('show')) ||
+        (popup4 && popup4.classList.contains('show')) ||
+        (popup6 && popup6.classList.contains('show')) ||
+        (popup7 && popup7.classList.contains('show'))
+      ) {
+        closeAllPopups();
+      }
+
+      // Reset tombol animasi & SKJ
+      removeActiveFree();
+      removeActiveFreeAni();
+      removeActiveBottom()
+    });
+  }
+});
+
+
+
+function isolateObjectByName(targetName) {
+  if (!object) return;
+
+  if (targetName === 'default') {
+    object.children.forEach(child => (child.visible = true));
+
+    gsap.to(renderCamera.position, {
+      duration: 1.2,
+      x: initialCameraPosition.x,
+      y: initialCameraPosition.y,
+      z: initialCameraPosition.z,
+      ease: 'power2.inOut',
+      onUpdate: () => {
+        renderCamera.lookAt(initialCameraTarget);
+        controls.target.copy(initialCameraTarget);
+        controls.update();
+      }
+    });
+    return;
+  }
+
+  object.children.forEach(child => {
+    child.visible = (child.name === targetName);
+  });
+
+  const target = object.getObjectByName(targetName);
+  if (target) focusCameraOnObject(target);
+}
+
+function focusCameraOnObject(target) {
+  const box = new THREE.Box3().setFromObject(target);
+  const center = new THREE.Vector3();
+  const size = new THREE.Vector3();
+  box.getCenter(center);
+  box.getSize(size);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const distance = maxDim * 2.2;
+
+  const direction = new THREE.Vector3(0, 0.5, 1).normalize();
+  const newPos = center.clone().add(direction.multiplyScalar(distance));
+
+  gsap.to(renderCamera.position, {
+    duration: 1.2,
+    x: newPos.x,
+    y: newPos.y,
+    z: newPos.z,
+    ease: 'power2.inOut',
+    onUpdate: () => {
+      renderCamera.lookAt(center);
+      controls.target.copy(center);
+      controls.update();
+    }
+  });
+}
+
+function restoreOriginalMaterial() {
+  if (!object) return;
+
+  object.traverse((child) => {
+    if (child.isMesh && child.userData.originalMaterial) {
+      child.material = child.userData.originalMaterial.clone();
+      child.material.needsUpdate = true;
+
+      const matName = child.userData.originalMaterial.name?.toLowerCase() || "";
+      if (matName.startsWith("bloom_effect")) {
+        child.userData.isBloom = true;
+      }
+
+      applyGlassAndMetalMaterial(child);
+    }
+  });
+
+  const useEnvMap = Array.from(hdriToggles).some(t => t.checked) ? envMapGlobal : null;
+  scene.environment = useEnvMap;
+  applyEnvMapToMaterials(object, useEnvMap);
+}
+
+
+function updateMeshDataDisplay(model) {
+  let totalVertices = 0;
+  let totalTriangles = 0;
+  let meshCount = 0;
+
+  model.traverse((child) => {
+    if (child.isMesh && child.geometry) {
+      meshCount++;
+      const geometry = child.geometry;
+      geometry.computeBoundingBox();
+      geometry.computeVertexNormals();
+
+      const position = geometry.attributes.position;
+      const index = geometry.index;
+
+      if (position) {
+        totalVertices += position.count;
+        if (index) {
+          totalTriangles += index.count / 3;
+        } else {
+          totalTriangles += position.count / 3;
+        }
+      }
+    }
+  });
+
+  const totalAll = totalTriangles + totalVertices + meshCount;
+
+  const cardMeshContainers = document.querySelectorAll('.card-tri');
+
+  cardMeshContainers.forEach(container => {
+    const totalCountEl = container.querySelector('.total-count');
+    const legendItems = container.querySelectorAll('.legend-item');
+
+    if (totalCountEl) {
+      totalCountEl.textContent = totalAll.toLocaleString();
+    }
+
+    if (legendItems.length >= 3) {
+      legendItems[0].querySelector('.value').textContent = totalTriangles.toLocaleString();
+      legendItems[1].querySelector('.value').textContent = totalVertices.toLocaleString();
+      legendItems[2].querySelector('.value').textContent = meshCount.toLocaleString();
+    }
+
+    const maxValue = Math.max(totalTriangles, totalVertices, meshCount);
+    const minWidth = 20;
+
+    const calcWidth = (val) => maxValue === 0 ? minWidth : Math.max((val / maxValue) * 100, minWidth);
+
+    const progressTriangles = container.querySelector('.progress-triangles');
+    const progressVertices = container.querySelector('.progress-vertices');
+    const progressMeshes = container.querySelector('.progress-meshes');
+
+    if (progressTriangles) progressTriangles.style.width = `${calcWidth(totalTriangles)}%`;
+    if (progressVertices) progressVertices.style.width = `${calcWidth(totalVertices)}%`;
+    if (progressMeshes) progressMeshes.style.width = `${calcWidth(meshCount)}%`;
+  });
+}
+
+modelCards.forEach(card => {
+  card.addEventListener('click', () => {
+    if (isModelLoading) {
+      showErrorToast("Model Loading", "Please wait while the model loads.");
+      return; 
+    }
+
+    const modelName = card.dataset.model;
+
+    document.querySelectorAll('.model-sdfr').forEach(c => {
+      const isActive = c.dataset.model === modelName;
+      c.classList.toggle('active-model', isActive);
+    });
+
+    loadNewModel(modelName);  
+  });
+});
+
+const aaToggles = document.querySelectorAll('.aa-toggle');
+
+// Mengambil tombol non-input berdasarkan ID
+const aaButton = document.getElementById('aa-toggle');
+
+// Mengambil checkbox input berdasarkan class
+const aaCheckbox = document.querySelector('.aa-toggle');
+
+// Fungsi untuk mengubah status Antialiasing
+function setAntialiasingVisibility(show) {
+  // Aktifkan atau nonaktifkan antialiasing di renderer
+  currentAntialias = show;
+
+  // Sinkronkan status checkbox hanya untuk elemen .aa-toggle
+  aaCheckbox.checked = show;  
+
+  // Hanya ubah class 'active-exf' pada tombol dengan ID 'aa-toggle' (tombol non-input)
+  if (show) {
+    aaButton.classList.add('active-exf');  // Tambahkan class active-exf jika antialiasing aktif
+  } else {
+    aaButton.classList.remove('active-exf');  // Hapus class active-exf jika antialiasing non-aktif
+  }
+
+  // Panggil initRenderer untuk mengubah setting antialiasing
+  initRenderer(show);
+}
+
+// Event listener untuk tombol non-input (tombol dengan ID 'aa-toggle')
+aaButton.addEventListener('click', () => {
+  // Set visibilitas antialiasing berdasarkan status checkbox
+  const show = !aaCheckbox.checked;
+  setAntialiasingVisibility(show);
+});
+
+// Event listener untuk checkbox input
+aaCheckbox.addEventListener('change', (e) => {
+  // Set visibilitas antialiasing berdasarkan status checkbox
+  setAntialiasingVisibility(e.target.checked);
+});
+
+// Fungsi untuk memperbarui status antialiasing
+function updateAntialiasing() {
+  // Cek status antialiasing dan perbarui elemen terkait
+  if (!currentAntialias) {
+    // Jika antialiasing mati, reset tombol dan checkbox
+    aaButton.classList.remove('active-exf');  // Hapus class 'active-exf' pada tombol non-input
+    aaCheckbox.checked = false;  // Non-cek checkbox jika antialiasing mati
+  }
+}
+
+// Memastikan status default antialiasing saat halaman dimuat
+setAntialiasingVisibility(currentAntialias);
+
+
+
+// === TOGGLE GRID HELPER DENGAN FADE IN/OUT ===
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 1;
+gridHelper.visible = true;
+
+const gridToggles = document.querySelectorAll('.grid-view'); // Dapatkan semua elemen checkbox
+const gridButton = document.getElementById('grid-view'); // Tombol biasa
+
+// Fungsi animasi untuk fade in/out grid
+function animateGridFade() {
+  if (Math.abs(gridHelper.material.opacity - gridFadeTarget) < 0.01) {
+    gridHelper.material.opacity = gridFadeTarget; // Pastikan mencapai target
+    return; // Stop jika sudah cukup dekat dengan target
+  }
+
+  const delta = gridFadeTarget - gridHelper.material.opacity;
+  const sign = Math.sign(delta);
+
+  gridHelper.material.opacity += sign * fadeSpeed;
+  gridHelper.material.opacity = THREE.MathUtils.clamp(gridHelper.material.opacity, 0, 1); 
+
+  if (gridHelper.material.opacity === 0) {
+    gridHelper.visible = false;
+  } else {
+    gridHelper.visible = true;
+  }
+
+  // Pastikan animasi terus berjalan
+  requestAnimationFrame(animateGridFade);
+}
+
+
+// Fungsi untuk mengatur status grid berdasarkan status toggle
+function setGridVisibility(show) {
+  gridFadeTarget = show ? 1 : 0;
+  gridHelper.material.transparent = true;
+  if (show && !gridHelper.visible) gridHelper.visible = true;
+  requestAnimationFrame(animateGridFade);
+}
+
+
+// Set event listener untuk checkbox (input)
+gridToggles.forEach(toggle => {
+  toggle.checked = true; // Set status default checkbox (checked)
+  
+  toggle.addEventListener('change', (e) => {
+    const show = e.target.checked; // Ambil status checkbox
+    setGridVisibility(show); // Update gridHelper visibility
+
+    // Sinkronkan status tombol berdasarkan status checkbox
+    if (show) {
+      gridButton.classList.add('active-exf'); // Aktifkan tombol jika checkbox tercentang
+    } else {
+      gridButton.classList.remove('active-exf'); // Nonaktifkan tombol jika checkbox tidak tercentang
+    }
+  });
+});
+
+// Set event listener untuk tombol biasa (button)
+gridButton.addEventListener('click', () => {
+  // Toggle status checkbox sesuai dengan tombol yang ditekan
+  const show = !gridButton.classList.contains('active-exf');
+  gridButton.classList.toggle('active-exf', show); // Set tombol ke status yang sesuai
+  gridToggles.forEach(toggle => toggle.checked = show); // Update status checkbox
+
+  // Update status gridHelper sesuai dengan status tombol
+  setGridVisibility(show);
+});
+
+// Mengambil tombol non-input berdasarkan ID
+const hdriButton = document.getElementById('hdri-toggle');
+
+// Mengambil checkbox input berdasarkan class
+const hdriCheckbox = document.querySelector('.hdri-toggle');
+
+// Mengambil semua elemen dengan class hdri-toggle
+const hdriToggles = document.querySelectorAll('.hdri-toggle');
+
+// Fungsi untuk mengubah status HDRI
+function setHDRIVisibility(show) {
+  // Aktifkan atau nonaktifkan HDRI di scene
+  scene.environment = show ? envMapGlobal : null;
+  if (object) applyEnvMapToMaterials(object, show ? envMapGlobal : null, 0.3);
+
+  // Hanya ubah class 'active-exf' pada tombol dengan ID 'hdri-toggle'
+  if (show) {
+    hdriButton.classList.add('active-exf');  // Tambahkan class active-exf jika show true
+  } else {
+    hdriButton.classList.remove('active-exf');  // Hapus class active-exf jika show false
+  }
+
+  // Sinkronkan status checkbox dengan tombol
+  hdriCheckbox.checked = show;
+
+  // Hapus class 'checked' pada tombol input jika HDRI dimatikan
+  if (!show) {
+    hdriCheckbox.classList.remove('checked');
+  }
+}
+
+// Fungsi untuk menghapus class 'checked' pada tombol input dan 'active-exf' pada tombol non-input
+function resetButtonClasses() {
+  // Hapus class 'checked' pada checkbox input jika HDRI dimatikan
+  hdriCheckbox.classList.remove('checked');  
+
+  // Hapus class 'active-exf' pada tombol non-input jika HDRI dimatikan
+  hdriButton.classList.remove('active-exf');
+}
+
+// Event listener untuk tombol non-input (tombol dengan ID 'hdri-toggle')
+hdriButton.addEventListener('click', () => {
+  // Set visibilitas HDRI berdasarkan status checkbox
+  const show = !hdriCheckbox.checked;
+  setHDRIVisibility(show);
+});
+
+// Event listener untuk checkbox input
+hdriCheckbox.addEventListener('change', (e) => {
+  // Set visibilitas HDRI berdasarkan status checkbox
+  setHDRIVisibility(e.target.checked);
+});
+
+// Event listener untuk semua toggle dengan class .hdri-toggle (checkbox)
+hdriToggles.forEach(toggle => {
+  toggle.checked = false;  // Set status default checkbox (false)
+  toggle.addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+
+    // Sinkronkan semua toggle (checkbox dan tombol)
+    hdriToggles.forEach(t => t.checked = enabled);
+
+    // Atur environment HDRI
+    scene.environment = enabled ? envMapGlobal : null;
+    if (object) applyEnvMapToMaterials(object, enabled ? envMapGlobal : null, 0.3);
+
+    // Pastikan hanya tombol non-input yang terupdate (hdri-toggle)
+    if (toggle === hdriButton) {
+      if (enabled) {
+        toggle.classList.add('active-exf');  // Menambahkan class active-exf jika enabled true
+      } else {
+        toggle.classList.remove('active-exf');  // Menghapus class active-exf jika enabled false
+      }
+    }
+  });
+});
+
+// Fungsi untuk memperbarui environment map HDRI
+function updateEnvMap() {
+  if (!hdrTexture || !renderer) return;
+
+  // Membuat PMREM untuk HDRI
+  const newPMREM = new THREE.PMREMGenerator(renderer);
+  const envMap = newPMREM.fromEquirectangular(hdrTexture).texture;
+  envMapGlobal = envMap;
+
+  // Cek apakah ada toggle yang diaktifkan
+  const enabled = Array.from(hdriToggles).some(t => t.checked);
+
+  // Update scene.environment berdasarkan status toggle
+  scene.environment = enabled ? envMapGlobal : null;
+  if (object) {
+    applyEnvMapToMaterials(object, enabled ? envMapGlobal : null);
+  }
+
+  // Membersihkan texture dan PMREM
+  hdrTexture.dispose();
+  newPMREM.dispose();
+}
+
+// Set status default HDRI saat halaman dimuat
+setHDRIVisibility(hdriCheckbox.checked);
+
+// Fungsi untuk menghapus class saat HDRI dimatikan
+function handleHDRIToggle() {
+  if (!scene.environment) {
+    resetButtonClasses(); // Hapus class jika HDRI dimatikan
+  }
+}
+
+function resetSettingsToDefault() {
+
+  resetToggle('.aa-toggle', false);
+
+  // 1. Reset parameter bloom ke default
+  bloomParams = {
+    strength: 2.6,
+    radius: 0.6,
+    threshold: 0.0
+  };
+
+  // 2. Set nilai efek bloom ke objek bloomPass (jika sudah ada)
+  if (bloomPass) {
+    bloomPass.strength = bloomParams.strength;
+    bloomPass.radius = bloomParams.radius;
+    bloomPass.threshold = bloomParams.threshold;
+  }
+
+  // 3. Reset semua slider & tampilannya
+  ['strength', 'radius', 'threshold'].forEach(key => {
+    const val = bloomParams[key];
+    document.querySelectorAll(`.bloom-${key}`).forEach(slider => {
+      slider.value = val;
+      updateSliderBackground(slider);
+      const display = slider.closest('.bloom-card')?.querySelector('.bloom-value');
+      if (display) display.textContent = val.toFixed(1);
+    });
+  });
+
+  // 4. Matikan semua bloom toggle
+  resetToggle('.bloom-toggle', false);
+  bloomEnabled = false;
+
+
+  setupBloomSliderControls();
+
+  // Reset Shadow
+  resetToggle('.shadow-toggle', false);
+  renderer.shadowMap.enabled = false;
+  directionalLight.castShadow = false;
+
+  // Reset Shadow Resolution ke "Low"
+  currentShadowQuality = "Low";
+  const shadowWrapper = document.querySelector('.vertical-level-shadow');
+  const defaultShadow = shadowWrapper.dataset.default;
+  const allShadowCircles = document.querySelectorAll('.v-circle-shadow');
+  const allShadowLines = document.querySelectorAll('.v-line-shadow');
+
+  allShadowCircles.forEach((circle, index) => {
+    const level = circle.dataset.level;
+    if (level === defaultShadow) {
+      circle.classList.add('active-level-shadow');
+    } else {
+      circle.classList.remove('active-level-shadow');
+    }
+  });
+
+  // Reset semua garis jadi 0
+  allShadowLines.forEach(line => {
+    if (line) line.style.transform = 'scaleX(0)';
+  });
+
+
+  // Reset Animation
+  resetToggle('.animation-toggle', false);
+  swingEnabled = false;
+  returningToCenter = true;
+  swingTime = 0;
+
+  // Reset Animation Speed ke default
+  const speedWrapper = document.querySelector('.vertical-level-selector');
+  const defaultSpeed = speedWrapper.dataset.default;
+  const allSpeedCircles = document.querySelectorAll('.v-circle');
+  const allSpeedLines = document.querySelectorAll('.v-line');
+
+  allSpeedCircles.forEach((circle, index) => {
+    const level = circle.dataset.level;
+    if (level === defaultSpeed) {
+      circle.classList.add('active-level-speed');
+      swingSpeed = parseFloat(level);
+    } else {
+      circle.classList.remove('active-level-speed');
+    }
+  });
+
+  // Reset semua garis jadi 0
+  allSpeedLines.forEach(line => {
+    if (line) line.style.transform = 'scaleX(0)';
+  });
+
+  // Reset HDRI toggle
+  const hdriButton = document.getElementById('hdri-toggle');
+  const hdriCheckbox = document.querySelector('.hdri-toggle');
+
+  hdriButton.classList.remove('active-exf');  
+  hdriCheckbox.checked = false;  
+  scene.environment = null;  
+
+  // Reset Grid toggle
+  resetToggle('.grid-view', true);
+  gridHelper.visible = true;
+  gridFadeTarget = 1;
+
+  resetToggle('#grid-view', true);
+  gridHelper.visible = true;
+  gridFadeTarget = 1;
+
+  if (object) applyEnvMapToMaterials(object, null);
+}
+
+function showErrorToast(message1 = "Error Message", message2 = "3D model belum tersedia.") {
+  const toast = document.getElementById('errorToast');
+  const text1 = toast.querySelector('.text-1');
+  const text2 = toast.querySelector('.text-2');
+
+  text1.textContent = message1;
+  text2.textContent = message2;
+
+  toast.classList.add('active-toast');
+
+  // Sembunyikan otomatis setelah 4 detik
+  setTimeout(() => {
+    toast.classList.remove('active-toast');
+  }, 10000);
+}
+
+function updateTitleWithAnimation(newTitle) {
+  const titleEls = document.querySelectorAll('.model-judul');
+  if (!titleEls.length) return;
+
+  titleEls.forEach(titleEl => {
+    titleEl.style.transition = 'opacity 0.5s';
+    titleEl.style.opacity = 0;
+  });
+
+  setTimeout(() => {
+    titleEls.forEach(titleEl => {
+      titleEl.textContent = newTitle;
+      titleEl.style.opacity = 1;
+    });
+  }, 500);
+}
+
+
+function updateSliderBackground(slider) {
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const percent = ((val - min) / (max - min)) * 100;
+
+  let activeColor = '#2ecc71'; // default
+  let backgroundColor = '#1e2a3a'; // default
+
+  // Cek konteks slider
+  if (slider.closest('.panel-setting-info')) {
+    activeColor = '#2ecc71'; // warna untuk panel-setting-info
+    backgroundColor = '#1e2a3a';
+  } else if (slider.closest('.bloom-indi')) {
+    activeColor = '#2ecc71'; // warna untuk card-wrapper
+    backgroundColor = '#3b4b5d';
+  }
+
+  slider.style.background = `linear-gradient(to right, ${activeColor} ${percent}%, ${backgroundColor} ${percent}%)`;
+}
+
+function setupBloomSliderControls() {
+  const strengthSliders = document.querySelectorAll('.bloom-strength');
+  const radiusSliders = document.querySelectorAll('.bloom-radius');
+  const thresholdSliders = document.querySelectorAll('.bloom-threshold');
+
+  function syncSliderGroup(sliders, paramKey, passKey) {
+    sliders.forEach(slider => {
+      slider.value = bloomParams[paramKey];
+      updateSliderBackground(slider);
+
+      const card = slider.closest('.bloom-card');
+      const display = card?.querySelector('.bloom-value');
+
+
+      slider.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        bloomParams[paramKey] = val;
+        bloomPass[passKey] = val;
+
+        sliders.forEach(s => {
+          s.value = val;
+          updateSliderBackground(s);
+        });
+
+        if (display) {
+          display.textContent = val.toFixed(1); 
+        }
+      });
+    });
+  }
+
+  syncSliderGroup(strengthSliders, 'strength', 'strength');
+  syncSliderGroup(radiusSliders, 'radius', 'radius');
+  syncSliderGroup(thresholdSliders, 'threshold', 'threshold');
+}
+
+
+function darkenNonBloomed(obj) {
+  obj.traverse((child) => {
+    if (child.isMesh && bloomLayer.test(child.layers) === false) {
+      materials[child.uuid] = child.material;
+      child.material = darkMaterial;
+
+      child.layers.enable(1);
+    }
+  });
+}
+
+function restoreMaterials(obj) {
+  obj.traverse((child) => {
+    if (child.isMesh && materials[child.uuid]) {
+      child.material = materials[child.uuid];
+      delete materials[child.uuid];
+      if (!child.userData.isBloom) {
+        child.layers.disable(1);
+      }
+    }
+  });
+}
+
+function resetToggle(selector, value = false) {
+  const toggles = document.querySelectorAll(selector);
+  toggles.forEach(t => {
+    if (t) t.checked = value;
+  });
+}
+
+function setOrthoZoomLimits(min = 0.5, max = 2.5) {
+  if (controls && currentCameraMode === 'ortho' && renderCamera.isOrthographicCamera) {
+    controls.enableZoom = true;
+    controls.zoomSpeed = 1.0;
+    controls.minZoom = min; // Set zoom min limit
+    controls.maxZoom = max; // Set zoom max limit
+
+    // Pastikan zoom kamera saat ini masih dalam batas
+    renderCamera.zoom = THREE.MathUtils.clamp(renderCamera.zoom, min, max);
+    renderCamera.updateProjectionMatrix(); // Update the projection matrix
+  }
+}
+
+
+const rotateToggles = document.querySelectorAll('.rotate-toggle');
+rotateToggles.forEach(toggle => {
+  toggle.checked = false;
+  toggle.addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+    autoRotateEnabled = enabled;
+    controls.autoRotate = enabled;
+    controls.autoRotateSpeed = autoRotateSpeed * autoRotateDirection;
+    rotateToggles.forEach(t => t.checked = enabled);
+
+    if (enabled) {
+      isReturningCamera = false;
+      cameraFadeAlpha = 1;
+      renderer.domElement.style.opacity = '1';
+    } else {
+      isReturningCamera = true;
+      cameraFadeAlpha = 0;
+    }
+  });
+});
+
+function fadeTransitionMaterial(targetMode = 'solid', duration = 500) {
+  if (!object) return;
+
+  const meshes = [];
+  object.traverse(child => {
+    if (child.isMesh && child.material && 'opacity' in child.material) {
+      child.material.transparent = true;
+      meshes.push(child);
+    }
+  });
+
+  const start = performance.now();
+  const fadeOut = () => {
+    const now = performance.now();
+    const elapsed = now - start;
+    const t = Math.min(elapsed / duration, 1);
+
+    meshes.forEach(mesh => {
+      mesh.material.opacity = 1 - t;
+      mesh.material.needsUpdate = true;
+    });
+
+    if (t < 1) {
+      requestAnimationFrame(fadeOut);
+    } else {
+      // Setelah fade-out selesai, ganti material
+      if (targetMode === 'solid') {
+        applySolidMaterial();
+      } else {
+        restoreOriginalMaterial();
+      }
+      fadeIn();
+    }
+  };
+
+  const fadeIn = () => {
+    const startIn = performance.now();
+    const animateIn = () => {
+      const now = performance.now();
+      const elapsed = now - startIn;
+      const t = Math.min(elapsed / duration, 1);
+
+      meshes.forEach(mesh => {
+        mesh.material.opacity = t;
+        mesh.material.needsUpdate = true;
+      });
+
+      if (t < 1) {
+        requestAnimationFrame(animateIn);
+      }
+    };
+    animateIn();
+  };
+
+  fadeOut();
+}
+
+const modelCredits = {
+  "Soccer Icon": { creator: "Polygon Runway", url: "https://www.youtube.com/@polygonrunway" },
+  "Clock": { creator: "Polygon Runway", url: "https://www.youtube.com/@polygonrunway" },
+  "Living Room": { creator: "3DGreenhorn", url: "https://www.youtube.com/@3dgreenhorn" },
+  "Game Room": { creator: "Polygon Runway", url: "https://www.youtube.com/@polygonrunway" },
+  "Fox": { creator: "Ksenia Starkova", url: "https://www.youtube.com/@KseniaStarkova" },
+  "Lion Bear": { creator: "Fullsworld", url: "https://www.youtube.com/@fullsworld" },
+  "Urban Cafe": { creator: "Polygon Runway", url: "https://www.youtube.com/@polygonrunway" },
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleLegendBtn = document.querySelector(".open-legend");
+  const legend = document.getElementById("viewlegend");
+  const cardMesh = document.querySelector(".card-mesh-bottom");
+  const icon = toggleLegendBtn.querySelector("i");
+
+  // 🔹 Kondisi awal (legend tertutup)
+  legend.style.display = "none";
+  legend.style.pointerEvents = "none";
+  cardMesh.style.width = "45%";
+  icon.classList.remove("fa-minus");
+  icon.classList.add("fa-plus");
+
+  let isLegendOpen = false; // status awal
+
+  // === Fungsi toggle legend ===
+  function toggleLegend() {
+    isLegendOpen = !isLegendOpen;
+
+    if (isLegendOpen) {
+      // 🔹 Buka legend
+      cardMesh.style.width = "94%";
+      legend.style.display = "flex";
+      legend.style.pointerEvents = "auto";
+
+      icon.classList.remove("fa-plus");
+      icon.classList.add("fa-minus");
+    } else {
+      // 🔹 Tutup legend
+      cardMesh.style.width = "45%";
+      legend.style.display = "none";
+      legend.style.pointerEvents = "none";
+
+      icon.classList.remove("fa-minus");
+      icon.classList.add("fa-plus");
+    }
+  }
+
+  // === Klik tombol open-legend ===
+  toggleLegendBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // mencegah klik tembus ke document
+    toggleLegend();
+  });
+
+  // === Klik di luar area legend & tombol ===
+  document.addEventListener("click", (e) => {
+    // jika legend sedang terbuka dan klik bukan di legend maupun tombol
+    if (
+      isLegendOpen &&
+      !legend.contains(e.target) &&
+      !toggleLegendBtn.contains(e.target)
+    ) {
+      // tutup legend
+      isLegendOpen = false;
+      cardMesh.style.width = "45%";
+      legend.style.display = "none";
+      legend.style.pointerEvents = "none";
+
+      icon.classList.remove("fa-minus");
+      icon.classList.add("fa-plus");
+    }
+  });
+});
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+    showErrorToast("Access denied", "Developer tools detected.");
+  });
+
+  document.addEventListener("keydown", function(e) {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && e.key === "I") ||
+      (e.ctrlKey && e.key === "U") ||
+      (e.ctrlKey && e.shiftKey && e.key === "J")
+    ) {
+      e.preventDefault();
+    }
+  });
+
+  setInterval(function () {
+    if (
+      window.outerHeight - window.innerHeight > 100 ||
+      window.outerWidth - window.innerWidth > 100
+  ) {
+    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+  }
+}, 1000);
+});
