@@ -586,7 +586,6 @@ function updateBloomLayerState() {
   });
 }
 
-
 function setCameraFrontTop(model) {
   const box = new THREE.Box3().setFromObject(model);
   const center = new THREE.Vector3();
@@ -1144,7 +1143,7 @@ function loadNewModel(modelName) {
             child.userData.isBloom = true;
           }
 
-          applyGlassAndMetalMaterial(child); // <- akan membaca userData.isBloom dan aktifkan efeknya
+           applyGlassAndMetalMaterial(child); 
         }
       });
 
@@ -1154,6 +1153,7 @@ function loadNewModel(modelName) {
       updateMeshDataDisplay(object);
       updateTitleWithAnimation(modelName);
       updateModelCredit(modelName);
+      resetEffectCheckboxes()
 
       // 🌍 HDRI
       const useEnvMap = hdriToggles.checked ? envMapGlobal : null;
@@ -2116,6 +2116,70 @@ document.addEventListener("DOMContentLoaded", () => {
       cardMesh.style.width = "45%";
       legend.style.display = "none";
       legend.style.pointerEvents = "none";
+
+      icon.classList.remove("fa-minus");
+      icon.classList.add("fa-plus");
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleMaterialBtn = document.querySelector(".open-materiali"); 
+  const materialCard = document.querySelector(".Material-card-container-bottom");
+  const viewMaterial = document.querySelector(".all-effect");
+  const icon = toggleMaterialBtn.querySelector("i");
+
+  // 🔹 Kondisi awal (material tertutup)
+  materialCard.style.width = "0%"; // material-card-container-bottom tersembunyi
+  viewMaterial.style.display = "none"; // all-effect tersembunyi
+  viewMaterial.style.opacity = "0"; // all-effect opacity 0
+  icon.classList.remove("fa-minus");
+  icon.classList.add("fa-plus");
+
+  let isMaterialOpen = false; // status awal
+
+  // === Fungsi toggle material ===
+  function toggleMaterial() {
+    isMaterialOpen = !isMaterialOpen;
+
+    if (isMaterialOpen) {
+      // 🔹 Buka material
+      materialCard.style.width = "94%";
+      viewMaterial.style.display = "flex";
+      viewMaterial.style.opacity = "1";
+      
+      icon.classList.remove("fa-plus");
+      icon.classList.add("fa-minus");
+    } else {
+      // 🔹 Tutup material
+      materialCard.style.width = "0%";
+      viewMaterial.style.display = "none";
+      viewMaterial.style.opacity = "0";
+
+      icon.classList.remove("fa-minus");
+      icon.classList.add("fa-plus");
+    }
+  }
+
+  // === Klik tombol cameraVisible (ikon plus/minus) ===
+  toggleMaterialBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // mencegah klik tembus ke document
+    toggleMaterial();
+  });
+
+  // === Klik di luar area material ===
+  document.addEventListener("click", (e) => {
+    // jika material sedang terbuka dan klik bukan di material maupun tombol
+    if (
+      isMaterialOpen &&
+      !materialCard.contains(e.target) &&
+      !toggleMaterialBtn.contains(e.target)
+    ) {
+      // tutup material
+      isMaterialOpen = false;
+      materialCard.style.width = "0%";
+      viewMaterial.style.display = "none";
+      viewMaterial.style.opacity = "0";
 
       icon.classList.remove("fa-minus");
       icon.classList.add("fa-plus");
