@@ -39,6 +39,9 @@ let lastAzimuthalAngle = 0;
 let lastHorizontalDelta = 0;
 let lastInteractionTime = 0;
 
+let glassObjects = [];
+let metallicObjects = [];
+
 
 let bloomParams = {
   strength: 2.6,
@@ -114,6 +117,82 @@ document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
     updateActiveCameraClassByMode(mode);
   });
 });
+
+// Fungsi untuk mengecek apakah ada objek yang bernama glass atau glass dengan angka
+function checkForGlassObjects() {
+    if (object) {
+        object.traverse((child) => {
+            if (child.isMesh && child.name.toLowerCase().includes("glass")) {
+                glassObjects.push(child);
+            }
+        });
+        if (glassObjects.length > 0) {
+            document.getElementById('cb-glass-effect').checked = true;
+        }
+    }
+}
+
+// Fungsi untuk menangani perubahan status checkbox
+function handleCheckboxChange(event) {
+    if (event.target.checked) {
+        // Jika checkbox dicentang, pastikan objek glass muncul
+        glassObjects.forEach(obj => obj.visible = true);
+    } else {
+        // Jika checkbox tidak dicentang, sembunyikan objek glass
+        glassObjects.forEach(obj => obj.visible = false);
+    }
+}
+
+// Menambahkan event listener pada checkbox untuk mendeteksi perubahan
+document.getElementById('cb-glass-effect').addEventListener('change', handleCheckboxChange);
+
+function checkForMetallicObjects() {
+    if (object) {
+        object.traverse((child) => {
+            // Cek apakah objek memiliki material dengan kata 'metal' dalam nama material
+            if (child.isMesh && child.material && child.material.name && child.material.name.toLowerCase().includes("metal")) {
+                metallicObjects.push(child);  // Menambahkan objek yang memiliki material metallic
+            }
+        });
+
+        // Jika ada objek dengan material metallic, centang checkbox secara otomatis
+        if (metallicObjects.length > 0) {
+            document.getElementById('cb-metallic-effect').checked = true;
+        }
+    }
+}
+
+function handleMetallicCheckboxChange(event) {
+    if (event.target.checked) {
+        // Jika checkbox dicentang, ganti material objek menjadi MeshStandardMaterial
+        metallicObjects.forEach(obj => {
+            // Simpan material asli untuk restore jika perlu
+            obj.userData.originalMaterial = obj.material.clone();
+
+            // Ganti material objek menjadi MeshStandardMaterial
+            obj.material = new THREE.MeshStandardMaterial({
+                color: obj.material.color || 0xffffff, // Pertahankan warna asli
+                metalness: 0,  // Tidak ada efek metallic
+                roughness: 0.4,  // Sesuaikan nilai roughness
+                emissive: obj.material.emissive || 0x000000, // Pertahankan warna emissive
+                envMap: scene.environment, // Jika menggunakan HDRI map
+                envMapIntensity: 0.5, // Sesuaikan dengan intensitas map
+            });
+        });
+    } else {
+        // Jika checkbox tidak dicentang, kembalikan material ke material asli
+        metallicObjects.forEach(obj => {
+            if (obj.userData.originalMaterial) {
+                // Kembalikan ke material original
+                obj.material = obj.userData.originalMaterial;
+            }
+        });
+    }
+}
+
+// Menambahkan event listener untuk menangani perubahan checkbox metallic
+document.getElementById('cb-metallic-effect').addEventListener('change', handleMetallicCheckboxChange);
+
 
 function updateActiveCameraClassByMode(mode) {
   document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
@@ -555,8 +634,8 @@ function applyGlassAndMetalMaterial(child) {
   ) {
     child.material = new THREE.MeshPhysicalMaterial({
       color: child.material.color || 0xffffff,
-      metalness: 0.5,
-      roughness: 0.05,
+      metalness: 0.9,
+      roughness: 0.2,
       reflectivity: 0.8,
       clearcoat: 1.0,
       clearcoatRoughness: 0.02,
@@ -654,6 +733,9 @@ window.addEventListener("DOMContentLoaded", () => {
       populateObjectDropdown(object);
       setCameraFrontTop(object);
       updateMeshDataDisplay(object);
+      checkForGlassObjects();
+      checkForMetallicObjects();
+
 
       const useEnvMap = (hdriToggles && hdriToggles.checked) ? envMapGlobal : null;
       applyEnvMapToMaterials(object, useEnvMap);
@@ -1153,7 +1235,9 @@ function loadNewModel(modelName) {
       updateMeshDataDisplay(object);
       updateTitleWithAnimation(modelName);
       updateModelCredit(modelName);
-      resetEffectCheckboxes()
+      checkForGlassObjects();
+      checkForMetallicObjects();
+
 
       // 🌍 HDRI
       const useEnvMap = hdriToggles.checked ? envMapGlobal : null;
