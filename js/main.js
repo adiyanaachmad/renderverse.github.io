@@ -40,7 +40,8 @@ let lastHorizontalDelta = 0;
 let lastInteractionTime = 0;
 
 let glassObjects = [];
-let metallicObjects = [];
+let metallicObjects = []; 
+let nonMetallicObjects = [];
 
 
 let bloomParams = {
@@ -148,51 +149,58 @@ document.getElementById('cb-glass-effect').addEventListener('change', handleChec
 
 function checkForMetallicObjects() {
     if (object) {
+        // Reset arrays setiap kali model baru dimuat
+        metallicObjects = [];
+        nonMetallicObjects = [];
+
         object.traverse((child) => {
-            // Cek apakah objek memiliki material dengan kata 'metal' dalam nama material
-            if (child.isMesh && child.material && child.material.name && child.material.name.toLowerCase().includes("metal")) {
-                metallicObjects.push(child);  // Menambahkan objek yang memiliki material metallic
+            // Cek apakah objek memiliki nama 'non_mli'
+            if (child.isMesh && child.material && child.name.toLowerCase().includes("non_mli")) {
+                nonMetallicObjects.push(child);  // Menambahkan objek dengan nama 'non_mli'
+                child.visible = false;  // Sembunyikan objek 'non_mli' secara default
+            } 
+            // Cek apakah objek memiliki material dengan kata 'metal'
+            else if (child.isMesh && child.material && child.name.toLowerCase().includes("metal")) {
+                metallicObjects.push(child);  // Menambahkan objek dengan material 'metal'
+                child.visible = false;  // Sembunyikan objek 'metal' secara default
             }
         });
 
-        // Jika ada objek dengan material metallic, centang checkbox secara otomatis
-        if (metallicObjects.length > 0) {
-            document.getElementById('cb-metallic-effect').checked = true;
-        }
+        // Set checkbox ke false saat model dimuat atau setelah memilih model baru
+        document.getElementById('cb-metallic-effect').checked = false;
+
+        // Pastikan objek non-metallic terlihat saat model baru dimuat
+        nonMetallicObjects.forEach(obj => {
+            obj.visible = true;  // Pastikan objek non-metallic terlihat secara default
+        });
     }
 }
 
+// Fungsi untuk menangani perubahan status checkbox metallic
 function handleMetallicCheckboxChange(event) {
     if (event.target.checked) {
-        // Jika checkbox dicentang, ganti material objek menjadi MeshStandardMaterial
+        // Jika checkbox dicentang, tampilkan objek metallic dan sembunyikan objek non-metallic
         metallicObjects.forEach(obj => {
-            // Simpan material asli untuk restore jika perlu
-            obj.userData.originalMaterial = obj.material.clone();
+            obj.visible = true;  // Tampilkan objek dengan material 'metal'
+        });
 
-            // Ganti material objek menjadi MeshStandardMaterial
-            obj.material = new THREE.MeshStandardMaterial({
-                color: obj.material.color || 0xffffff, // Pertahankan warna asli
-                metalness: 0,  // Tidak ada efek metallic
-                roughness: 0.4,  // Sesuaikan nilai roughness
-                emissive: obj.material.emissive || 0x000000, // Pertahankan warna emissive
-                envMap: scene.environment, // Jika menggunakan HDRI map
-                envMapIntensity: 0.5, // Sesuaikan dengan intensitas map
-            });
+        nonMetallicObjects.forEach(obj => {
+            obj.visible = false;  // Sembunyikan objek dengan nama 'non_mli'
         });
     } else {
-        // Jika checkbox tidak dicentang, kembalikan material ke material asli
+        // Jika checkbox tidak dicentang, tampilkan objek non-metallic dan sembunyikan objek metallic
+        nonMetallicObjects.forEach(obj => {
+            obj.visible = true;  // Tampilkan objek dengan nama 'non_mli'
+        });
+
         metallicObjects.forEach(obj => {
-            if (obj.userData.originalMaterial) {
-                // Kembalikan ke material original
-                obj.material = obj.userData.originalMaterial;
-            }
+            obj.visible = false;  // Sembunyikan objek dengan material 'metal'
         });
     }
 }
 
 // Menambahkan event listener untuk menangani perubahan checkbox metallic
 document.getElementById('cb-metallic-effect').addEventListener('change', handleMetallicCheckboxChange);
-
 
 function updateActiveCameraClassByMode(mode) {
   document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
