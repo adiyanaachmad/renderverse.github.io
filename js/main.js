@@ -2149,6 +2149,7 @@ const modelCredits = {
   "Fox": { creator: "Ksenia Starkova", url: "https://www.youtube.com/@KseniaStarkova" },
   "Lion Bear": { creator: "Fullsworld", url: "https://www.youtube.com/@fullsworld" },
   "Urban Cafe": { creator: "Polygon Runway", url: "https://www.youtube.com/@polygonrunway" },
+  "Bedroom": { creator: "Collaboration", url: "https://www.youtube.com/@polygonrunway" },
 };
 
 document.addEventListener("DOMContentLoaded", () => {
