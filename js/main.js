@@ -3,6 +3,7 @@ import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/js
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/RGBELoader.js";
 import { DRACOLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/DRACOLoader.js";
+import { KTX2Loader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/KTX2Loader.js";
 import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -38,6 +39,7 @@ let autoRotateDirection = 1;
 let lastAzimuthalAngle = 0;
 let lastHorizontalDelta = 0;
 let lastInteractionTime = 0;
+let ktx2Loader;
 
 let glassObjects = [];
 let metallicObjects = []; 
@@ -422,6 +424,10 @@ function initRenderer(antialias = false) {
   finalComposer.addPass(finalPass);
   finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
   finalComposer.setSize(window.innerWidth, window.innerHeight);
+
+  if (ktx2Loader) {
+      ktx2Loader.detectSupport(renderer); // Wajib dipanggil setelah renderer dibuat
+  }
 }
 
 initRenderer(false);
@@ -704,8 +710,12 @@ const loader = new GLTFLoader();
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
-
 loader.setDRACOLoader(dracoLoader);
+
+ktx2Loader = new KTX2Loader();
+const TRANSCODER_PATH = 'https://unpkg.com/three@0.129.0/examples/js/libs/basis/'; 
+ktx2Loader.setTranscoderPath(TRANSCODER_PATH);
+loader.setKTX2Loader(ktx2Loader);
 
 
 const objToRender = 'Soccer Icon';
@@ -1211,6 +1221,8 @@ function loadNewModel(modelName) {
     const newDracoLoader = new DRACOLoader();
     newDracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
     newLoader.setDRACOLoader(newDracoLoader);
+
+    newLoader.setKTX2Loader(ktx2Loader);
 
     newLoader.load(`./models/${modelName}/scene.glb`, (gltf) => {
       object = gltf.scene;
