@@ -261,7 +261,10 @@ main {
   border-radius: 8px;
   margin-top: 15px;
   padding: 20px 12px;
-  max-width: 500px;
+  flex: 1 1 30%;       
+  width: 100%;        
+  overflow: hidden;
+  box-sizing: border-box;     
   overflow: hidden;
 }
 
@@ -880,7 +883,7 @@ main {
       padding: 16px;
       zoom: .7;
       height: 273px;
-      /* overflow-y: auto; */
+      overflow-y: auto;
       font-size: 22px !important;
       color: #fff;
       gap: 10px !important;
@@ -974,18 +977,25 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
+    /* padding: 8px; */
     border-radius: 8px;
     border-bottom: 0px!important;
     background-color: #3b4b5d;
-    padding-bottom: 4px;
-    padding-top: 4px;
+    padding-bottom: 5px;
+    padding-top: 5px;
     padding-right: 16px;
     padding-left: 0px;
   }
 
   .camera-card-header{
     margin-bottom: 0px!important;
+  }
+
+  .bloom-gred{
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    overflow-x: auto!important;
   }
 
   .legend-left,
@@ -1025,7 +1035,10 @@ main {
   }
 
   .card-mesh-bloom{
-    padding-bottom: 46px!important;
+    right: -3px!important;
+    padding-bottom: 50px!important;
+    width: 94%;
+    overflow: hidden;
   }
 
   .active-camera,
@@ -1107,6 +1120,7 @@ main {
 
   .toast {
     top: 10px !important;
+    width: 100%;
   }
 
   #openSettingBtnAsd {

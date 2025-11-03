@@ -1527,10 +1527,10 @@ function restoreOriginalMaterial() {
   applyEnvMapToMaterials(object, useEnvMap);
 }
 
-
 function updateMeshDataDisplay(model) {
   let totalVertices = 0;
   let totalTriangles = 0;
+  let totalEdges = 0;  
   let meshCount = 0;
 
   model.traverse((child) => {
@@ -1551,10 +1551,13 @@ function updateMeshDataDisplay(model) {
           totalTriangles += position.count / 3;
         }
       }
+
+      const edges = new THREE.EdgesGeometry(geometry);
+      totalEdges += edges.attributes.position.count / 2; 
     }
   });
 
-  const totalAll = totalTriangles + totalVertices + meshCount;
+  const totalAll = totalTriangles + totalVertices + meshCount + totalEdges;
 
   const cardMeshContainers = document.querySelectorAll('.card-tri');
 
@@ -1566,23 +1569,26 @@ function updateMeshDataDisplay(model) {
       totalCountEl.textContent = totalAll.toLocaleString();
     }
 
-    if (legendItems.length >= 3) {
+    if (legendItems.length >= 4) {  // Update dengan jumlah legend yang lebih banyak
       legendItems[0].querySelector('.value').textContent = totalTriangles.toLocaleString();
       legendItems[1].querySelector('.value').textContent = totalVertices.toLocaleString();
-      legendItems[2].querySelector('.value').textContent = meshCount.toLocaleString();
+      legendItems[2].querySelector('.value').textContent = totalEdges.toLocaleString();  
+      legendItems[3].querySelector('.value').textContent = meshCount.toLocaleString();
     }
 
-    const maxValue = Math.max(totalTriangles, totalVertices, meshCount);
+    const maxValue = Math.max(totalTriangles, totalVertices, totalEdges, meshCount);
     const minWidth = 20;
 
     const calcWidth = (val) => maxValue === 0 ? minWidth : Math.max((val / maxValue) * 100, minWidth);
 
     const progressTriangles = container.querySelector('.progress-triangles');
     const progressVertices = container.querySelector('.progress-vertices');
+    const progressEdges = container.querySelector('.progress-edges');  
     const progressMeshes = container.querySelector('.progress-meshes');
 
     if (progressTriangles) progressTriangles.style.width = `${calcWidth(totalTriangles)}%`;
     if (progressVertices) progressVertices.style.width = `${calcWidth(totalVertices)}%`;
+    if (progressEdges) progressEdges.style.width = `${calcWidth(totalEdges)}%`; 
     if (progressMeshes) progressMeshes.style.width = `${calcWidth(meshCount)}%`;
   });
 }
@@ -2303,29 +2309,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// window.addEventListener("DOMContentLoaded", () => {
-//   window.addEventListener("contextmenu", function (e) {
-//     e.preventDefault();
-//     showErrorToast("Access denied", "Developer tools detected.");
-//   });
+window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+    showErrorToast("Access denied", "Developer tools detected.");
+  });
 
-//   document.addEventListener("keydown", function(e) {
-//     if (
-//       e.key === "F12" ||
-//       (e.ctrlKey && e.shiftKey && e.key === "I") ||
-//       (e.ctrlKey && e.key === "U") ||
-//       (e.ctrlKey && e.shiftKey && e.key === "J")
-//     ) {
-//       e.preventDefault();
-//     }
-//   });
+  document.addEventListener("keydown", function(e) {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && e.key === "I") ||
+      (e.ctrlKey && e.key === "U") ||
+      (e.ctrlKey && e.shiftKey && e.key === "J")
+    ) {
+      e.preventDefault();
+    }
+  });
 
-//   setInterval(function () {
-//     if (
-//       window.outerHeight - window.innerHeight > 100 ||
-//       window.outerWidth - window.innerWidth > 100
-//   ) {
-//     document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-//   }
-// }, 1000);
-// });
+  setInterval(function () {
+    if (
+      window.outerHeight - window.innerHeight > 100 ||
+      window.outerWidth - window.innerWidth > 100
+  ) {
+    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+  }
+}, 1000);
+});

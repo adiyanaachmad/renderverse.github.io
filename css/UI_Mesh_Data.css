@@ -163,6 +163,18 @@
     border-radius: 3px;
 }
 
+.progress-edges {
+    background-color: #f57c00;
+    width: calc((50 / 365) * 100%);
+    border-radius: 3px;
+}
+
+.progress-faces {
+    background-color: blue;
+    width: calc((50 / 365) * 100%);
+    border-radius: 3px;
+}
+
 .legend {
   font-size: 18px;
   font-weight: 400;
@@ -214,6 +226,10 @@
 
 .dot-meshes {
     background-color: #f08080;
+}
+
+.dot-edges {
+    background-color: #f57c00;
 }
 
 .checkbox-wrapper-8 .tgl {

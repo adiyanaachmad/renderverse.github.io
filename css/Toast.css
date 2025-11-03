@@ -220,6 +220,7 @@
     display: grid;
     gap: 5px;
     bottom: 40px;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .bottom-nav-out {
