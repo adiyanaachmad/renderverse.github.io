@@ -137,14 +137,20 @@ function checkForGlassObjects() {
 
 // Fungsi untuk menangani perubahan status checkbox
 function handleCheckboxChange(event) {
-    if (event.target.checked) {
-        // Jika checkbox dicentang, pastikan objek glass muncul
-        glassObjects.forEach(obj => obj.visible = true);
+    if (glassObjects.length === 0) {
+        // Jika tidak ada objek glass, nonaktifkan checkbox dan tampilkan error toast
+        document.getElementById('cb-glass-effect').checked = false;
+        showErrorToast("No Glass Objects", "No glass objects found in the scene.");
     } else {
-        // Jika checkbox tidak dicentang, sembunyikan objek glass
-        glassObjects.forEach(obj => obj.visible = false);
+        // Jika ada objek glass, kontrol visibilitas objek
+        if (event.target.checked) {
+            glassObjects.forEach(obj => obj.visible = true);
+        } else {
+            glassObjects.forEach(obj => obj.visible = false);
+        }
     }
 }
+
 
 // Menambahkan event listener pada checkbox untuk mendeteksi perubahan
 document.getElementById('cb-glass-effect').addEventListener('change', handleCheckboxChange);
@@ -180,24 +186,19 @@ function checkForMetallicObjects() {
 
 // Fungsi untuk menangani perubahan status checkbox metallic
 function handleMetallicCheckboxChange(event) {
-    if (event.target.checked) {
-        // Jika checkbox dicentang, tampilkan objek metallic dan sembunyikan objek non-metallic
-        metallicObjects.forEach(obj => {
-            obj.visible = true;  // Tampilkan objek dengan material 'metal'
-        });
-
-        nonMetallicObjects.forEach(obj => {
-            obj.visible = false;  // Sembunyikan objek dengan nama 'non_mli'
-        });
+    if (metallicObjects.length === 0) {
+        // Jika tidak ada objek metallic, nonaktifkan checkbox dan tampilkan error toast
+        document.getElementById('cb-metallic-effect').checked = false;
+       showErrorToast("No Metallic Objects", "No metallic objects found in the scene.");
     } else {
-        // Jika checkbox tidak dicentang, tampilkan objek non-metallic dan sembunyikan objek metallic
-        nonMetallicObjects.forEach(obj => {
-            obj.visible = true;  // Tampilkan objek dengan nama 'non_mli'
-        });
-
-        metallicObjects.forEach(obj => {
-            obj.visible = false;  // Sembunyikan objek dengan material 'metal'
-        });
+        // Jika ada objek metallic, kontrol visibilitas objek
+        if (event.target.checked) {
+            metallicObjects.forEach(obj => obj.visible = true);
+            nonMetallicObjects.forEach(obj => obj.visible = false);
+        } else {
+            metallicObjects.forEach(obj => obj.visible = false);
+            nonMetallicObjects.forEach(obj => obj.visible = true);
+        }
     }
 }
 
@@ -1200,6 +1201,9 @@ function loadNewModel(modelName) {
   currentAntialias = false;
   initRenderer(false);
 
+  glassObjects = [];
+  metallicObjects = [];
+
   if (autoRotateEnabled) {
     autoRotateEnabled = false;
     rotateToggles.forEach(t => t.checked = false);
@@ -1243,6 +1247,13 @@ function loadNewModel(modelName) {
           const matName = child.material?.name?.toLowerCase() || "";
           if (matName.startsWith("bloom_effect")) {
             child.userData.isBloom = true;
+          }     
+          if (matName.includes("glass")) {
+              glassObjects.push(child); // Menambahkan objek glass
+          }
+
+          if (matName.includes("metal") || child.material.metalness > 0) {
+              metallicObjects.push(child); // Menambahkan objek metallic
           }
 
            applyGlassAndMetalMaterial(child); 
@@ -1257,7 +1268,6 @@ function loadNewModel(modelName) {
       updateModelCredit(modelName);
       checkForGlassObjects();
       checkForMetallicObjects();
-
 
       // 🌍 HDRI
       const useEnvMap = hdriToggles.checked ? envMapGlobal : null;
@@ -2293,29 +2303,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-window.addEventListener("DOMContentLoaded", () => {
-  window.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-    showErrorToast("Access denied", "Developer tools detected.");
-  });
+// window.addEventListener("DOMContentLoaded", () => {
+//   window.addEventListener("contextmenu", function (e) {
+//     e.preventDefault();
+//     showErrorToast("Access denied", "Developer tools detected.");
+//   });
 
-  document.addEventListener("keydown", function(e) {
-    if (
-      e.key === "F12" ||
-      (e.ctrlKey && e.shiftKey && e.key === "I") ||
-      (e.ctrlKey && e.key === "U") ||
-      (e.ctrlKey && e.shiftKey && e.key === "J")
-    ) {
-      e.preventDefault();
-    }
-  });
+//   document.addEventListener("keydown", function(e) {
+//     if (
+//       e.key === "F12" ||
+//       (e.ctrlKey && e.shiftKey && e.key === "I") ||
+//       (e.ctrlKey && e.key === "U") ||
+//       (e.ctrlKey && e.shiftKey && e.key === "J")
+//     ) {
+//       e.preventDefault();
+//     }
+//   });
 
-  setInterval(function () {
-    if (
-      window.outerHeight - window.innerHeight > 100 ||
-      window.outerWidth - window.innerWidth > 100
-  ) {
-    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-  }
-}, 1000);
-});
+//   setInterval(function () {
+//     if (
+//       window.outerHeight - window.innerHeight > 100 ||
+//       window.outerWidth - window.innerWidth > 100
+//   ) {
+//     document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+//   }
+// }, 1000);
+// });

@@ -1075,6 +1075,10 @@ main {
     width: 320px!important;
   }
 
+  .camera-card-container-bottom{
+    padding-bottom: 47px!important;
+  }
+
   .camera-card-container {
     height: 165px !important;
     min-width: 320px !important;
@@ -1083,7 +1087,7 @@ main {
   .camera-card {
     background-color: #1e2a3a !important;
     padding: 10px !important;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     display: grid;
   }
 
