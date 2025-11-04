@@ -241,7 +241,7 @@
     display: none;
     bottom: 20px;
     left: 50%;
-    transform: translateX(0);
+    transform: translateX(60%);
     display: flex;
     align-items: center;
     opacity: 0;
