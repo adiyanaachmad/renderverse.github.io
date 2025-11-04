@@ -72,7 +72,7 @@
     left: -50%;
     transform: translateX(-50%) translateY(0);
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: left;
     width: 95%;
     padding: 10px 0;
     border-radius: 10px;
@@ -275,7 +275,7 @@
     transform: translateX(0);
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: right;
     width: 95%;
     padding: 10px 0;
     opacity: 0;
@@ -318,6 +318,7 @@
     border-radius: 10px;
     background: transparent;
     transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 2;
 }
 
 .bottom-navbar button {

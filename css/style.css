@@ -898,7 +898,7 @@ main {
     position: static;
     background: transparent;
     padding: 0;
-    width: 0%;
+    width: 0vw;
     right: 0px!important;
     display: flex!important;
     align-items: flex-start;
@@ -1161,7 +1161,7 @@ main {
 
   .toast {
     top: 10px !important;
-    width: 100%;
+    width: 90%;
   }
 
   #openSettingBtnAsd {

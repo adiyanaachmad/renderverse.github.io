@@ -2251,7 +2251,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const icon = toggleMaterialBtn.querySelector("i");
 
   // 🔹 Kondisi awal (material tertutup)
-  materialCard.style.width = "0%"; // material-card-container-bottom tersembunyi
+  materialCard.style.width = "0vw"; // material-card-container-bottom tersembunyi
   viewMaterial.style.display = "none"; // all-effect tersembunyi
   viewMaterial.style.opacity = "0"; // all-effect opacity 0
   icon.classList.remove("fa-minus");
@@ -2265,7 +2265,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isMaterialOpen) {
       // 🔹 Buka material
-      materialCard.style.width = "94%";
+      materialCard.style.width = "126vw";
       viewMaterial.style.display = "flex";
       viewMaterial.style.opacity = "1";
       
@@ -2273,7 +2273,7 @@ document.addEventListener("DOMContentLoaded", () => {
       icon.classList.add("fa-minus");
     } else {
       // 🔹 Tutup material
-      materialCard.style.width = "0%";
+      materialCard.style.width = "0vw";
       viewMaterial.style.display = "none";
       viewMaterial.style.opacity = "0";
 
