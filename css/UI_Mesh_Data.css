@@ -30,12 +30,12 @@
 }
 
 .Material-card-container-bottom{
-  position: fixed;
+  position: relative;
   background-color: #3b4b5d;
   color: #fff;
   display: block;
   right: 0;
-  bottom: 119px!important;
+  bottom: 105px!important;
   border-radius: 10px;
   padding: 20px;
   padding-bottom: 47px;
@@ -48,23 +48,23 @@
 }
 
 .card-mesh-bottom{
-  position: fixed;
+  position: relative;
   background-color: #3b4b5d;
   padding: 20px;
   left: 0;
   width: 250px;
-  bottom: 90px;
+  bottom: 76px;
   border-radius: 10px;
   zoom: .7;
 }
 
 .card-mesh-bloom{
-  position: fixed;
+  position: relative;
   background-color: #3b4b5d;
   padding: 20px;
   right: 0;
   min-width: 250px;
-  bottom: 90px;
+  bottom: 76px;
   border-radius: 10px;
   zoom: .7;
 }

@@ -288,12 +288,13 @@
 .bottom-graphic {
     position: fixed;
     bottom: 0px;
-    display: none;
+    /* display: none; */
     left: -50%;
     transform: translateX(-50%) translateX(0);
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    background-color: #3b4b5d;
+    justify-content: space-between;
     width: 95%;
     padding: 10px 0;
     opacity: 0;
