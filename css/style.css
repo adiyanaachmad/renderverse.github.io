@@ -1051,7 +1051,7 @@ main {
     align-items: flex-start;
     justify-content: space-between;
     gap: 15px;
-    right: 0px;
+    right: 3px;
     width: 92%!important;
     bottom: 122px!important;
     /* bottom: 20px!important; */
@@ -1083,7 +1083,8 @@ main {
   }
 
   .active-camera,
-  .active-qual {
+  .active-qual,
+  .active-unit {
     background-color: #739eb2!important;
     border-radius: 8px;
     color: #fff !important;
@@ -1161,7 +1162,7 @@ main {
 
   .toast {
     top: 10px !important;
-    /* width: 85%; */
+    width: 88%;
   }
 
   #openSettingBtnAsd {

@@ -39,6 +39,9 @@ let autoRotateDirection = 1;
 let lastAzimuthalAngle = 0;
 let lastHorizontalDelta = 0;
 let lastInteractionTime = 0;
+let floatDirection = 1; 
+let time = 0; 
+const frequency = 0.5;
 let ktx2Loader;
 
 let glassObjects = [];
@@ -556,6 +559,14 @@ new RGBELoader()
 
 // Load model
 let object;
+let isFloating = false; 
+let floatSpeed = 1.0; 
+let timeElapsed = 0;
+
+const amplitude = 0.5; 
+const gridY = 0;
+
+let floatYStart = gridY + amplitude;
 
 function normalizeModel(model, targetSize = 8) {
   const box = new THREE.Box3().setFromObject(model);
@@ -755,6 +766,8 @@ window.addEventListener("DOMContentLoaded", () => {
       checkForGlassObjects();
       checkForMetallicObjects();
 
+      floatYStart = object.position.y;
+
 
       const useEnvMap = (hdriToggles && hdriToggles.checked) ? envMapGlobal : null;
       applyEnvMapToMaterials(object, useEnvMap);
@@ -802,6 +815,77 @@ function swingModel(deltaTime) {
   object.rotation.y = angle;
 }
 
+function floatAnimation(deltaTime) {
+    if (isFloating && object) {
+        timeElapsed += deltaTime * floatSpeed; 
+
+        const yOffset = amplitude * Math.sin(timeElapsed);
+        object.position.y = floatYStart + yOffset;
+    }
+}
+const turntableButton = document.querySelector('.turntable-btn');
+const floatButton = document.querySelector('.float-btn');
+
+function startFloating() {
+    timeElapsed = 0; 
+    isFloating = true;
+    
+    if (object) {
+        object.position.y = floatYStart; 
+    }
+    
+}
+
+function stopFloating() {
+    isFloating = false;
+}
+
+function setAnimationMode(mode) {
+    if (!object) return;
+    
+    // 1. Reset kedua mode
+    swingEnabled = false;
+    isFloating = false;
+    returningToCenter = true; 
+
+    stopFloating();
+
+    // 2. Reset posisi/rotasi objek secara halus saat ganti mode
+    gsap.to(object.rotation, { duration: 0.5, y: 0 });
+    gsap.to(object.position, { duration: 0.5, y: floatYStart });
+
+    if (mode === 'turntable') {
+        swingEnabled = true;
+        swingTime = 0; 
+        turntableButton?.classList.add('active-unit');
+        floatButton?.classList.remove('active-unit');
+    } else if (mode === 'float') {
+        isFloating = true;
+        floatDirection = 1; 
+        startFloating();
+        turntableButton?.classList.remove('active-unit');
+        floatButton?.classList.add('active-unit');
+    }
+}
+
+if (turntableButton) {
+    turntableButton.addEventListener('click', () => {
+        // Hanya ganti mode jika checkbox utama aktif
+        if (animationToggles[0]?.checked) {
+            setAnimationMode('turntable');
+        }
+    });
+}
+
+if (floatButton) {
+    floatButton.addEventListener('click', () => {
+        // Hanya ganti mode jika checkbox utama aktif
+        if (animationToggles[0]?.checked) {
+            setAnimationMode('float');
+        }
+    });
+}
+
 document.querySelectorAll('.vertical-level-selector').forEach(wrapper => {
   const defaultLevel = wrapper.dataset.default;
   const circles = wrapper.querySelectorAll('.v-circle');
@@ -825,7 +909,9 @@ document.querySelectorAll('.vertical-level-selector').forEach(wrapper => {
     });
 
     // ✅ Tambahkan logika swingSpeed di sini:
-    swingSpeed = parseFloat(level);
+    const newSpeed = parseFloat(level);
+    swingSpeed = newSpeed; 
+    floatSpeed = newSpeed;
   }
 
   circles.forEach((circle) => {
@@ -871,6 +957,7 @@ function animate() {
   swingModel(deltaTime);
   returnToCenter();
   animateCameraBack(deltaTime);
+    floatAnimation(deltaTime);
   
 
   if (autoRotateEnabled && controls) {
@@ -1013,11 +1100,24 @@ const animationToggles = document.querySelectorAll('.animation-toggle');
 animationToggles.forEach(toggle => {
   toggle.checked = false;
   toggle.addEventListener('change', (e) => {
-    swingEnabled = e.target.checked;
-    animationToggles.forEach(t => t.checked = swingEnabled);
-    if (!swingEnabled && object) {
-      returningToCenter = true;
-      swingTime = 0;
+    const enabled = e.target.checked;
+    animationToggles.forEach(t => t.checked = enabled);
+   
+    if (enabled) {
+        if (turntableButton.classList.contains('active-unit')) {
+            setAnimationMode('turntable');
+        } else if (floatButton.classList.contains('active-unit')) {
+            setAnimationMode('float');
+        } else {
+            setAnimationMode('turntable'); 
+        }
+    } else {
+        swingEnabled = false;
+        isFloating = false;
+        returningToCenter = true; 
+        if (object) {
+            gsap.to(object.position, { duration: 0.5, y: floatYStart });
+        }
     }
   });
 });
@@ -1268,6 +1368,8 @@ function loadNewModel(modelName) {
       updateModelCredit(modelName);
       checkForGlassObjects();
       checkForMetallicObjects();
+
+      floatYStart = object.position.y;
 
       // 🌍 HDRI
       const useEnvMap = hdriToggles.checked ? envMapGlobal : null;
@@ -2309,29 +2411,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-window.addEventListener("DOMContentLoaded", () => {
-  window.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-    showErrorToast("Access denied", "Developer tools detected.");
-  });
+// window.addEventListener("DOMContentLoaded", () => {
+//   window.addEventListener("contextmenu", function (e) {
+//     e.preventDefault();
+//     showErrorToast("Access denied", "Developer tools detected.");
+//   });
 
-  document.addEventListener("keydown", function(e) {
-    if (
-      e.key === "F12" ||
-      (e.ctrlKey && e.shiftKey && e.key === "I") ||
-      (e.ctrlKey && e.key === "U") ||
-      (e.ctrlKey && e.shiftKey && e.key === "J")
-    ) {
-      e.preventDefault();
-    }
-  });
+//   document.addEventListener("keydown", function(e) {
+//     if (
+//       e.key === "F12" ||
+//       (e.ctrlKey && e.shiftKey && e.key === "I") ||
+//       (e.ctrlKey && e.key === "U") ||
+//       (e.ctrlKey && e.shiftKey && e.key === "J")
+//     ) {
+//       e.preventDefault();
+//     }
+//   });
 
-  setInterval(function () {
-    if (
-      window.outerHeight - window.innerHeight > 100 ||
-      window.outerWidth - window.innerWidth > 100
-  ) {
-    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-  }
-}, 1000);
-});
+//   setInterval(function () {
+//     if (
+//       window.outerHeight - window.innerHeight > 100 ||
+//       window.outerWidth - window.innerWidth > 100
+//   ) {
+//     document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+//   }
+// }, 1000);
+// });
