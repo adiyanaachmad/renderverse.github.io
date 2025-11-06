@@ -63,7 +63,7 @@
     padding: 10px 0;
     border-radius: 10px;
     background: #3b4b5d;
-    z-index: 9;
+    z-index: 3;
 }
 
 .bottom-data {
@@ -324,7 +324,7 @@
     border-radius: 10px;
     background: transparent;
     transition: opacity 0.5s ease, transform 0.5s ease;
-    z-index: 2;
+    z-index: 4;
 }
 
 .bottom-navbar button {

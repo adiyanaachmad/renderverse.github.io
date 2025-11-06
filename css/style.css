@@ -458,7 +458,7 @@ main {
   align-items: center;
   margin-top: 15px;
   background-color: #3b4b5d;
-  border-radius: 5px;
+  border-radius: 10px;
   overflow: hidden;
   padding: 8px;
 }
@@ -781,7 +781,7 @@ main {
     zoom: .9;
   }
   .bottom-graphic{
-    z-index: 2;
+    z-index: 9;
   }
 
    .bottom-data {
@@ -1053,11 +1053,13 @@ main {
     gap: 15px;
     right: 3px;
     width: 92%!important;
-    bottom: 122px!important;
+    /* bottom: 213px!important; */
+    /* bottom: 122px!important; */
     /* bottom: 20px!important; */
-    zoom: .6!important;
+    bottom: 0px!important;
+    zoom: .7!important;
     padding: 27px!important;
-    padding-bottom: 50px!important;
+    /* padding-bottom: 50px!important; */
   }
 
   input:checked+.slider:before,
