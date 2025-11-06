@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let height = "542px";
     if (key === "camera") height = "165px";
-    if (key === "material") height = "180px";
+    if (key === "material") height = "335px";
     if (key === "bloom") height = "440px";
 
     panel.container.style.height = height;

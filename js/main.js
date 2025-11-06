@@ -124,16 +124,34 @@ document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
   });
 });
 
+function synchronizeCheckboxes(className) {
+    const checkboxes = document.querySelectorAll(`.${className}`);
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = checkboxes[0].checked; // Make sure all checkboxes match the first one's state
+    });
+}
+
 // Fungsi untuk mengecek apakah ada objek yang bernama glass atau glass dengan angka
 function checkForGlassObjects() {
     if (object) {
+        // Reset array glassObjects
+        glassObjects = [];
+
         object.traverse((child) => {
             if (child.isMesh && child.name.toLowerCase().includes("glass")) {
-                glassObjects.push(child);
+                glassObjects.push(child);  // Menambahkan objek dengan nama 'glass'
             }
         });
+
+        // Jika ada objek glass, centang checkbox-nya
         if (glassObjects.length > 0) {
-            document.getElementById('cb-glass-effect').checked = true;
+            document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+                checkbox.checked = true;  // Centang checkbox glass
+            });
+        } else {
+            document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+                checkbox.checked = false;  // Jika tidak ada objek glass, kosongkan checkbox
+            });
         }
     }
 }
@@ -142,21 +160,31 @@ function checkForGlassObjects() {
 function handleCheckboxChange(event) {
     if (glassObjects.length === 0) {
         // Jika tidak ada objek glass, nonaktifkan checkbox dan tampilkan error toast
-        document.getElementById('cb-glass-effect').checked = false;
+        document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+            checkbox.checked = false;
+        });
         showErrorToast("No Glass Objects", "No glass objects found in the scene.");
     } else {
         // Jika ada objek glass, kontrol visibilitas objek
-        if (event.target.checked) {
-            glassObjects.forEach(obj => obj.visible = true);
-        } else {
-            glassObjects.forEach(obj => obj.visible = false);
-        }
+        glassObjects.forEach(obj => {
+            obj.visible = event.target.checked;
+        });
     }
 }
 
-
 // Menambahkan event listener pada checkbox untuk mendeteksi perubahan
-document.getElementById('cb-glass-effect').addEventListener('change', handleCheckboxChange);
+document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+    checkbox.addEventListener('change', (event) => {
+        synchronizeCheckboxes('cb-glass-effect');
+        handleCheckboxChange(event);
+    });
+    
+    // ✅ SOLUSI: Hentikan perambatan click ke document
+    checkbox.addEventListener('click', (event) => {
+        event.stopPropagation(); 
+    });
+});
+
 
 function checkForMetallicObjects() {
     if (object) {
@@ -177,22 +205,41 @@ function checkForMetallicObjects() {
             }
         });
 
-        // Set checkbox ke false saat model dimuat atau setelah memilih model baru
-        document.getElementById('cb-metallic-effect').checked = false;
+        // Reset semua checkbox ke OFF saat model baru dimuat
+        document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+            checkbox.checked = false; // Reset checkbox metallic ke false
+        });
 
         // Pastikan objek non-metallic terlihat saat model baru dimuat
         nonMetallicObjects.forEach(obj => {
             obj.visible = true;  // Pastikan objek non-metallic terlihat secara default
         });
+
+        // Jika ada objek metallic, centang checkbox-nya
+        if (metallicObjects.length > 0) {
+            document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+                checkbox.checked = true;  // Centang checkbox metallic
+            });
+        }
+
+        // Jika ada objek non-metallic yang terlihat, pastikan metallic checkbox tetap OFF
+        if (nonMetallicObjects.length > 0) {
+            document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+                checkbox.checked = false;  // Centang checkbox metallic OFF karena objek non-metallic yang terlihat
+            });
+        }
     }
 }
 
 // Fungsi untuk menangani perubahan status checkbox metallic
+
 function handleMetallicCheckboxChange(event) {
     if (metallicObjects.length === 0) {
         // Jika tidak ada objek metallic, nonaktifkan checkbox dan tampilkan error toast
-        document.getElementById('cb-metallic-effect').checked = false;
-       showErrorToast("No Metallic Objects", "No metallic objects found in the scene.");
+        document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        showErrorToast("No Metallic Objects", "No metallic objects found in the scene.");
     } else {
         // Jika ada objek metallic, kontrol visibilitas objek
         if (event.target.checked) {
@@ -206,7 +253,17 @@ function handleMetallicCheckboxChange(event) {
 }
 
 // Menambahkan event listener untuk menangani perubahan checkbox metallic
-document.getElementById('cb-metallic-effect').addEventListener('change', handleMetallicCheckboxChange);
+document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+    checkbox.addEventListener('change', (event) => {
+        synchronizeCheckboxes('cb-metallic-effect');
+        handleMetallicCheckboxChange(event);
+    });
+
+    // ✅ SOLUSI: Hentikan perambatan click ke document
+    checkbox.addEventListener('click', (event) => {
+        event.stopPropagation(); 
+    });
+});
 
 function updateActiveCameraClassByMode(mode) {
   document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
@@ -823,8 +880,8 @@ function floatAnimation(deltaTime) {
         object.position.y = floatYStart + yOffset;
     }
 }
-const turntableButton = document.querySelector('.turntable-btn');
-const floatButton = document.querySelector('.float-btn');
+const turntableButton = document.querySelectorAll('.turntable-btn');
+const floatButton = document.querySelectorAll('.float-btn');
 
 function startFloating() {
     timeElapsed = 0; 
@@ -857,33 +914,37 @@ function setAnimationMode(mode) {
     if (mode === 'turntable') {
         swingEnabled = true;
         swingTime = 0; 
-        turntableButton?.classList.add('active-unit');
-        floatButton?.classList.remove('active-unit');
+        turntableButton.forEach(button => button.classList.add('active-unit'));
+        floatButton.forEach(button => button.classList.remove('active-unit'));
     } else if (mode === 'float') {
         isFloating = true;
         floatDirection = 1; 
         startFloating();
-        turntableButton?.classList.remove('active-unit');
-        floatButton?.classList.add('active-unit');
+        turntableButton.forEach(button => button.classList.remove('active-unit'));
+        floatButton.forEach(button => button.classList.add('active-unit'));
     }
 }
 
 if (turntableButton) {
-    turntableButton.addEventListener('click', () => {
+  turntableButton.forEach(button => {
+    button.addEventListener('click', () => {
         // Hanya ganti mode jika checkbox utama aktif
         if (animationToggles[0]?.checked) {
             setAnimationMode('turntable');
         }
     });
+  });
 }
 
 if (floatButton) {
-    floatButton.addEventListener('click', () => {
-        // Hanya ganti mode jika checkbox utama aktif
-        if (animationToggles[0]?.checked) {
-            setAnimationMode('float');
-        }
-    });
+    floatButton.forEach(button => {
+      button.addEventListener('click', () => {
+          // Hanya ganti mode jika checkbox utama aktif
+          if (animationToggles[0]?.checked) {
+              setAnimationMode('float');
+          }
+      });
+  });
 }
 
 document.querySelectorAll('.vertical-level-selector').forEach(wrapper => {
@@ -1097,25 +1158,29 @@ window.addEventListener("resize", () => {
 
 // === TOGGLE ANIMASI ===
 const animationToggles = document.querySelectorAll('.animation-toggle');
+
 animationToggles.forEach(toggle => {
   toggle.checked = false;
   toggle.addEventListener('change', (e) => {
     const enabled = e.target.checked;
     animationToggles.forEach(t => t.checked = enabled);
-   
+    
     if (enabled) {
-        if (turntableButton.classList.contains('active-unit')) {
+        if (turntableButton[0] && turntableButton[0].classList.contains('active-unit')) {
             setAnimationMode('turntable');
-        } else if (floatButton.classList.contains('active-unit')) {
+        } else if (floatButton[0] && floatButton[0].classList.contains('active-unit')) {
             setAnimationMode('float');
         } else {
+            // Default jika tidak ada tombol yang memiliki kelas 'active-unit'
             setAnimationMode('turntable'); 
         }
     } else {
+        // Kode untuk menonaktifkan animasi (Sudah benar)
         swingEnabled = false;
         isFloating = false;
         returningToCenter = true; 
         if (object) {
+            // Asumsi 'object' adalah objek 3D yang Anda animasikan
             gsap.to(object.position, { duration: 0.5, y: floatYStart });
         }
     }

@@ -87,8 +87,8 @@
           <img src="img/Retro Game Room 800-800 Final.webp" alt="Card Image 4">
         </div>
       </div>
-      <div class="model-sdfr card-container card-container-desktop">
-        <div class="card group-1 sound-init" data-model="Fox">
+      <div class="card-container card-container-desktop">
+        <div class="model-sdfr card group-1 sound-init" data-model="Fox">
           <img src="img/fox 800-800.webp" alt="Card Image 5">
         </div>
         <div class="model-sdfr card group-1 sound-init" data-model="Lion Bear">
@@ -222,6 +222,26 @@
           <img src="img/PlasticMoldWorn.webp" alt="">
         </div>
       </div>
+      <div class="all-effect-item">
+        <div class="effect-left">
+          <!-- <span class="dot-mesh dot-triangles"></span> -->
+          <span class="label">Glass</span>
+        </div>
+        <div class="checkbox-wrapper-8 glass-effect">
+          <input type="checkbox"  id="cb-glass-effect"  class="tgl tgl-skewed cb-glass-effect">
+          <label  for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+        </div>
+      </div>
+      <div class="all-effect-item">
+        <div class="effect-left">
+          <!-- <span class="dot-mesh dot-triangles"></span> -->
+          <span class="label">Metallic</span>
+        </div>
+        <div class="checkbox-wrapper-8 metalic-effect">
+          <input type="checkbox"  id="cb-metallic-effect"  class="tgl tgl-skewed cb-metallic-effect">
+          <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -256,6 +276,13 @@
             <span class="slider"></span>
           </label>
         </div>
+        <div class="header-view-mod">
+          <h3>Particle Animation</h3>
+          <label class="switch">
+            <input type="checkbox" id="bloomToggleDesktop" class="sound-init">
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
 
       <div class="animate-wrapper" style="margin-top: 14px;">
@@ -282,11 +309,11 @@
           <div class="v-circle-shadow sound-init" data-level="Ultra">U</div>
         </div>
         <div class="quality-card-container-bottom" id="cameraCard">
-        <div class="camera-card-quality">
-          <button class="basic-shadow-btn active-qual sound-init">Basic Shadow</button>
-          <button class="soft-shadow-btn sound-init">Soft Shadow</button>
+          <div class="camera-card-quality">
+            <button class="basic-shadow-btn active-qual sound-init">Basic Shadow</button>
+            <button class="soft-shadow-btn sound-init">Soft Shadow</button>
+          </div>
         </div>
-      </div>
       </div>
 
       <div class="animate-wrapper" style="margin-top: 14px;">
@@ -311,6 +338,12 @@
             <div class="v-line"></div>
           </div>
           <div class="v-circle sound-init" data-level="2.0">2.0</div>
+        </div>
+        <div class="quality-card-container-bottom" id="cameraCard">
+          <div class="camera-card-quality">
+            <button class="turntable-btn active-unit sound-init">Swing Motion</button>
+            <button class="float-btn sound-init">Hover Motion</button>
+          </div>
         </div>
       </div>
     </div>
@@ -816,7 +849,7 @@
             <span class="label">Glass</span>
           </div>
           <div class="checkbox-wrapper-8 glass-effect">
-            <input type="checkbox"  id="cb-glass-effect"  class="tgl tgl-skewed">
+            <input type="checkbox"  id="cb-glass-effect"  class="tgl tgl-skewed cb-glass-effect">
             <label  for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
           </div>
         </div>
@@ -826,7 +859,7 @@
             <span class="label">Metallic</span>
           </div>
           <div class="checkbox-wrapper-8 metalic-effect">
-            <input type="checkbox"  id="cb-metallic-effect"  class="tgl tgl-skewed">
+            <input type="checkbox"  id="cb-metallic-effect"  class="tgl tgl-skewed cb-metallic-effect">
             <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
           </div>
         </div>
@@ -904,6 +937,45 @@
     </div>
   </div>
 
+  <!-- <div class="bottom-particle" id="popup8">
+    <div class="animate-wrapper">
+      <div class="mesh-col-1">
+        <div class="header-animate-speed">
+          <h3>Particle Speed</h3>
+          <label class="switch">
+            <input type="checkbox" id="animationToggleDesktop" class="animation-particle sound-init">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="vertical-level-particle" data-default="0.5">
+          <div class="v-circle-particle sound-init " data-level="0.5">0.5</div>
+          <div class="v-line-wrapper-particle">
+            <div class="v-line-particle"></div>
+          </div>
+          <div class="v-circle-particle sound-init" data-level="1.0">1.0</div>
+          <div class="v-line-wrapper-particle">
+            <div class="v-line-particle"></div>
+          </div>
+          <div class="v-circle-particle sound-init" data-level="1.5">1.5</div>
+          <div class="v-line-wrapper-particle">
+            <div class="v-line-particle"></div>
+          </div>
+          <div class="v-circle-particle sound-init" data-level="2.0">2.0</div>
+        </div>
+      </div>
+      <div class="particle-card">
+        <div class="particle-card-header">
+          <h2>Radius</h2>
+          <span class="particle-value">0.5</span>
+        </div>
+        <div class="slider-bloom">
+          <input type="range" id="bloomRadiusMobile" class="particle-count sound-init" min="0" max="1.5" step="0.5"
+            value="0.5">
+        </div>
+      </div>
+    </div>
+  </div> -->
+
   <div class="bottom-profile">
     <div class="profile-card">
     <div class="profile-top">
@@ -954,7 +1026,7 @@
   <script type="module" src="js/main.js"></script>
   <script src="js/button.js"></script>
   <script src="js/popup.js"></script>
-  <script src="js/particle.js"></script>
+  <!-- <script src="js/particle.js"></script> -->
 
 </body>
 

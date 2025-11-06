@@ -327,6 +327,24 @@
     z-index: 4;
 }
 
+.bottom-particle {
+    position: fixed;
+    bottom: 0px;
+    /* display: none; */
+    left: 50%;
+    transform: translateX(-50%) translateX(0);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 95%;
+    padding: 10px 0;
+    opacity: 1;
+    border-radius: 10px;
+    background: transparent;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 4;
+}
+
 .bottom-navbar button {
     background-color: transparent;
     width: 50px;
