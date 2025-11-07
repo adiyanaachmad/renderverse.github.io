@@ -272,10 +272,9 @@ main {
   background-color: #1e2a3a;
   color: #ffff;
   border-radius: 8px;
-  padding: 20px 12px;
+  padding: 21px 12px;
   flex: 1 1 30%;       
-  width: 100%;    
-  height: 100%;    
+  width: 100%;       
   overflow: hidden;
   box-sizing: border-box;     
   overflow: hidden;
@@ -469,7 +468,8 @@ main {
   padding: 8px;
 }
 
-.camera-card-quality {
+.camera-card-quality,
+.camera-card-particle {
   display: flex;
   align-items: center;
   margin-top: 15px;
@@ -492,7 +492,8 @@ main {
 
 .camera-card button,
 .material-card-init button,
-.camera-card-quality button {
+.camera-card-quality button,
+.camera-card-particle button {
   padding: 15px 10px;
   background: none;
   border: none;
@@ -664,7 +665,8 @@ main {
     transition: height 0.5s ease !important;
   }
 
-  .material-card-container {
+  .material-card-container,
+  .particle-card-container {
     background-color: #1e2a3a !important;
     min-width: 260px !important;
     margin-top: 20px;
@@ -746,25 +748,41 @@ main {
     transform: translateX(20px)!important;
   }
 
-  .camera-card-quality {
+  .camera-card-quality{
     background-color: #1e2a3a !important;
     padding: 12px !important;
   }
 
+  .camera-card-particle {
+    background-color: #3b4b5d !important;
+    padding: 12px !important;
+  }
+
   .active-qual,
-  .active-unit {
+  .active-unit,
+  .active-particle {
     background-color: #739eb2!important;
     border-radius: 8px;
     color: #fff !important;
   }
 
-  .camera-card-quality button {
+  .camera-card-quality button,
+  .camera-card-particle button {
     font-size: 18px;
   }
 
   .bottom-profile,
   .object-container{
     width: 98%!important;
+  }
+
+  .particle-card{
+    background-color: #3b4b5d!important;
+    margin-top: 20px;
+  }
+
+  .particle-value{
+    background-color: #1e2a3a!important;
   }
 
   .bottom-nav-material,
@@ -776,7 +794,8 @@ main {
   .bottom-camera,
   .bottom-material,
   .bottom-gif,
-  .bottom-graphic{
+  .bottom-graphic,
+  .bottom-particle{
     display: none!important;
     opacity: 0!important;
     pointer-events: none!important;
@@ -1125,9 +1144,17 @@ main {
     gap: 8px;
   }
 
+  .camera-card-particle{
+    margin-top: 0px!important;
+    min-width: 250px;
+    display: flex;
+    gap: 8px;
+  }
+
   .active-camera,
   .active-qual,
-  .active-unit {
+  .active-unit,
+  .active-particle {
     background-color: #739eb2!important;
     border-radius: 8px;
     color: #fff !important;
@@ -1189,13 +1216,15 @@ main {
     display: grid;
   }
 
-  .camera-card-quality {
+  .camera-card-quality,
+  .camera-card-particle {
     background-color: #1e2a3a !important;
     padding: 12px !important;
   }
 
   .camera-card button,
-  .camera-card-quality button {
+  .camera-card-quality button,
+  .camera-card-particle button {
     font-size: 18px;
   }
 

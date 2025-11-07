@@ -1489,6 +1489,14 @@ function removeActiveFree() {
   }
 }
 
+function removeActivePj() {
+  const toggleParticleButton = document.getElementById('toggleParticle');
+  if (toggleParticleButton) {
+    toggleParticleButton.classList.remove('active-free');
+    toggleParticleButton.style.backgroundColor = ''; // kembalikan warna default
+  }
+}
+
 function removeActiveFreeAni() {
   const toggleAniButton = document.getElementById('toggleAni');
   if (toggleAniButton) {
@@ -1498,7 +1506,7 @@ function removeActiveFreeAni() {
 }
 
 function closeAllPopups() {
-    const popups = [document.getElementById('popup2'), document.getElementById('popup3'), document.getElementById('popup4'), document.getElementById('popup5'),  document.getElementById('popup6'), document.getElementById('popup7')];
+    const popups = [document.getElementById('popup2'), document.getElementById('popup3'), document.getElementById('popup4'), document.getElementById('popup5'),  document.getElementById('popup6'), document.getElementById('popup7'), document.getElementById('popup8')];
 
     popups.forEach(popup => {
         if (popup.classList.contains('show')) {
@@ -1595,13 +1603,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const popup4 = document.getElementById('popup4');
       const popup6 = document.getElementById('popup6');
       const popup7 = document.getElementById('popup7');
+      const popup8 = document.getElementById('popup8');
 
       // Jika salah satu popup sedang terbuka → tutup semuanya
       if (
         (popup2 && popup2.classList.contains('show')) ||
         (popup4 && popup4.classList.contains('show')) ||
         (popup6 && popup6.classList.contains('show')) ||
-        (popup7 && popup7.classList.contains('show'))
+        (popup7 && popup7.classList.contains('show')) ||
+        (popup8 && popup8.classList.contains('show'))
       ) {
         closeAllPopups();
       }
@@ -1609,7 +1619,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Reset tombol animasi & SKJ
       removeActiveFree();
       removeActiveFreeAni();
-      removeActiveBottom()
+      removeActiveBottom();
+      removeActivePj()
     });
   }
 });

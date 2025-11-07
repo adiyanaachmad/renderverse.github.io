@@ -165,7 +165,8 @@
 }
 
 .bottom-graphic.show,
-.bottom-gif.show {
+.bottom-gif.show,
+.bottom-particle.show {
     display: flex;
     opacity: 1;
     left: 50%;
@@ -191,7 +192,8 @@
 }
 
 .bottom-graphic.hide,
-.bottom-gif.hide {
+.bottom-gif.hide,
+.bottom-particle.hide {
     opacity: 0;
     left: -50%;
 }
@@ -330,15 +332,15 @@
 .bottom-particle {
     position: fixed;
     bottom: 0px;
-    /* display: none; */
-    left: 50%;
+    display: none;
+    left: -50%;
     transform: translateX(-50%) translateX(0);
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     width: 95%;
     padding: 10px 0;
-    opacity: 1;
+    opacity: 0;
     border-radius: 10px;
     background: transparent;
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -504,7 +506,8 @@
 }
 
 #toggleSkj.active-free,
-#toggleAni.active-free {
+#toggleAni.active-free,
+#toggleParticle.active-free {
     background-color: #739eb2 !important;
 }
 

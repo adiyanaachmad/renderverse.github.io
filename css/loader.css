@@ -57,10 +57,22 @@
   background: rgba(255, 255, 0, 0.5);
 }
 
-.particles {
+/* .particles {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: -1;
+} */
+
+#particles-js { /* Target wadah particles.js */
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  /* KONDISI AWAL: Sembunyi */
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
 }

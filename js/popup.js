@@ -84,6 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
       toggleBtn: document.getElementById("materialVisible"),
       icon: document.getElementById("materialVisible").querySelector("i"),
       isExpanded: false
+    },
+    particle: {
+      container: document.querySelector(".particle-card-container"),
+      toggleBtn: document.getElementById("particleVisible"),
+      icon: document.getElementById("particleVisible").querySelector("i"),
+      isExpanded: false
     }
   };
 
@@ -102,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (key === "camera") height = "165px";
     if (key === "material") height = "335px";
     if (key === "bloom") height = "440px";
+    if (key === "particle") height = "270px";
 
     panel.container.style.height = height;
     panel.icon.classList.remove("fa-plus");
@@ -152,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
   panels.bloom.toggleBtn.addEventListener("click", () => togglePanel("bloom"));
   panels.camera.toggleBtn.addEventListener("click", () => togglePanel("camera"));
   panels.material.toggleBtn.addEventListener("click", () => togglePanel("material"));
+  panels.particle.toggleBtn.addEventListener("click", () => togglePanel("particle"));
 
   openBtn.addEventListener("click", () => {
     panelSetting.style.display = "block";
@@ -290,6 +298,14 @@ function removeActiveFree() {
   }
 }
 
+function removeActivePj() {
+  const toggleParticleButton = document.getElementById('toggleParticle');
+  if (toggleParticleButton) {
+    toggleParticleButton.classList.remove('active-free');
+    toggleParticleButton.style.backgroundColor = ''; // kembalikan warna default
+  }
+}
+
 function removeActiveFreeAni() {
   const toggleAniButton = document.getElementById('toggleAni');
   if (toggleAniButton) {
@@ -362,6 +378,7 @@ toggleMbgButton.addEventListener('click', function() {
     }
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 }); 
 
 document.getElementById('toggleChart').addEventListener('click', function() {
@@ -372,6 +389,7 @@ document.getElementById('toggleChart').addEventListener('click', function() {
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
+    const togglePJPopup = document.getElementById('popup8');
 
     // Cek apakah toggleMbg masih terbuka
     if (toggleMbgPopup.classList.contains('show')) {
@@ -387,6 +405,9 @@ document.getElementById('toggleChart').addEventListener('click', function() {
     }
     if (toggleSkjPopup.classList.contains('show')) {
         closePopup(toggleSkjPopup);
+    }
+    if (togglePjPopup.classList.contains('show')) {
+        closePopup(togglePjPopup);
     }
     if (toggleAniPopup.classList.contains('show')) {
         closePopup(toggleAniPopup);
@@ -409,6 +430,7 @@ document.getElementById('toggleChart').addEventListener('click', function() {
     }
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 });
 
 document.getElementById('toggleBm').addEventListener('click', function() {
@@ -419,6 +441,7 @@ document.getElementById('toggleBm').addEventListener('click', function() {
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
+    const togglePJPopup = document.getElementById('popup8');
 
     // Cek apakah toggleMbg masih terbuka
     if (toggleMbgPopup.classList.contains('show')) {
@@ -434,6 +457,9 @@ document.getElementById('toggleBm').addEventListener('click', function() {
     }
     if (toggleSkjPopup.classList.contains('show')) {
         closePopup(toggleSkjPopup);
+    }
+    if (togglePjPopup.classList.contains('show')) {
+        closePopup(togglePjPopup);
     }
     if (toggleAniPopup.classList.contains('show')) {
         closePopup(toggleAniPopup);
@@ -456,6 +482,7 @@ document.getElementById('toggleBm').addEventListener('click', function() {
     }
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 });
 
 document.getElementById('toggleCame').addEventListener('click', function() {
@@ -466,6 +493,7 @@ document.getElementById('toggleCame').addEventListener('click', function() {
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
+    const togglePjPopup = document.getElementById('popup8');
 
     // Cek apakah toggleMbg masih terbuka
     if (toggleMbgPopup.classList.contains('show')) {
@@ -485,6 +513,9 @@ document.getElementById('toggleCame').addEventListener('click', function() {
     if (toggleSkjPopup.classList.contains('show')) {
         closePopup(toggleSkjPopup);
     }
+    if (togglePjPopup.classList.contains('show')) {
+        closePopup(togglePjPopup);
+    }
     if (toggleAniPopup.classList.contains('show')) {
         closePopup(toggleAniPopup);
     }
@@ -501,6 +532,7 @@ document.getElementById('toggleCame').addEventListener('click', function() {
     }
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 });
 
 document.getElementById('toggleMate').addEventListener('click', function() {
@@ -511,13 +543,14 @@ document.getElementById('toggleMate').addEventListener('click', function() {
     const toggleCamePopup = document.getElementById('popup4');
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
+    const togglePjPopup = document.getElementById('popup8');
 
     if (toggleMbgPopup.classList.contains('show')) {
         return; 
     }
 
     // Menutup seluruh popup yang sedang terbuka (termasuk popup lainnya)
-    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleSkjPopup, toggleAniPopup];
+    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleSkjPopup, toggleAniPopup, togglePjPopup ];
 
     popups.forEach(p => {
         if (p.classList.contains('show')) {
@@ -536,6 +569,7 @@ document.getElementById('toggleMate').addEventListener('click', function() {
     }
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 });
 
 document.getElementById('toggleSkj').addEventListener('click', function() {
@@ -547,12 +581,13 @@ document.getElementById('toggleSkj').addEventListener('click', function() {
     const toggleCamePopup = document.getElementById('popup4');
     const toggleMatePopup = document.getElementById('popup5');
     const toggleAniPopup = document.getElementById('popup7');
+    const togglePjPopup = document.getElementById('popup8');
 
     // Cegah buka popup lain saat toggleMbg masih aktif
     if (toggleMbgPopup.classList.contains('show')) return;
 
     // Tutup popup lain
-    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleAniPopup];
+    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleAniPopup, togglePjPopup ];
     popups.forEach(p => {
         if (p.classList.contains('show')) closePopup(p);
     });
@@ -561,6 +596,7 @@ document.getElementById('toggleSkj').addEventListener('click', function() {
     removeActiveBottom();
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 
     // Logika toggle
     if (popup.classList.contains('show')) {
@@ -585,6 +621,46 @@ document.getElementById('toggleAni').addEventListener('click', function() {
     const toggleCamePopup = document.getElementById('popup4');
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
+    const togglePjPopup = document.getElementById('popup8');
+
+    // Cegah buka popup lain saat toggleMbg masih aktif
+    if (toggleMbgPopup.classList.contains('show')) return;
+
+    // Tutup popup lain
+    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup, togglePjPopup];
+    popups.forEach(p => {
+        if (p.classList.contains('show')) closePopup(p);
+    });
+
+    // 🔹 Tambahkan ini agar semua active-bottom ikut hilang
+    removeActiveBottom();
+    removeActiveFree();
+    removeActiveFreeAni(); 
+    removeActivePj();
+
+    // Logika toggle
+    if (popup.classList.contains('show')) {
+        // Tutup popup dan hapus active-free
+        closePopup(popup, () => {
+            removeActiveFree();
+        });
+    } else {
+        // Buka popup dan beri class active-free
+        openPopup(popup);
+        removeActiveFree(); // pastikan hanya 1 tombol aktif
+        button.classList.add('active-free');
+    }
+});
+
+document.getElementById('toggleParticle').addEventListener('click', function() {
+    const popup = document.getElementById('popup8'); 
+    const button = document.getElementById('toggleParticle');
+    const toggleMbgPopup = document.getElementById('popup1');
+    const toggleChartPopup = document.getElementById('popup2');
+    const toggleBmPopup = document.getElementById('popup3');
+    const toggleCamePopup = document.getElementById('popup4');
+    const toggleMatePopup = document.getElementById('popup5');
+    const toggleSkjPopup = document.getElementById('popup6');
 
     // Cegah buka popup lain saat toggleMbg masih aktif
     if (toggleMbgPopup.classList.contains('show')) return;
@@ -599,6 +675,7 @@ document.getElementById('toggleAni').addEventListener('click', function() {
     removeActiveBottom();
     removeActiveFree();
     removeActiveFreeAni(); 
+    removeActivePj();
 
     // Logika toggle
     if (popup.classList.contains('show')) {

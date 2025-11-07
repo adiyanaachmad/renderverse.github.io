@@ -243,8 +243,31 @@
         </div>
       </div>
     </div>
+    <div class="particle-card-container" id="particleCard">
+      <div class="material-card-header">
+        <h2>Particle Motion</h2>
+        <div class="close-mesh-data sound-init" id="particleVisible"
+          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+      </div>
+      <div class="particle-card">
+        <div class="particle-card-header">
+          <h2>Speed</h2>
+          <span class="particle-value">5</span>
+        </div>
+        <div class="slider-bloom">
+          <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
+            value="5">
+        </div>
+      </div>
+      <div class="quality-card-container-bottom" id="cameraCard">
+        <div class="camera-card-particle">
+          <button class="random-btn active-particle sound-init">RANDOM</button>
+          <button class="snow-btn sound-init">SNOW</button>
+        </div>
+      </div>
+    </div>
   </div>
-
+  
   <div class="panel-setting-advance" id="panelSettingAdvance">
     <div class="setting-mod">
       <div class="animate-wrapper">
@@ -279,7 +302,7 @@
         <div class="header-view-mod">
           <h3>Particle Animation</h3>
           <label class="switch">
-            <input type="checkbox" id="bloomToggleDesktop" class="sound-init">
+            <input type="checkbox" id="bloomToggleDesktop" class="animation-particle sound-init">
             <span class="slider"></span>
           </label>
         </div>
@@ -937,44 +960,35 @@
     </div>
   </div>
 
-  <!-- <div class="bottom-particle" id="popup8">
-    <div class="animate-wrapper">
+  <div class="bottom-particle" id="popup8">
+    <div class="animate-wrapper bloom-indi">
       <div class="mesh-col-1">
         <div class="header-animate-speed">
-          <h3>Particle Speed</h3>
+          <h3>Particle Motion</h3>
           <label class="switch">
             <input type="checkbox" id="animationToggleDesktop" class="animation-particle sound-init">
             <span class="slider"></span>
           </label>
         </div>
-        <div class="vertical-level-particle" data-default="0.5">
-          <div class="v-circle-particle sound-init " data-level="0.5">0.5</div>
-          <div class="v-line-wrapper-particle">
-            <div class="v-line-particle"></div>
+        <div class="quality-card-container-bottom" id="cameraCard">
+          <div class="camera-card-particle">
+            <button class="random-btn active-particle sound-init">RANDOM</button>
+            <button class="snow-btn sound-init">SNOW</button>
           </div>
-          <div class="v-circle-particle sound-init" data-level="1.0">1.0</div>
-          <div class="v-line-wrapper-particle">
-            <div class="v-line-particle"></div>
-          </div>
-          <div class="v-circle-particle sound-init" data-level="1.5">1.5</div>
-          <div class="v-line-wrapper-particle">
-            <div class="v-line-particle"></div>
-          </div>
-          <div class="v-circle-particle sound-init" data-level="2.0">2.0</div>
         </div>
       </div>
       <div class="particle-card">
         <div class="particle-card-header">
-          <h2>Radius</h2>
-          <span class="particle-value">0.5</span>
+          <h2>Speed</h2>
+          <span class="particle-value">5</span>
         </div>
         <div class="slider-bloom">
-          <input type="range" id="bloomRadiusMobile" class="particle-count sound-init" min="0" max="1.5" step="0.5"
-            value="0.5">
+          <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
+            value="5">
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 
   <div class="bottom-profile">
     <div class="profile-card">
@@ -1022,11 +1036,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/Tween.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script type="module" src="js/main.js"></script>
   <script src="js/button.js"></script>
   <script src="js/popup.js"></script>
-  <!-- <script src="js/particle.js"></script> -->
+  <script src="js/particle.js"></script>
 
 </body>
 
