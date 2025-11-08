@@ -389,7 +389,7 @@ document.getElementById('toggleChart').addEventListener('click', function() {
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
-    const togglePJPopup = document.getElementById('popup8');
+    const togglePjPopup = document.getElementById('popup8');
 
     // Cek apakah toggleMbg masih terbuka
     if (toggleMbgPopup.classList.contains('show')) {
@@ -441,7 +441,7 @@ document.getElementById('toggleBm').addEventListener('click', function() {
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
-    const togglePJPopup = document.getElementById('popup8');
+    const togglePjPopup = document.getElementById('popup8');
 
     // Cek apakah toggleMbg masih terbuka
     if (toggleMbgPopup.classList.contains('show')) {
@@ -661,12 +661,13 @@ document.getElementById('toggleParticle').addEventListener('click', function() {
     const toggleCamePopup = document.getElementById('popup4');
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
+    const toggleAniPopup = document.getElementById('popup7');
 
     // Cegah buka popup lain saat toggleMbg masih aktif
     if (toggleMbgPopup.classList.contains('show')) return;
 
     // Tutup popup lain
-    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup];
+    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup, toggleAniPopup];
     popups.forEach(p => {
         if (p.classList.contains('show')) closePopup(p);
     });
