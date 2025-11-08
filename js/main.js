@@ -366,7 +366,7 @@ function initRenderer(antialias = false) {
       });
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias, powerPreference: "high-performance"  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputEncoding = THREE.sRGBEncoding;
@@ -471,7 +471,7 @@ function initRenderer(antialias = false) {
   bloomComposer.renderToScreen = false;
   bloomComposer.addPass(renderScene);
   bloomComposer.addPass(bloomPass);
-  bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+  bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   bloomComposer.setSize(window.innerWidth, window.innerHeight);
   bloomComposer.renderTarget1.depthBuffer = true;
   bloomComposer.renderTarget2.depthBuffer = true;
@@ -483,7 +483,7 @@ function initRenderer(antialias = false) {
   finalComposer.renderToScreen = true;
   finalComposer.addPass(new RenderPass(scene, renderCamera));
   finalComposer.addPass(finalPass);
-  finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.2));
+  finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   finalComposer.setSize(window.innerWidth, window.innerHeight);
 
   if (ktx2Loader) {
