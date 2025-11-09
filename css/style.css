@@ -598,6 +598,11 @@ main {
     bottom: 90px!important;
   }
 
+  .hide-menu{
+    display: block;
+    opacity: 1;
+  }
+
   .active-camera {
     background-color: #1e2a3a !important;
     border-radius: 8px;
@@ -756,6 +761,10 @@ main {
   .camera-card-particle {
     background-color: #3b4b5d !important;
     padding: 12px !important;
+  }
+
+  .active-maximize{
+    background-color: #739eb2!important;
   }
 
   .active-qual,
@@ -965,6 +974,11 @@ main {
     justify-content: space-between;
     gap: 15px;
     transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .hide-menu-1{
+    display: none;
+    opacity: 0;
   }
 
   .all-effect {

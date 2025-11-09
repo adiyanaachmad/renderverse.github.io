@@ -76,6 +76,10 @@
     animation: pulse 0.3s ease;
 }
 
+.set-jut.animate {
+    animation: pulse 0.3s ease;
+}
+
 .menu-btn-rex.animate-pl {
     animation: pulse 0.3s ease;
 }
