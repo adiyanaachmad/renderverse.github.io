@@ -340,8 +340,8 @@ const AdditiveBlendShader = {
   // const stats = new Stats();
   // stats.dom.style.position = 'fixed';
   // stats.dom.style.right = '10px';
-  // stats.dom.style.top = '10px';
-  // stats.dom.style.zIndex = '9999';
+  // stats.dom.style.bottom = '10px';
+  // stats.dom.style.zIndex = '999999';
   // document.body.appendChild(stats.dom);
 
 function initRenderer(antialias = false) {

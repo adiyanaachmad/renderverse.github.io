@@ -14,7 +14,7 @@ function setupParticleToggle() {
     animationToggles.forEach(clickedCheckbox => {
         clickedCheckbox.addEventListener('change', function () {
 
-            // --- SINKRONISASI KRUSIAL ---
+            // --- SINKRONISASI KRUSIAL --- 
             const isChecked = this.checked;
 
             // Paksa semua toggle (termasuk yang baru diklik) memiliki status yang SAMA
@@ -26,11 +26,21 @@ function setupParticleToggle() {
             if (isChecked) {
                 particlesContainer.style.visibility = 'visible';
                 particlesContainer.style.opacity = '1';
+                
+                const particlesJSInstance = pJSDom[0];
+                if (particlesJSInstance) {
+                    particlesJSInstance.pJS.fn.particleCreate();
+                }
             } else {
                 particlesContainer.style.opacity = '0';
                 setTimeout(() => {
                     particlesContainer.style.visibility = 'hidden';
-                }, 500); 
+
+                    const particlesJSInstance = pJSDom[0];
+                    if (particlesJSInstance) {
+                        particlesJSInstance.pJS.fn.particleRemove();
+                    }
+                }, 500);
             }
         });
     });
