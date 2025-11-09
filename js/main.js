@@ -8,6 +8,7 @@ import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/j
 import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
+import { MeshoptDecoder } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/meshopt_decoder.module.js";
 // import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
 
 import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
@@ -776,15 +777,19 @@ function setCameraFrontTop(model) {
 }
 
 const loader = new GLTFLoader();
-
 const dracoLoader = new DRACOLoader();
+ktx2Loader = new KTX2Loader();
+
+// B. Atur semua decoder pada instance loader global
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
 loader.setDRACOLoader(dracoLoader);
 
-ktx2Loader = new KTX2Loader();
 const TRANSCODER_PATH = 'https://unpkg.com/three@0.129.0/examples/js/libs/basis/'; 
 ktx2Loader.setTranscoderPath(TRANSCODER_PATH);
 loader.setKTX2Loader(ktx2Loader);
+
+// C. Terapkan MeshoptDecoder yang sudah diperbaiki impornya
+loader.setMeshoptDecoder(MeshoptDecoder);
 
 
 const objToRender = 'Soccer Icon';
@@ -1386,14 +1391,15 @@ function loadNewModel(modelName) {
 
 
   setTimeout(() => {
-    const newLoader = new GLTFLoader();
-    const newDracoLoader = new DRACOLoader();
-    newDracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
-    newLoader.setDRACOLoader(newDracoLoader);
+    // const newLoader = new GLTFLoader();
+    // const newDracoLoader = new DRACOLoader();
+    // newDracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
+    // newLoader.setDRACOLoader(newDracoLoader);
 
-    newLoader.setKTX2Loader(ktx2Loader);
+    // newLoader.setMeshoptDecoder(MeshoptDecoder);
+    // newLoader.setKTX2Loader(ktx2Loader);
 
-    newLoader.load(`./models/${modelName}/scene.glb`, (gltf) => {
+    loader.load(`./models/${modelName}/scene.glb`, (gltf) => {
       object = gltf.scene;
       normalizeModel(object, 9);
 
@@ -2487,29 +2493,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-window.addEventListener("DOMContentLoaded", () => {
-  window.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-    showErrorToast("Access denied", "Developer tools detected.");
-  });
+// window.addEventListener("DOMContentLoaded", () => {
+//   window.addEventListener("contextmenu", function (e) {
+//     e.preventDefault();
+//     showErrorToast("Access denied", "Developer tools detected.");
+//   });
 
-  document.addEventListener("keydown", function(e) {
-    if (
-      e.key === "F12" ||
-      (e.ctrlKey && e.shiftKey && e.key === "I") ||
-      (e.ctrlKey && e.key === "U") ||
-      (e.ctrlKey && e.shiftKey && e.key === "J")
-    ) {
-      e.preventDefault();
-    }
-  });
+//   document.addEventListener("keydown", function(e) {
+//     if (
+//       e.key === "F12" ||
+//       (e.ctrlKey && e.shiftKey && e.key === "I") ||
+//       (e.ctrlKey && e.key === "U") ||
+//       (e.ctrlKey && e.shiftKey && e.key === "J")
+//     ) {
+//       e.preventDefault();
+//     }
+//   });
 
-  setInterval(function () {
-    if (
-      window.outerHeight - window.innerHeight > 100 ||
-      window.outerWidth - window.innerWidth > 100
-  ) {
-    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-  }
-}, 1000);
-});
+//   setInterval(function () {
+//     if (
+//       window.outerHeight - window.innerHeight > 100 ||
+//       window.outerWidth - window.innerWidth > 100
+//   ) {
+//     document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+//   }
+// }, 1000);
+// });
