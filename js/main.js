@@ -592,7 +592,7 @@ let envMapGlobal = null;
 
 new RGBELoader()
   .setPath('./hdr/')
-  .load('paul_lobe_haus_2k.hdr', (texture) => {
+  .load('paul_lobe_haus_1k.hdr', (texture) => {
     hdrTexture = texture;
 
     const newPMREM = new THREE.PMREMGenerator(renderer);
@@ -2493,29 +2493,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// window.addEventListener("DOMContentLoaded", () => {
-//   window.addEventListener("contextmenu", function (e) {
-//     e.preventDefault();
-//     showErrorToast("Access denied", "Developer tools detected.");
-//   });
+window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+    showErrorToast("Access denied", "Developer tools detected.");
+  });
 
-//   document.addEventListener("keydown", function(e) {
-//     if (
-//       e.key === "F12" ||
-//       (e.ctrlKey && e.shiftKey && e.key === "I") ||
-//       (e.ctrlKey && e.key === "U") ||
-//       (e.ctrlKey && e.shiftKey && e.key === "J")
-//     ) {
-//       e.preventDefault();
-//     }
-//   });
+  document.addEventListener("keydown", function(e) {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && e.key === "I") ||
+      (e.ctrlKey && e.key === "U") ||
+      (e.ctrlKey && e.shiftKey && e.key === "J")
+    ) {
+      e.preventDefault();
+    }
+  });
 
-//   setInterval(function () {
-//     if (
-//       window.outerHeight - window.innerHeight > 100 ||
-//       window.outerWidth - window.innerWidth > 100
-//   ) {
-//     document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-//   }
-// }, 1000);
-// });
+  setInterval(function () {
+    if (
+      window.outerHeight - window.innerHeight > 100 ||
+      window.outerWidth - window.innerWidth > 100
+  ) {
+    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+  }
+}, 1000);
+});
