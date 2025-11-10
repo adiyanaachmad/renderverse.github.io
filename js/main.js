@@ -59,6 +59,7 @@ let bloomParams = {
 // Scene setup
 const scene = new THREE.Scene();
 const clock = new THREE.Clock();
+scene.fog = null; 
 scene.environment = null;
 
 // Camera
@@ -515,10 +516,77 @@ bloomToggles.forEach(toggle => {
 });
 
 // Grid
-const gridHelper = new THREE.GridHelper(30, 20);
+// const gridHelper = new THREE.GridHelper(30, 20);
+// gridHelper.material.transparent = true;
+// gridHelper.material.opacity = 1;
+// gridHelper.position.y = 0;
+// scene.add(gridHelper);
+
+// Grid size is 30. Batas grid pada X dan Z adalah 15.
+const GRID_SIZE = 30;
+const GRID_BOUNDARY = GRID_SIZE / 2; // 15.0
+
+// Definisi untuk Fog Khusus Boundary
+const FOG_COLOR = new THREE.Color(0x1e2a3a); 
+// Fog mulai samar di 70% dari batas (sekitar 10.5)
+const FOG_RADIUS_START = GRID_BOUNDARY * 0.2; 
+// Fog mencapai maksimum (menutup) di batas grid (15.0)
+const FOG_RADIUS_END = GRID_BOUNDARY;       
+
+
+// Grid
+const gridHelper = new THREE.GridHelper(GRID_SIZE, 20);
 gridHelper.material.transparent = true;
 gridHelper.material.opacity = 1;
 gridHelper.position.y = 0;
+
+// ✅ SOLUSI: Mengaplikasikan efek fog berdasarkan batas (Boundary Fog)
+gridHelper.material.onBeforeCompile = (shader) => {
+    // 1. Definisikan uniform untuk warna dan batas
+    shader.uniforms.fogColor = { value: FOG_COLOR };
+    shader.uniforms.fogRadiusStart = { value: FOG_RADIUS_START };
+    shader.uniforms.fogRadiusEnd = { value: FOG_RADIUS_END };
+
+    // 2. Vertex Shader: Dapatkan World Position dan kirimkan ke Fragment Shader
+    shader.vertexShader = `
+        varying vec3 vWorldPosition; // Deklarasi varying untuk World Position
+        ${shader.vertexShader}
+    `.replace(
+        '#include <begin_vertex>',
+        `
+        #include <begin_vertex>
+        // Hitung World Position
+        vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+        vWorldPosition = worldPosition.xyz;
+        `
+    );
+
+    // 3. Fragment Shader: Hitung Boundary Fog berdasarkan jarak horizontal (X dan Z)
+    shader.fragmentShader = `
+        uniform vec3 fogColor;
+        uniform float fogRadiusStart;
+        uniform float fogRadiusEnd;
+        varying vec3 vWorldPosition; // Deklarasi varying
+        ${shader.fragmentShader}
+    `.replace(
+        '#include <dithering_fragment>',
+        `
+        #include <dithering_fragment>
+        
+        // 1. Hitung jarak ke batas terluar grid (max(|X|, |Z|)). 
+        // Ini memastikan fog mengikuti bentuk persegi GridHelper.
+        float distanceToEdge = max(abs(vWorldPosition.x), abs(vWorldPosition.z));
+        
+        // 2. Gunakan smoothstep untuk transisi yang mulus
+        // FogFactor 0.0 (jelas) sebelum FOG_RADIUS_START, 1.0 (tertutup) setelah FOG_RADIUS_END
+        float fogFactor = smoothstep(fogRadiusStart, fogRadiusEnd, distanceToEdge);
+        
+        // 3. Aplikasikan fog ke warna grid (gl_FragColor.rgb)
+        gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
+        `
+    );
+};
+
 scene.add(gridHelper);
 
 // Lighting
@@ -692,21 +760,21 @@ function applyGlassAndMetalMaterial(child) {
     !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
   ) {
     child.material = new THREE.MeshPhysicalMaterial({
-      color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
-      metalness: 0,
-      roughness: 0,
-      transmission: 1.0,
-      ior: 1.52,
-      thickness: 0.01,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      reflectivity: 0.15,
-      transparent: true,
-      opacity: 1,
-      side: THREE.DoubleSide,
-      envMap: useEnvMap,
-      envMapIntensity: useEnvMap ? 1.0 : 0,
-      depthWrite: false
+    color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
+        metalness: 0,
+        roughness: 0.3, // Make it more rough for a blurry look
+        transmission: 0.95, // Control the transparency
+        ior: 1.52,
+        thickness: 0.01,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.1,
+        reflectivity: 0.15,
+        transparent: true,
+        opacity: 0.7, // Reduce opacity to make it less transparent
+        side: THREE.DoubleSide,
+        envMap: useEnvMap,
+        envMapIntensity: useEnvMap ? 1.0 : 0,
+        depthWrite: false
     });
   }
 
