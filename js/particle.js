@@ -1,49 +1,11 @@
-function setupParticleToggle() {
-    // 1. Ambil semua checkbox dengan class 'animation-particle'
-    const animationToggles = document.querySelectorAll('.animation-particle');
-
-    // 2. Ambil elemen WADAH particles.js menggunakan ID
-    const particlesContainer = document.getElementById('particles-js');
-
-    if (!particlesContainer) {
-        console.error("Wadah dengan ID 'particles-js' tidak ditemukan. Partikel Anda tersesat di dimensi lain!");
-        return;
-    }
-
-    // 3. Tambahkan event listener ke setiap toggle
-    animationToggles.forEach(clickedCheckbox => {
-        clickedCheckbox.addEventListener('change', function () {
-
-            // --- SINKRONISASI KRUSIAL --- 
-            const isChecked = this.checked;
-
-            // Paksa semua toggle (termasuk yang baru diklik) memiliki status yang SAMA
-            animationToggles.forEach(otherCheckbox => {
-                otherCheckbox.checked = isChecked;
-            });
-
-            // --- LOGIKA TAMPILAN (DIPERBAIKI) ---
-            if (isChecked) {
-                particlesContainer.style.visibility = 'visible';
-                particlesContainer.style.opacity = '1';
-                
-                const particlesJSInstance = pJSDom[0];
-                if (particlesJSInstance) {
-                    particlesJSInstance.pJS.fn.particleCreate();
-                }
-            } else {
-                particlesContainer.style.opacity = '0';
-                setTimeout(() => {
-                    particlesContainer.style.visibility = 'hidden';
-
-                    const particlesJSInstance = pJSDom[0];
-                    if (particlesJSInstance) {
-                        particlesJSInstance.pJS.fn.particleRemove();
-                    }
-                }, 500);
-            }
-        });
-    });
+function getModeName() {
+    const randomBtn = document.querySelector('.random-btn.active-particle');
+    if (randomBtn) return 'random';
+    
+    const snowBtn = document.querySelector('.snow-btn.active-particle');
+    if (snowBtn) return 'snow';
+    
+    return 'random'; // Default jika tidak ada yang aktif
 }
 
 const particlePresets = {
@@ -69,8 +31,76 @@ const particlePresets = {
     }
 };
 
+function setupParticleToggle() {
+    // 1. Ambil semua checkbox dengan class 'animation-particle'
+    const animationToggles = document.querySelectorAll('.animation-particle');
+
+    // 2. Ambil elemen WADAH particles.js menggunakan ID
+    const particlesContainer = document.getElementById('particles-js');
+
+    if (!particlesContainer) {
+        console.error("Wadah dengan ID 'particles-js' tidak ditemukan. Partikel Anda tersesat di dimensi lain!");
+        return;
+    }
+    
+    // Ambil konfigurasi default dari preset (dipakai saat diaktifkan kembali)
+    const initialConfig = particlePresets['random']; 
+
+    // 3. Tambahkan event listener ke setiap toggle
+    animationToggles.forEach(clickedCheckbox => {
+        clickedCheckbox.addEventListener('change', function () {
+
+            // --- SINKRONISASI KRUSIAL --- 
+            const isChecked = this.checked;
+
+            // Paksa semua toggle (termasuk yang baru diklik) memiliki status yang SAMA
+            animationToggles.forEach(otherCheckbox => {
+                otherCheckbox.checked = isChecked;
+            });
+
+            // --- LOGIKA MENGHEMAT CPU: HANCURKAN/RE-INISIALISASI ---
+            if (isChecked) {
+                // 1. Dapatkan kecepatan saat ini dari kontrol slider
+                let currentSpeed = 5; 
+                // Kita akan menggunakan nilai dari slider UI jika ada, 
+                // karena instance particles.js saat ini sudah dihancurkan
+                const speedSlider = document.querySelector('.particle-speed');
+                if (speedSlider) {
+                    currentSpeed = parseFloat(speedSlider.value);
+                }
+
+                // 2. Inisialisasi ulang (membuat partikel baru)
+                loadParticleMode(getModeName(), currentSpeed); // Fungsi ini akan membuat ulang partikel
+                
+                // 3. Tampilkan kontainer
+                particlesContainer.style.visibility = 'visible';
+                particlesContainer.style.opacity = '1';
+
+            } else {
+                // 1. Sembunyikan dengan fade-out
+                particlesContainer.style.opacity = '0';
+                
+                // 2. Hancurkan instance setelah fade-out selesai (500ms)
+                setTimeout(() => {
+                    particlesContainer.style.visibility = 'hidden';
+
+                    // === LOGIKA PENGHEMATAN CPU KRUSIAL ===
+                    // Hapus elemen DOM kanvas particles.js
+                    particlesContainer.innerHTML = ''; 
+                    // Hapus instance dari array global particles.js (menghentikan perulangan)
+                    if (pJSDom.length > 0) {
+                         pJSDom.splice(0, 1);
+                    }
+                    // =====================================
+                    
+                }, 500);
+            }
+        });
+    });
+}
+
 function loadParticleMode(modeName, initialSpeed) {
-    console.log("Memuat mode: " + modeName);
+    // console.log("Memuat mode: " + modeName);
     const particlesContainer = document.getElementById('particles-js');
     if (!particlesContainer) {
         console.error("Elemen dengan ID 'particles-js' tidak ditemukan!");

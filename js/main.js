@@ -538,54 +538,46 @@ const FOG_RADIUS_END = GRID_BOUNDARY;
 const gridHelper = new THREE.GridHelper(GRID_SIZE, 20);
 gridHelper.material.transparent = true;
 gridHelper.material.opacity = 1;
-gridHelper.position.y = 0;
+gridHelper.position.y += 0.01;
 
 // ✅ SOLUSI: Mengaplikasikan efek fog berdasarkan batas (Boundary Fog)
 gridHelper.material.onBeforeCompile = (shader) => {
-    // 1. Definisikan uniform untuk warna dan batas
     shader.uniforms.fogColor = { value: FOG_COLOR };
     shader.uniforms.fogRadiusStart = { value: FOG_RADIUS_START };
     shader.uniforms.fogRadiusEnd = { value: FOG_RADIUS_END };
 
-    // 2. Vertex Shader: Dapatkan World Position dan kirimkan ke Fragment Shader
+    // Modifikasi shader vertex
     shader.vertexShader = `
-        varying vec3 vWorldPosition; // Deklarasi varying untuk World Position
+        varying vec3 vCustomWorldPosition; // Ganti 'worldPosition' menjadi 'vCustomWorldPosition'
         ${shader.vertexShader}
     `.replace(
         '#include <begin_vertex>',
         `
         #include <begin_vertex>
-        // Hitung World Position
-        vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
-        vWorldPosition = worldPosition.xyz;
+        // Hitung posisi dunia (world position)
+        vec4 customWorldPosition = modelMatrix * vec4( position, 1.0 ); // Ganti nama variabel menjadi customWorldPosition
+        vCustomWorldPosition = customWorldPosition.xyz; // Ganti nama variabel menjadi customWorldPosition
         `
     );
 
-    // 3. Fragment Shader: Hitung Boundary Fog berdasarkan jarak horizontal (X dan Z)
+    // Modifikasi shader fragment
     shader.fragmentShader = `
         uniform vec3 fogColor;
         uniform float fogRadiusStart;
         uniform float fogRadiusEnd;
-        varying vec3 vWorldPosition; // Deklarasi varying
+        varying vec3 vCustomWorldPosition; // Ganti nama variabel menjadi vCustomWorldPosition
         ${shader.fragmentShader}
     `.replace(
         '#include <dithering_fragment>',
         `
         #include <dithering_fragment>
-        
-        // 1. Hitung jarak ke batas terluar grid (max(|X|, |Z|)). 
-        // Ini memastikan fog mengikuti bentuk persegi GridHelper.
-        float distanceToEdge = max(abs(vWorldPosition.x), abs(vWorldPosition.z));
-        
-        // 2. Gunakan smoothstep untuk transisi yang mulus
-        // FogFactor 0.0 (jelas) sebelum FOG_RADIUS_START, 1.0 (tertutup) setelah FOG_RADIUS_END
+        // Gunakan vCustomWorldPosition
+        float distanceToEdge = max(abs(vCustomWorldPosition.x), abs(vCustomWorldPosition.z));
         float fogFactor = smoothstep(fogRadiusStart, fogRadiusEnd, distanceToEdge);
-        
-        // 3. Aplikasikan fog ke warna grid (gl_FragColor.rgb)
-        gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, fogFactor);
         `
     );
-};
+}
 
 scene.add(gridHelper);
 
