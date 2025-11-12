@@ -1,10 +1,10 @@
 function getModeName() {
     const randomBtn = document.querySelector('.random-btn.active-particle');
     if (randomBtn) return 'random';
-    
+
     const snowBtn = document.querySelector('.snow-btn.active-particle');
     if (snowBtn) return 'snow';
-    
+
     return 'random'; // Default jika tidak ada yang aktif
 }
 
@@ -42,9 +42,9 @@ function setupParticleToggle() {
         console.error("Wadah dengan ID 'particles-js' tidak ditemukan. Partikel Anda tersesat di dimensi lain!");
         return;
     }
-    
+
     // Ambil konfigurasi default dari preset (dipakai saat diaktifkan kembali)
-    const initialConfig = particlePresets['random']; 
+    const initialConfig = particlePresets['random'];
 
     // 3. Tambahkan event listener ke setiap toggle
     animationToggles.forEach(clickedCheckbox => {
@@ -61,7 +61,7 @@ function setupParticleToggle() {
             // --- LOGIKA MENGHEMAT CPU: HANCURKAN/RE-INISIALISASI ---
             if (isChecked) {
                 // 1. Dapatkan kecepatan saat ini dari kontrol slider
-                let currentSpeed = 5; 
+                let currentSpeed = 5;
                 // Kita akan menggunakan nilai dari slider UI jika ada, 
                 // karena instance particles.js saat ini sudah dihancurkan
                 const speedSlider = document.querySelector('.particle-speed');
@@ -71,7 +71,7 @@ function setupParticleToggle() {
 
                 // 2. Inisialisasi ulang (membuat partikel baru)
                 loadParticleMode(getModeName(), currentSpeed); // Fungsi ini akan membuat ulang partikel
-                
+
                 // 3. Tampilkan kontainer
                 particlesContainer.style.visibility = 'visible';
                 particlesContainer.style.opacity = '1';
@@ -79,20 +79,20 @@ function setupParticleToggle() {
             } else {
                 // 1. Sembunyikan dengan fade-out
                 particlesContainer.style.opacity = '0';
-                
+
                 // 2. Hancurkan instance setelah fade-out selesai (500ms)
                 setTimeout(() => {
                     particlesContainer.style.visibility = 'hidden';
 
                     // === LOGIKA PENGHEMATAN CPU KRUSIAL ===
                     // Hapus elemen DOM kanvas particles.js
-                    particlesContainer.innerHTML = ''; 
+                    particlesContainer.innerHTML = '';
                     // Hapus instance dari array global particles.js (menghentikan perulangan)
                     if (pJSDom.length > 0) {
-                         pJSDom.splice(0, 1);
+                        pJSDom.splice(0, 1);
                     }
                     // =====================================
-                    
+
                 }, 500);
             }
         });
@@ -109,7 +109,7 @@ function loadParticleMode(modeName, initialSpeed) {
 
     // 1. Dapatkan konfigurasi preset
     const modeConfig = particlePresets[modeName] || particlePresets['random'];
-    
+
     // 2. Buat konfigurasi particlesJS lengkap
     const finalConfig = {
         "particles": modeConfig,
@@ -128,10 +128,10 @@ function loadParticleMode(modeName, initialSpeed) {
         particlesContainer.innerHTML = '';
         pJSDom.splice(0, 1);
     }
-    
+
     // 4. Inisialisasi ulang particles.js
     particlesJS("particles-js", finalConfig);
-    
+
     // **Penundaan Krusial**: Beri waktu sebentar agar pJSDom terisi dengan instance baru
     // sebelum kita mencoba mengaksesnya di setupParticleSpeedControls.
     setTimeout(setupParticleSpeedControls, 100);
@@ -142,7 +142,7 @@ function setupParticleModeControls() {
     const allSnowButtons = document.querySelectorAll('.snow-btn');
     const allModeButtons = document.querySelectorAll('.random-btn, .snow-btn');
     let initialMode = 'random';
-    
+
     function updateActiveModeUI(newMode) {
         allModeButtons.forEach(btn => btn.classList.remove('active-particle'));
         if (newMode === 'random') {
@@ -159,7 +159,7 @@ function setupParticleModeControls() {
             }
 
             const newMode = this.classList.contains('random-btn') ? 'random' : 'snow';
-            let currentSpeed = 5; 
+            let currentSpeed = 5;
 
             if (typeof pJSDom[0] !== 'undefined') {
                 currentSpeed = pJSDom[0].pJS.particles.move.speed;
@@ -178,7 +178,7 @@ function setupParticleModeControls() {
     }
 
     updateActiveModeUI(initialMode);
-    loadParticleMode(initialMode, 5); 
+    loadParticleMode(initialMode, 5);
 }
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -228,24 +228,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateSliderBackground(slider) {
-  const min = parseFloat(slider.min);
-  const max = parseFloat(slider.max);
-  const val = parseFloat(slider.value);
-  const percent = ((val - min) / (max - min)) * 100;
+    const min = parseFloat(slider.min);
+    const max = parseFloat(slider.max);
+    const val = parseFloat(slider.value);
+    const percent = ((val - min) / (max - min)) * 100;
 
-  let activeColor = '#2ecc71'; // default
-  let backgroundColor = '#1e2a3a'; // default
+    let activeColor = '#2ecc71'; // default
+    let backgroundColor = '#1e2a3a'; // default
 
-  // Cek konteks slider
-  if (slider.closest('.panel-setting-info')) {
-    activeColor = '#2ecc71'; // warna untuk panel-setting-info
-    backgroundColor = '#1e2a3a';
-  } else if (slider.closest('.bloom-indi')) {
-    activeColor = '#2ecc71'; // warna untuk card-wrapper
-    backgroundColor = '#3b4b5d';
-  }
+    // Cek konteks slider
+    if (slider.closest('.panel-setting-info')) {
+        activeColor = '#2ecc71'; // warna untuk panel-setting-info
+        backgroundColor = '#1e2a3a';
+    } else if (slider.closest('.bloom-indi')) {
+        activeColor = '#2ecc71'; // warna untuk card-wrapper
+        backgroundColor = '#3b4b5d';
+    }
 
-  slider.style.background = `linear-gradient(to right, ${activeColor} ${percent}%, ${backgroundColor} ${percent}%)`;
+    slider.style.background = `linear-gradient(to right, ${activeColor} ${percent}%, ${backgroundColor} ${percent}%)`;
 }
 
 function setupParticleSpeedControls() {
@@ -260,19 +260,19 @@ function setupParticleSpeedControls() {
 
     const pJS_move = pJSDom[0].pJS.particles.move;
     // Ambil nilai awal dari particlesJS sebagai Single Source of Truth
-    const initialSpeed = pJS_move.speed; 
+    const initialSpeed = pJS_move.speed;
 
     speedSliders.forEach(slider => {
         // --- INISIALISASI AWAL (Pastikan semua UI menampilkan nilai particlesJS) ---
         slider.value = initialSpeed; // Set nilai slider ke nilai particlesJS
         updateSliderBackground(slider);
-        
+
         // Ambil elemen display value (particle-value)
         const card = slider.closest('.particle-card');
         const display = card?.querySelector('.particle-value');
         if (display) {
-             // Pastikan nilai awal di display sesuai dengan nilai particlesJS
-             display.textContent = initialSpeed;
+            // Pastikan nilai awal di display sesuai dengan nilai particlesJS
+            display.textContent = initialSpeed;
         }
         // ------------------------------------------------------------------------
 
@@ -286,11 +286,11 @@ function setupParticleSpeedControls() {
             // --- SINKRONISASI SLIDER & UI (UNTUK SEMUA SLIDER) ---
             speedSliders.forEach(s => {
                 s.value = newSpeed;
-                updateSliderBackground(s); 
-        
+                updateSliderBackground(s);
+
                 const otherCard = s.closest('.particle-card');
                 const otherDisplay = otherCard?.querySelector('.particle-value');
-                
+
                 if (otherDisplay) {
                     otherDisplay.textContent = newSpeed; // Update semua tampilan nilai!
                 }

@@ -601,10 +601,10 @@ directionalLight.shadow.camera.far = 50;
 scene.add(directionalLight);
 
 const shadowQualityMap = {
-  "Low": 512,
-  "Medium": 1024,
-  "High": 2048,
-  "Ultra": 4096
+  "Low": 256,
+  "Medium": 512,
+  "High": 768,
+  "Ultra": 1024
 };
 
 const shadowTypeMap = {
