@@ -9,7 +9,7 @@ import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/p
 import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
 import { MeshoptDecoder } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/meshopt_decoder.module.js";
-// import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
+import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
 
 import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
 
@@ -339,12 +339,41 @@ const AdditiveBlendShader = {
 };
 
 
-  // const stats = new Stats();
-  // stats.dom.style.position = 'fixed';
-  // stats.dom.style.right = '10px';
-  // stats.dom.style.bottom = '10px';
-  // stats.dom.style.zIndex = '999999';
-  // document.body.appendChild(stats.dom);
+const stats = new Stats();
+stats.dom.style.position = 'fixed';
+stats.dom.style.right = '0px';  // Tempatkan di kanan bawah
+stats.dom.style.bottom = '0px';
+stats.dom.style.zIndex = '2';
+stats.dom.style.pointerEvents = 'none';  // Memastikan statistik tidak mengganggu interaksi
+stats.dom.style.top = '80px';  // Jika kamu ingin mengatur posisi vertikal di bawah atau atas
+stats.dom.style.left = '0px';
+
+// Menambahkan Stats ke halaman, tapi disembunyikan terlebih dahulu
+document.body.appendChild(stats.dom);
+stats.dom.style.display = 'none';  // Awalnya disembunyikan
+
+const fpsButton = document.getElementById('fpsShow');
+
+// Fungsi untuk toggle tampilkan/hilangkan FPS stats
+fpsButton.addEventListener('click', () => {
+  if (stats.dom.style.display === 'none') {
+    // Jika Stats disembunyikan, tampilkan
+    stats.dom.style.display = 'block';
+    
+    // Ganti ikon tombol dan tambahkan class aktif
+    fpsButton.querySelector('i').classList.remove('fa-eye-slash');
+    fpsButton.querySelector('i').classList.add('fa-eye');
+    fpsButton.classList.add('active-fps');  // Menambahkan class untuk perubahan tampilan tombol
+  } else {
+    // Jika Stats sudah terlihat, sembunyikan
+    stats.dom.style.display = 'none';
+    
+    // Ganti ikon tombol kembali
+    fpsButton.querySelector('i').classList.remove('fa-eye');
+    fpsButton.querySelector('i').classList.add('fa-eye-slash');
+    fpsButton.classList.remove('active-fps');  // Hapus class untuk kembali ke tampilan semula
+  }
+});
 
 function initRenderer(antialias = false) {
   const previousTarget = controls?.target?.clone();
@@ -376,6 +405,8 @@ function initRenderer(antialias = false) {
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.2;
+
+  renderer.sortObjects = true; 
 
   document.getElementById("container3D").appendChild(renderer.domElement);
 
@@ -1077,7 +1108,7 @@ function animateCameraBack(deltaTime) {
 // Animation
 function animate() {
   requestAnimationFrame(animate);
-  // stats.update();
+  stats.update();
   const deltaTime = clock.getDelta();
   controls.update();
   swingModel(deltaTime);

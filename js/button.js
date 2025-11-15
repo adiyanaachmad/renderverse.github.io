@@ -1,7 +1,8 @@
+// Menambahkan animasi pada tombol
 document.querySelectorAll('.menu-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     btn.classList.remove('animate');
-    void btn.offsetWidth;
+    void btn.offsetWidth;  // Memicu reflow untuk animasi
     btn.classList.add('animate');
   });
 });
@@ -9,26 +10,30 @@ document.querySelectorAll('.menu-btn').forEach(btn => {
 document.querySelectorAll('.set-jut').forEach(btn => {
   btn.addEventListener('click', () => {
     btn.classList.remove('animate');
-    void btn.offsetWidth;
+    void btn.offsetWidth;  // Memicu reflow untuk animasi
     btn.classList.add('animate');
   });
 });
 
+// Menyiapkan suara klik
 const clickSound = new Audio('sounds/minecraft_click.mp3');
 clickSound.volume = 1.0;
-
 clickSound.load();
 
+// Fungsi untuk memutar suara klik
 function playSoundEffect() {
-  clickSound.currentTime = 0; 
+  clickSound.currentTime = 0; // Memulai suara dari awal
   clickSound.play().catch(error => {
     console.error('Gagal memutar sound:', error);
   });
 }
 
+// Menambahkan event listener pada elemen dengan class .sound-init
 const soundElements = document.querySelectorAll('.sound-init');
 soundElements.forEach(element => {
-  element.addEventListener('click', playSoundEffect);
+  element.addEventListener('click', () => {
+    playSoundEffect();  // Memutar suara saat tombol diklik
+  });
 });
 
 // Mengambil elemen tombol maximize
