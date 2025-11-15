@@ -406,8 +406,6 @@ function initRenderer(antialias = false) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.2;
 
-  renderer.sortObjects = true; 
-
   document.getElementById("container3D").appendChild(renderer.domElement);
 
   // Setup controls
@@ -1423,22 +1421,44 @@ function hideLoader() {
   loaderWrapper.classList.remove('active');
 }
 
-function removeCurrentModel() {
+// Fungsi untuk membersihkan model dan sumber daya Three.js
+const removeCurrentModel = () => {
   if (object) {
-    scene.remove(object);
+    scene.remove(object);  // Hapus objek dari scene
     object.traverse(child => {
       if (child.isMesh) {
-        child.geometry.dispose();
+        child.geometry.dispose();  // Hapus geometri mesh
         if (Array.isArray(child.material)) {
-          child.material.forEach(m => m.dispose());
+          child.material.forEach(m => m.dispose());  // Buang material jika ada lebih dari satu
         } else {
-          child.material.dispose();
+          child.material.dispose();  // Hapus material mesh
         }
       }
     });
-    object = null;
+    object = null;  // Set objek menjadi null
   }
-}
+};
+
+const disposeOfScene = (scene, renderer) => {
+  // Traverse seluruh scene
+  scene.traverse((child) => {
+    // Periksa apakah objek adalah mesh
+    if (child instanceof THREE.Mesh) {
+      child.geometry.dispose();  // Hapus geometri mesh
+
+      // Loop melalui properti material dan buang
+      for (const key in child.material) {
+        if (typeof child.material[key] === "object") {
+          const value = child.material[key];
+          if (value && typeof value.dispose === "function") {
+            value.dispose();  // Hapus material jika ada
+          }
+        }
+      }
+    }
+  });
+  renderer.dispose();  // Hapus renderer
+};
 
 function loadNewModel(modelName) {
   isModelLoading = true;
@@ -1577,6 +1597,26 @@ function loadNewModel(modelName) {
     });
   }, 5000);
 }
+
+window.addEventListener('beforeunload', () => {
+  // Panggil pembersihan sebelum halaman ditutup atau dimuat ulang
+  if (object) {
+    removeCurrentModel();  // Membersihkan model dari scene
+  }
+  if (renderer) {
+    disposeOfScene(scene, renderer);  // Membersihkan semua sumber daya Three.js
+  }
+});
+
+// Atau menggunakan event `unload` jika `beforeunload` tidak sesuai
+window.onunload = () => {
+  if (object) {
+    removeCurrentModel();  // Membersihkan model dari scene
+  }
+  if (renderer) {
+    disposeOfScene(scene, renderer);  // Membersihkan semua sumber daya Three.js
+  }
+};
 
 function removeActiveFree() {
   const toggleSkjButton = document.getElementById('toggleSkj');
@@ -2611,3 +2651,4 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 }, 1000);
 });
+
