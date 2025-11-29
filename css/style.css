@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 body {
   margin: 0px;
   padding: 0px;
-  font-family: "Quicksand", sans-serif;
+  font-family:  "Encode Sans Expanded", sans-serif;
   background-color: #1e2a3a;
   line-height: 1.5;
   letter-spacing: 1.5px;
@@ -47,7 +47,7 @@ body {
  font-size: 20px;
  margin: 0;
  font-weight: 500;
- font-family: "Quicksand", sans-serif;
+ font-family:  "Encode Sans Expanded", sans-serif;
 }
 
 .hidden {
@@ -97,7 +97,7 @@ body {
   color: white;
   padding: 12px 20px;
   border-radius: 10px;
-  font-family: "Quicksand", sans-serif;
+  font-family:  "Encode Sans Expanded", sans-serif;
 }
 
 .title-model h2 {
@@ -108,7 +108,7 @@ body {
   color: #ffff;
   font-weight: 500;
   margin: 0;
-  font-family: "Quicksand", sans-serif;
+  font-family:  "Encode Sans Expanded", sans-serif;
 }
 
 .title-bottom{
@@ -125,7 +125,7 @@ body {
     color: #ffff;
     font-weight: 500;
     margin: 0;
-    font-family: "Quicksand", sans-serif;
+    font-family:  "Encode Sans Expanded", sans-serif;
     text-align: center;  
     width: 190px; 
 }
@@ -160,7 +160,7 @@ body {
   font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
-  font-family: "Quicksand", sans-serif;
+  font-family:  "Encode Sans Expanded", sans-serif;
 }
 
 .nav-tabs button.active {
@@ -502,7 +502,7 @@ main {
   color: #fff;
   flex: 1;
   transition: background 0.2s;
-  font-family:"Quicksand", sans-serif;
+  font-family: "Encode Sans Expanded", sans-serif;
   letter-spacing: 1.5px;
   font-weight: 500;
 }
@@ -778,7 +778,7 @@ main {
 
   .camera-card-quality button,
   .camera-card-particle button {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .bottom-profile,

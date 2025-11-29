@@ -18,7 +18,7 @@ document.querySelectorAll('.set-jut').forEach(btn => {
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const gainNode = audioContext.createGain();
-gainNode.gain.value = 3.0; 
+gainNode.gain.value = 5.0; 
 
 gainNode.connect(audioContext.destination);
 

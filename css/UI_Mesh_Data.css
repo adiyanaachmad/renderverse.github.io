@@ -100,7 +100,7 @@
     font-size: 20px;
     font-weight: 500;
     color: #fff;
-    font-family: "Quicksand", sans-serif;
+    font-family:  "Encode Sans Expanded", sans-serif;
 }
 
 .icon-count-mesh{
@@ -114,7 +114,7 @@
     font-size: 40px;
     font-weight: 500;
     color: #fff;
-    font-family:  "Quicksand", sans-serif;
+    font-family:   "Encode Sans Expanded", sans-serif;
 }
 
 .increase-info {
@@ -214,7 +214,7 @@
   min-width: 60px;
   text-align: right;
   font-variant-numeric: tabular-nums;
-  font-family:  "Quicksand", sans-serif;
+  font-family:   "Encode Sans Expanded", sans-serif;
 }
 
 .dot-triangles {
@@ -305,7 +305,7 @@
   backface-visibility: hidden;
   border-radius: 8px;
   transition: all 0.2s ease;
-  font-family: "Quicksand", sans-serif;
+  font-family:  "Encode Sans Expanded", sans-serif;
   background: #1e2a3a;
   position: relative;
 }
