@@ -15,24 +15,37 @@ document.querySelectorAll('.set-jut').forEach(btn => {
   });
 });
 
-// Menyiapkan suara klik
-const clickSound = new Audio('sounds/minecraft_click.mp3');
-clickSound.volume = 1.0;
-clickSound.load();
 
-// Fungsi untuk memutar suara klik
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const gainNode = audioContext.createGain();
+gainNode.gain.value = 3.0; 
+
+gainNode.connect(audioContext.destination);
+
+// 4. Memuat file suara
+const clickSound = new Audio('sounds/684505__saha213131__click.mp3');
+clickSound.crossOrigin = "anonymous"; 
+
+let source;
+clickSound.addEventListener('canplaythrough', () => {
+  source = audioContext.createMediaElementSource(clickSound);
+  source.connect(gainNode);
+});
+
 function playSoundEffect() {
-  clickSound.currentTime = 0; // Memulai suara dari awal
+  if (audioContext.state === 'suspended') {
+      audioContext.resume();
+  }
+  clickSound.currentTime = 0;
   clickSound.play().catch(error => {
     console.error('Gagal memutar sound:', error);
   });
 }
 
-// Menambahkan event listener pada elemen dengan class .sound-init
 const soundElements = document.querySelectorAll('.sound-init');
 soundElements.forEach(element => {
   element.addEventListener('click', () => {
-    playSoundEffect();  // Memutar suara saat tombol diklik
+    playSoundEffect();
   });
 });
 
