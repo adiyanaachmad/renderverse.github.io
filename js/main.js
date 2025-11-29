@@ -8,7 +8,6 @@ import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/j
 import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
-import { MeshoptDecoder } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/meshopt_decoder.module.js";
 import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
 
 import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
@@ -397,7 +396,7 @@ function initRenderer(antialias = false) {
       });
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias, powerPreference: "high-performance"  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
   renderer.setClearColor(0x000000, 0);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputEncoding = THREE.sRGBEncoding;
@@ -415,11 +414,12 @@ function initRenderer(antialias = false) {
 
   controls = new OrbitControls(renderCamera, renderer.domElement);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
+  controls.dampingFactor = 0.03;
   controls.maxPolarAngle = Math.PI / 2.2;
   controls.minDistance = 5;
   controls.maxDistance = 20;
   controls.enablePan = false;
+  controls.zoomSpeed = 0.5;
   controls.autoRotate = autoRotateEnabled;
 
   controls.autoRotateSpeed = autoRotateSpeed * autoRotateDirection;
@@ -502,7 +502,7 @@ function initRenderer(antialias = false) {
   bloomComposer.renderToScreen = false;
   bloomComposer.addPass(renderScene);
   bloomComposer.addPass(bloomPass);
-  bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  bloomComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
   bloomComposer.setSize(window.innerWidth, window.innerHeight);
   bloomComposer.renderTarget1.depthBuffer = true;
   bloomComposer.renderTarget2.depthBuffer = true;
@@ -514,7 +514,7 @@ function initRenderer(antialias = false) {
   finalComposer.renderToScreen = true;
   finalComposer.addPass(new RenderPass(scene, renderCamera));
   finalComposer.addPass(finalPass);
-  finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
   finalComposer.setSize(window.innerWidth, window.innerHeight);
 
   if (ktx2Loader) {
@@ -848,21 +848,40 @@ function setCameraFrontTop(model) {
   const maxDim = Math.max(size.x, size.y, size.z);
   const distance = maxDim * 1.0;
 
-  const x = center.x;
-  const y = center.y + distance * 0.6;
-  const z = center.z + distance;
-
-  renderCamera.position.set(x, y, z);
-  renderCamera.lookAt(center);
+  const targetX = center.x;
+  const targetY = center.y + distance * 0.6;
+  const targetZ = center.z + distance;
 
   controls.object = renderCamera;
-  controls.update();
 
-  controls.target.copy(center);
-  controls.update();
+  gsap.to(renderCamera.position, {
+    duration: 1.5, 
+    x: targetX,
+    y: targetY,
+    z: targetZ,
+    ease: "power2.inOut", 
+    onUpdate: () => {
+      controls.update();
+    },
+    onComplete: () => {
+      initialCameraPosition.copy(renderCamera.position);
+    }
+  });
 
-  initialCameraPosition.copy(renderCamera.position);
-  initialCameraTarget.copy(center);
+  gsap.to(controls.target, {
+    duration: 1.5,
+    x: center.x,
+    y: center.y,
+    z: center.z,
+    ease: "power2.inOut",
+    onUpdate: () => {
+      controls.update();
+      renderCamera.lookAt(controls.target); 
+    },
+    onComplete: () => {
+      initialCameraTarget.copy(controls.target);
+    }
+  });
 }
 
 const loader = new GLTFLoader();
@@ -876,9 +895,6 @@ loader.setDRACOLoader(dracoLoader);
 const TRANSCODER_PATH = 'https://unpkg.com/three@0.129.0/examples/js/libs/basis/'; 
 ktx2Loader.setTranscoderPath(TRANSCODER_PATH);
 loader.setKTX2Loader(ktx2Loader);
-
-// C. Terapkan MeshoptDecoder yang sudah diperbaiki impornya
-loader.setMeshoptDecoder(MeshoptDecoder);
 
 
 const objToRender = 'Soccer Icon';
@@ -2395,7 +2411,7 @@ function resetToggle(selector, value = false) {
 function setOrthoZoomLimits(min = 0.5, max = 2.5) {
   if (controls && currentCameraMode === 'ortho' && renderCamera.isOrthographicCamera) {
     controls.enableZoom = true;
-    controls.zoomSpeed = 1.0;
+    controls.zoomSpeed = 0.5;
     controls.minZoom = min; // Set zoom min limit
     controls.maxZoom = max; // Set zoom max limit
 
