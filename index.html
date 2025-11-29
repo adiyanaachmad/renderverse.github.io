@@ -1056,6 +1056,14 @@
   <script src="js/popup.js"></script>
   <script src="js/particle.js"></script>
 
+  <script>
+    function setDocHeight() {
+        const doc = document.documentElement;
+        doc.style.setProperty('--doc-height', `${window.innerHeight}px`);
+    }
+    setDocHeight(); 
+    window.addEventListener('resize', setDocHeight);
+</script>
 </body>
 
 </html>

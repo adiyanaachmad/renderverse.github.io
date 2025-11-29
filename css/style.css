@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+:root {
+    /* Fallback standar jika JS gagal dimuat atau variabel belum dihitung */
+    --doc-height: 100vh;
+}
+
 body {
   margin: 0px;
   padding: 0px;
@@ -8,8 +13,7 @@ body {
   background-color: #1e2a3a;
   line-height: 1.5;
   letter-spacing: 1.5px;
-  overflow: hidden;
-  height: 100svh;
+  height: var(--doc-height);
 }
 
 .credit-info {
@@ -250,8 +254,8 @@ main {
 }
 
 #container3D canvas {
-  width: 100vw !important;
-  height: 100vh !important;
+  width: 100% !important;
+  height: var(--doc-height) !important;
   position: relative;
 }
 
