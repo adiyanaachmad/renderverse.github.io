@@ -28,7 +28,7 @@ let bloomPass;
 let renderScene, finalPass;
 let renderCamera;
 let autoRotateEnabled = false;
-let autoRotateSpeed = 6.0; 
+let autoRotateSpeed = 6.0;
 let initialCameraPosition = new THREE.Vector3();
 let initialCameraTarget = new THREE.Vector3();
 let isReturningCamera = false;
@@ -39,13 +39,13 @@ let autoRotateDirection = 1;
 let lastAzimuthalAngle = 0;
 let lastHorizontalDelta = 0;
 let lastInteractionTime = 0;
-let floatDirection = 1; 
-let time = 0; 
+let floatDirection = 1;
+let time = 0;
 const frequency = 0.5;
 let ktx2Loader;
 
 let glassObjects = [];
-let metallicObjects = []; 
+let metallicObjects = [];
 let nonMetallicObjects = [];
 
 
@@ -58,7 +58,7 @@ let bloomParams = {
 // Scene setup
 const scene = new THREE.Scene();
 const clock = new THREE.Clock();
-scene.fog = null; 
+scene.fog = null;
 scene.environment = null;
 
 // Camera
@@ -126,150 +126,150 @@ document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
 });
 
 function synchronizeCheckboxes(className) {
-    const checkboxes = document.querySelectorAll(`.${className}`);
-    checkboxes.forEach((checkbox) => {
-        checkbox.checked = checkboxes[0].checked; // Make sure all checkboxes match the first one's state
-    });
+  const checkboxes = document.querySelectorAll(`.${className}`);
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = checkboxes[0].checked; // Make sure all checkboxes match the first one's state
+  });
 }
 
 // Fungsi untuk mengecek apakah ada objek yang bernama glass atau glass dengan angka
 function checkForGlassObjects() {
-    if (object) {
-        // Reset array glassObjects
-        glassObjects = [];
+  if (object) {
+    // Reset array glassObjects
+    glassObjects = [];
 
-        object.traverse((child) => {
-            if (child.isMesh && child.name.toLowerCase().includes("glass")) {
-                glassObjects.push(child);  // Menambahkan objek dengan nama 'glass'
-            }
-        });
+    object.traverse((child) => {
+      if (child.isMesh && child.name.toLowerCase().includes("glass")) {
+        glassObjects.push(child);  // Menambahkan objek dengan nama 'glass'
+      }
+    });
 
-        // Jika ada objek glass, centang checkbox-nya
-        if (glassObjects.length > 0) {
-            document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
-                checkbox.checked = true;  // Centang checkbox glass
-            });
-        } else {
-            document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
-                checkbox.checked = false;  // Jika tidak ada objek glass, kosongkan checkbox
-            });
-        }
+    // Jika ada objek glass, centang checkbox-nya
+    if (glassObjects.length > 0) {
+      document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+        checkbox.checked = true;  // Centang checkbox glass
+      });
+    } else {
+      document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+        checkbox.checked = false;  // Jika tidak ada objek glass, kosongkan checkbox
+      });
     }
+  }
 }
 
 // Fungsi untuk menangani perubahan status checkbox
 function handleCheckboxChange(event) {
-    if (glassObjects.length === 0) {
-        // Jika tidak ada objek glass, nonaktifkan checkbox dan tampilkan error toast
-        document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        showErrorToast("No Glass Objects", "No glass objects found in the scene.");
-    } else {
-        // Jika ada objek glass, kontrol visibilitas objek
-        glassObjects.forEach(obj => {
-            obj.visible = event.target.checked;
-        });
-    }
+  if (glassObjects.length === 0) {
+    // Jika tidak ada objek glass, nonaktifkan checkbox dan tampilkan error toast
+    document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    showErrorToast("No Glass Objects", "No glass objects found in the scene.");
+  } else {
+    // Jika ada objek glass, kontrol visibilitas objek
+    glassObjects.forEach(obj => {
+      obj.visible = event.target.checked;
+    });
+  }
 }
 
 // Menambahkan event listener pada checkbox untuk mendeteksi perubahan
 document.querySelectorAll('.cb-glass-effect').forEach(checkbox => {
-    checkbox.addEventListener('change', (event) => {
-        synchronizeCheckboxes('cb-glass-effect');
-        handleCheckboxChange(event);
-    });
-    
-    // ✅ SOLUSI: Hentikan perambatan click ke document
-    checkbox.addEventListener('click', (event) => {
-        event.stopPropagation(); 
-    });
+  checkbox.addEventListener('change', (event) => {
+    synchronizeCheckboxes('cb-glass-effect');
+    handleCheckboxChange(event);
+  });
+
+  // ✅ SOLUSI: Hentikan perambatan click ke document
+  checkbox.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 });
 
 
 function checkForMetallicObjects() {
-    if (object) {
-        // Reset arrays setiap kali model baru dimuat
-        metallicObjects = [];
-        nonMetallicObjects = [];
+  if (object) {
+    // Reset arrays setiap kali model baru dimuat
+    metallicObjects = [];
+    nonMetallicObjects = [];
 
-        object.traverse((child) => {
-            // Cek apakah objek memiliki nama 'non_mli'
-            if (child.isMesh && child.material && child.name.toLowerCase().includes("non_mli")) {
-                nonMetallicObjects.push(child);  // Menambahkan objek dengan nama 'non_mli'
-                child.visible = false;  // Sembunyikan objek 'non_mli' secara default
-            } 
-            // Cek apakah objek memiliki material dengan kata 'metal'
-            else if (child.isMesh && child.material && child.name.toLowerCase().includes("metal")) {
-                metallicObjects.push(child);  // Menambahkan objek dengan material 'metal'
-                child.visible = false;  // Sembunyikan objek 'metal' secara default
-            }
-        });
+    object.traverse((child) => {
+      // Cek apakah objek memiliki nama 'non_mli'
+      if (child.isMesh && child.material && child.name.toLowerCase().includes("non_mli")) {
+        nonMetallicObjects.push(child);  // Menambahkan objek dengan nama 'non_mli'
+        child.visible = false;  // Sembunyikan objek 'non_mli' secara default
+      }
+      // Cek apakah objek memiliki material dengan kata 'metal'
+      else if (child.isMesh && child.material && child.name.toLowerCase().includes("metal")) {
+        metallicObjects.push(child);  // Menambahkan objek dengan material 'metal'
+        child.visible = false;  // Sembunyikan objek 'metal' secara default
+      }
+    });
 
-        // Reset semua checkbox ke OFF saat model baru dimuat
-        document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
-            checkbox.checked = false; // Reset checkbox metallic ke false
-        });
+    // Reset semua checkbox ke OFF saat model baru dimuat
+    document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+      checkbox.checked = false; // Reset checkbox metallic ke false
+    });
 
-        // Pastikan objek non-metallic terlihat saat model baru dimuat
-        nonMetallicObjects.forEach(obj => {
-            obj.visible = true;  // Pastikan objek non-metallic terlihat secara default
-        });
+    // Pastikan objek non-metallic terlihat saat model baru dimuat
+    nonMetallicObjects.forEach(obj => {
+      obj.visible = true;  // Pastikan objek non-metallic terlihat secara default
+    });
 
-        // Jika ada objek metallic, centang checkbox-nya
-        if (metallicObjects.length > 0) {
-            document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
-                checkbox.checked = true;  // Centang checkbox metallic
-            });
-        }
-
-        // Jika ada objek non-metallic yang terlihat, pastikan metallic checkbox tetap OFF
-        if (nonMetallicObjects.length > 0) {
-            document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
-                checkbox.checked = false;  // Centang checkbox metallic OFF karena objek non-metallic yang terlihat
-            });
-        }
+    // Jika ada objek metallic, centang checkbox-nya
+    if (metallicObjects.length > 0) {
+      document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+        checkbox.checked = true;  // Centang checkbox metallic
+      });
     }
+
+    // Jika ada objek non-metallic yang terlihat, pastikan metallic checkbox tetap OFF
+    if (nonMetallicObjects.length > 0) {
+      document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+        checkbox.checked = false;  // Centang checkbox metallic OFF karena objek non-metallic yang terlihat
+      });
+    }
+  }
 }
 
 // Fungsi untuk menangani perubahan status checkbox metallic
 
 function handleMetallicCheckboxChange(event) {
-    if (metallicObjects.length === 0) {
-        // Jika tidak ada objek metallic, nonaktifkan checkbox dan tampilkan error toast
-        document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        showErrorToast("No Metallic Objects", "No metallic objects found in the scene.");
+  if (metallicObjects.length === 0) {
+    // Jika tidak ada objek metallic, nonaktifkan checkbox dan tampilkan error toast
+    document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    showErrorToast("No Metallic Objects", "No metallic objects found in the scene.");
+  } else {
+    // Jika ada objek metallic, kontrol visibilitas objek
+    if (event.target.checked) {
+      metallicObjects.forEach(obj => obj.visible = true);
+      nonMetallicObjects.forEach(obj => obj.visible = false);
     } else {
-        // Jika ada objek metallic, kontrol visibilitas objek
-        if (event.target.checked) {
-            metallicObjects.forEach(obj => obj.visible = true);
-            nonMetallicObjects.forEach(obj => obj.visible = false);
-        } else {
-            metallicObjects.forEach(obj => obj.visible = false);
-            nonMetallicObjects.forEach(obj => obj.visible = true);
-        }
+      metallicObjects.forEach(obj => obj.visible = false);
+      nonMetallicObjects.forEach(obj => obj.visible = true);
     }
+  }
 }
 
 // Menambahkan event listener untuk menangani perubahan checkbox metallic
 document.querySelectorAll('.cb-metallic-effect').forEach(checkbox => {
-    checkbox.addEventListener('change', (event) => {
-        synchronizeCheckboxes('cb-metallic-effect');
-        handleMetallicCheckboxChange(event);
-    });
+  checkbox.addEventListener('change', (event) => {
+    synchronizeCheckboxes('cb-metallic-effect');
+    handleMetallicCheckboxChange(event);
+  });
 
-    // ✅ SOLUSI: Hentikan perambatan click ke document
-    checkbox.addEventListener('click', (event) => {
-        event.stopPropagation(); 
-    });
+  // ✅ SOLUSI: Hentikan perambatan click ke document
+  checkbox.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 });
 
 function updateActiveCameraClassByMode(mode) {
   document.querySelectorAll('.per-mode, .orto-mode').forEach(btn => {
     const isActive = (mode === 'perspective' && btn.classList.contains('per-mode')) ||
-                     (mode === 'ortho' && btn.classList.contains('orto-mode'));
+      (mode === 'ortho' && btn.classList.contains('orto-mode'));
     btn.classList.toggle('active-camera', isActive);
   });
 }
@@ -358,7 +358,7 @@ fpsButton.addEventListener('click', () => {
   if (stats.dom.style.display === 'none') {
     // Jika Stats disembunyikan, tampilkan
     stats.dom.style.display = 'block';
-    
+
     // Ganti ikon tombol dan tambahkan class aktif
     fpsButton.querySelector('i').classList.remove('fa-eye-slash');
     fpsButton.querySelector('i').classList.add('fa-eye');
@@ -366,7 +366,7 @@ fpsButton.addEventListener('click', () => {
   } else {
     // Jika Stats sudah terlihat, sembunyikan
     stats.dom.style.display = 'none';
-    
+
     // Ganti ikon tombol kembali
     fpsButton.querySelector('i').classList.remove('fa-eye');
     fpsButton.querySelector('i').classList.add('fa-eye-slash');
@@ -387,15 +387,15 @@ function initRenderer(antialias = false) {
   // Hanya menggunakan WebGLMultisampleRenderTarget jika antialiasing aktif
   const renderTarget = antialias
     ? new THREE.WebGLMultisampleRenderTarget(window.innerWidth, window.innerHeight, {
-        format: THREE.RGBAFormat,
-        encoding: THREE.sRGBEncoding,
-      })
+      format: THREE.RGBAFormat,
+      encoding: THREE.sRGBEncoding,
+    })
     : new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
-        format: THREE.RGBAFormat,
-        encoding: THREE.sRGBEncoding,
-      });
+      format: THREE.RGBAFormat,
+      encoding: THREE.sRGBEncoding,
+    });
 
-  renderer = new THREE.WebGLRenderer({ alpha: true, antialias, powerPreference: "high-performance"  });
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
   renderer.setClearColor(0x000000, 0);
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -463,29 +463,29 @@ function initRenderer(antialias = false) {
   // === Gunakan AA khusus untuk bloomComposer saat mode ortho ===
   const bloomRenderTarget = currentCameraMode === 'ortho'
     ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
+      format: THREE.RGBAFormat,
+      encoding: THREE.sRGBEncoding,
+    })
+    : (antialias
+      ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
         format: THREE.RGBAFormat,
         encoding: THREE.sRGBEncoding,
       })
-    : (antialias
-        ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
-            format: THREE.RGBAFormat,
-            encoding: THREE.sRGBEncoding,
-          })
-        : new THREE.WebGLRenderTarget(size.x, size.y, {
-            format: THREE.RGBAFormat,
-            encoding: THREE.sRGBEncoding,
-          })
-      );
+      : new THREE.WebGLRenderTarget(size.x, size.y, {
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+      })
+    );
 
   const finalRenderTarget = antialias
     ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {
-        format: THREE.RGBAFormat,
-        encoding: THREE.sRGBEncoding,
-      })
+      format: THREE.RGBAFormat,
+      encoding: THREE.sRGBEncoding,
+    })
     : new THREE.WebGLRenderTarget(size.x, size.y, {
-        format: THREE.RGBAFormat,
-        encoding: THREE.sRGBEncoding,
-      });
+      format: THREE.RGBAFormat,
+      encoding: THREE.sRGBEncoding,
+    });
 
   renderScene = new RenderPass(scene, renderCamera);
   bloomPass = new UnrealBloomPass(
@@ -518,7 +518,7 @@ function initRenderer(antialias = false) {
   finalComposer.setSize(window.innerWidth, window.innerHeight);
 
   if (ktx2Loader) {
-      ktx2Loader.detectSupport(renderer); // Wajib dipanggil setelah renderer dibuat
+    ktx2Loader.detectSupport(renderer); // Wajib dipanggil setelah renderer dibuat
   }
 }
 
@@ -556,11 +556,11 @@ const GRID_SIZE = 30;
 const GRID_BOUNDARY = GRID_SIZE / 2; // 15.0
 
 // Definisi untuk Fog Khusus Boundary
-const FOG_COLOR = new THREE.Color(0x1e2a3a); 
+const FOG_COLOR = new THREE.Color(0x1e2a3a);
 // Fog mulai samar di 70% dari batas (sekitar 10.5)
-const FOG_RADIUS_START = GRID_BOUNDARY * 0.2; 
+const FOG_RADIUS_START = GRID_BOUNDARY * 0.2;
 // Fog mencapai maksimum (menutup) di batas grid (15.0)
-const FOG_RADIUS_END = GRID_BOUNDARY;       
+const FOG_RADIUS_END = GRID_BOUNDARY;
 
 
 // Grid
@@ -571,41 +571,41 @@ gridHelper.position.y += 0.01;
 
 // ✅ SOLUSI: Mengaplikasikan efek fog berdasarkan batas (Boundary Fog)
 gridHelper.material.onBeforeCompile = (shader) => {
-    shader.uniforms.fogColor = { value: FOG_COLOR };
-    shader.uniforms.fogRadiusStart = { value: FOG_RADIUS_START };
-    shader.uniforms.fogRadiusEnd = { value: FOG_RADIUS_END };
+  shader.uniforms.fogColor = { value: FOG_COLOR };
+  shader.uniforms.fogRadiusStart = { value: FOG_RADIUS_START };
+  shader.uniforms.fogRadiusEnd = { value: FOG_RADIUS_END };
 
-    // Modifikasi shader vertex
-    shader.vertexShader = `
+  // Modifikasi shader vertex
+  shader.vertexShader = `
         varying vec3 vCustomWorldPosition; // Ganti 'worldPosition' menjadi 'vCustomWorldPosition'
         ${shader.vertexShader}
     `.replace(
-        '#include <begin_vertex>',
-        `
+    '#include <begin_vertex>',
+    `
         #include <begin_vertex>
         // Hitung posisi dunia (world position)
         vec4 customWorldPosition = modelMatrix * vec4( position, 1.0 ); // Ganti nama variabel menjadi customWorldPosition
         vCustomWorldPosition = customWorldPosition.xyz; // Ganti nama variabel menjadi customWorldPosition
         `
-    );
+  );
 
-    // Modifikasi shader fragment
-    shader.fragmentShader = `
+  // Modifikasi shader fragment
+  shader.fragmentShader = `
         uniform vec3 fogColor;
         uniform float fogRadiusStart;
         uniform float fogRadiusEnd;
         varying vec3 vCustomWorldPosition; // Ganti nama variabel menjadi vCustomWorldPosition
         ${shader.fragmentShader}
     `.replace(
-        '#include <dithering_fragment>',
-        `
+    '#include <dithering_fragment>',
+    `
         #include <dithering_fragment>
         // Gunakan vCustomWorldPosition
         float distanceToEdge = max(abs(vCustomWorldPosition.x), abs(vCustomWorldPosition.z));
         float fogFactor = smoothstep(fogRadiusStart, fogRadiusEnd, distanceToEdge);
         gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, fogFactor);
         `
-    );
+  );
 }
 
 scene.add(gridHelper);
@@ -706,11 +706,11 @@ new RGBELoader()
 
 // Load model
 let object;
-let isFloating = false; 
-let floatSpeed = 1.0; 
+let isFloating = false;
+let floatSpeed = 1.0;
 let timeElapsed = 0;
 
-const amplitude = 0.5; 
+const amplitude = 0.5;
 const gridY = 0;
 
 let floatYStart = gridY + amplitude;
@@ -781,21 +781,21 @@ function applyGlassAndMetalMaterial(child) {
     !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
   ) {
     child.material = new THREE.MeshPhysicalMaterial({
-    color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
-        metalness: 0,
-        roughness: 0.3, // Make it more rough for a blurry look
-        transmission: 0.95, // Control the transparency
-        ior: 1.52,
-        thickness: 0.01,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.1,
-        reflectivity: 0.15,
-        transparent: true,
-        opacity: 0.7, // Reduce opacity to make it less transparent
-        side: THREE.DoubleSide,
-        envMap: useEnvMap,
-        envMapIntensity: useEnvMap ? 1.0 : 0,
-        depthWrite: false
+      color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
+      metalness: 0,
+      roughness: 0.5, // Make it more rough for a blurry look
+      transmission: 0.95, // Control the transparency
+      ior: 1.52,
+      thickness: 0.01,
+      clearcoat: 2.0,
+      clearcoatRoughness: 0.1,
+      reflectivity: 0.15,
+      transparent: true,
+      opacity: 0.7, // Reduce opacity to make it less transparent
+      side: THREE.FrontSide,
+      envMap: useEnvMap,
+      envMapIntensity: useEnvMap ? 1.0 : 0,
+      depthWrite: false
     });
   }
 
@@ -855,11 +855,11 @@ function setCameraFrontTop(model) {
   controls.object = renderCamera;
 
   gsap.to(renderCamera.position, {
-    duration: 1.5, 
+    duration: 1.5,
     x: targetX,
     y: targetY,
     z: targetZ,
-    ease: "power2.inOut", 
+    ease: "power2.inOut",
     onUpdate: () => {
       controls.update();
     },
@@ -876,7 +876,7 @@ function setCameraFrontTop(model) {
     ease: "power2.inOut",
     onUpdate: () => {
       controls.update();
-      renderCamera.lookAt(controls.target); 
+      renderCamera.lookAt(controls.target);
     },
     onComplete: () => {
       initialCameraTarget.copy(controls.target);
@@ -892,7 +892,7 @@ ktx2Loader = new KTX2Loader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
 loader.setDRACOLoader(dracoLoader);
 
-const TRANSCODER_PATH = 'https://unpkg.com/three@0.129.0/examples/js/libs/basis/'; 
+const TRANSCODER_PATH = 'https://unpkg.com/three@0.129.0/examples/js/libs/basis/';
 ktx2Loader.setTranscoderPath(TRANSCODER_PATH);
 loader.setKTX2Loader(ktx2Loader);
 
@@ -914,7 +914,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
           child.frustumCulled = true;     // hanya render yang terlihat
           child.matrixAutoUpdate = false; // tidak hitung ulang transform setiap frame
-          child.updateMatrix();     
+          child.updateMatrix();
 
           child.userData.originalMaterial = child.material.clone();
 
@@ -983,77 +983,77 @@ function swingModel(deltaTime) {
 }
 
 function floatAnimation(deltaTime) {
-    if (isFloating && object) {
-        timeElapsed += deltaTime * floatSpeed; 
+  if (isFloating && object) {
+    timeElapsed += deltaTime * floatSpeed;
 
-        const yOffset = amplitude * Math.sin(timeElapsed);
-        object.position.y = floatYStart + yOffset;
-    }
+    const yOffset = amplitude * Math.sin(timeElapsed);
+    object.position.y = floatYStart + yOffset;
+  }
 }
 const turntableButton = document.querySelectorAll('.turntable-btn');
 const floatButton = document.querySelectorAll('.float-btn');
 
 function startFloating() {
-    timeElapsed = 0; 
-    isFloating = true;
-    
-    if (object) {
-        object.position.y = floatYStart; 
-    }
-    
+  timeElapsed = 0;
+  isFloating = true;
+
+  if (object) {
+    object.position.y = floatYStart;
+  }
+
 }
 
 function stopFloating() {
-    isFloating = false;
+  isFloating = false;
 }
 
 function setAnimationMode(mode) {
-    if (!object) return;
-    
-    // 1. Reset kedua mode
-    swingEnabled = false;
-    isFloating = false;
-    returningToCenter = true; 
+  if (!object) return;
 
-    stopFloating();
+  // 1. Reset kedua mode
+  swingEnabled = false;
+  isFloating = false;
+  returningToCenter = true;
 
-    // 2. Reset posisi/rotasi objek secara halus saat ganti mode
-    gsap.to(object.rotation, { duration: 0.5, y: 0 });
-    gsap.to(object.position, { duration: 0.5, y: floatYStart });
+  stopFloating();
 
-    if (mode === 'turntable') {
-        swingEnabled = true;
-        swingTime = 0; 
-        turntableButton.forEach(button => button.classList.add('active-unit'));
-        floatButton.forEach(button => button.classList.remove('active-unit'));
-    } else if (mode === 'float') {
-        isFloating = true;
-        floatDirection = 1; 
-        startFloating();
-        turntableButton.forEach(button => button.classList.remove('active-unit'));
-        floatButton.forEach(button => button.classList.add('active-unit'));
-    }
+  // 2. Reset posisi/rotasi objek secara halus saat ganti mode
+  gsap.to(object.rotation, { duration: 0.5, y: 0 });
+  gsap.to(object.position, { duration: 0.5, y: floatYStart });
+
+  if (mode === 'turntable') {
+    swingEnabled = true;
+    swingTime = 0;
+    turntableButton.forEach(button => button.classList.add('active-unit'));
+    floatButton.forEach(button => button.classList.remove('active-unit'));
+  } else if (mode === 'float') {
+    isFloating = true;
+    floatDirection = 1;
+    startFloating();
+    turntableButton.forEach(button => button.classList.remove('active-unit'));
+    floatButton.forEach(button => button.classList.add('active-unit'));
+  }
 }
 
 if (turntableButton) {
   turntableButton.forEach(button => {
     button.addEventListener('click', () => {
-        // Hanya ganti mode jika checkbox utama aktif
-        if (animationToggles[0]?.checked) {
-            setAnimationMode('turntable');
-        }
+      // Hanya ganti mode jika checkbox utama aktif
+      if (animationToggles[0]?.checked) {
+        setAnimationMode('turntable');
+      }
     });
   });
 }
 
 if (floatButton) {
-    floatButton.forEach(button => {
-      button.addEventListener('click', () => {
-          // Hanya ganti mode jika checkbox utama aktif
-          if (animationToggles[0]?.checked) {
-              setAnimationMode('float');
-          }
-      });
+  floatButton.forEach(button => {
+    button.addEventListener('click', () => {
+      // Hanya ganti mode jika checkbox utama aktif
+      if (animationToggles[0]?.checked) {
+        setAnimationMode('float');
+      }
+    });
   });
 }
 
@@ -1081,7 +1081,7 @@ document.querySelectorAll('.vertical-level-selector').forEach(wrapper => {
 
     // ✅ Tambahkan logika swingSpeed di sini:
     const newSpeed = parseFloat(level);
-    swingSpeed = newSpeed; 
+    swingSpeed = newSpeed;
     floatSpeed = newSpeed;
   }
 
@@ -1110,7 +1110,7 @@ function animateCameraBack(deltaTime) {
   cameraFadeAlpha = THREE.MathUtils.lerp(cameraFadeAlpha, 1, lerpSpeed);
 
   if (cam.position.distanceTo(initialCameraPosition) < 0.01 &&
-      controls.target.distanceTo(initialCameraTarget) < 0.01) {
+    controls.target.distanceTo(initialCameraTarget) < 0.01) {
     cam.position.copy(initialCameraPosition);
     controls.target.copy(initialCameraTarget);
     controls.update();
@@ -1128,8 +1128,8 @@ function animate() {
   swingModel(deltaTime);
   returnToCenter();
   animateCameraBack(deltaTime);
-    floatAnimation(deltaTime);
-  
+  floatAnimation(deltaTime);
+
 
   if (autoRotateEnabled && controls) {
     const now = performance.now();
@@ -1177,7 +1177,7 @@ animate();
 function updateActiveMaterialClassByMode(mode) {
   document.querySelectorAll('.colourfull-material, .solid-material').forEach(btn => {
     const isActive = (mode === 'colourfull' && btn.classList.contains('colourfull-material')) ||
-                     (mode === 'solid' && btn.classList.contains('solid-material'));
+      (mode === 'solid' && btn.classList.contains('solid-material'));
     btn.classList.toggle('active-material', isActive);
   });
 }
@@ -1274,25 +1274,25 @@ animationToggles.forEach(toggle => {
   toggle.addEventListener('change', (e) => {
     const enabled = e.target.checked;
     animationToggles.forEach(t => t.checked = enabled);
-    
+
     if (enabled) {
-        if (turntableButton[0] && turntableButton[0].classList.contains('active-unit')) {
-            setAnimationMode('turntable');
-        } else if (floatButton[0] && floatButton[0].classList.contains('active-unit')) {
-            setAnimationMode('float');
-        } else {
-            // Default jika tidak ada tombol yang memiliki kelas 'active-unit'
-            setAnimationMode('turntable'); 
-        }
+      if (turntableButton[0] && turntableButton[0].classList.contains('active-unit')) {
+        setAnimationMode('turntable');
+      } else if (floatButton[0] && floatButton[0].classList.contains('active-unit')) {
+        setAnimationMode('float');
+      } else {
+        // Default jika tidak ada tombol yang memiliki kelas 'active-unit'
+        setAnimationMode('turntable');
+      }
     } else {
-        // Kode untuk menonaktifkan animasi (Sudah benar)
-        swingEnabled = false;
-        isFloating = false;
-        returningToCenter = true; 
-        if (object) {
-            // Asumsi 'object' adalah objek 3D yang Anda animasikan
-            gsap.to(object.position, { duration: 0.5, y: floatYStart });
-        }
+      // Kode untuk menonaktifkan animasi (Sudah benar)
+      swingEnabled = false;
+      isFloating = false;
+      returningToCenter = true;
+      if (object) {
+        // Asumsi 'object' adalah objek 3D yang Anda animasikan
+        gsap.to(object.position, { duration: 0.5, y: floatYStart });
+      }
     }
   });
 });
@@ -1493,7 +1493,7 @@ function loadNewModel(modelName) {
   const aaButton = document.getElementById('aa-toggle');
   aaButton.classList.remove('active-exf');
   aaToggles.forEach(toggle => {
-    toggle.checked = false; 
+    toggle.checked = false;
   });
   currentAntialias = false;
   initRenderer(false);
@@ -1511,10 +1511,10 @@ function loadNewModel(modelName) {
   controls.autoRotate = autoRotateEnabled;
   controls.autoRotateSpeed = autoRotateSpeed * autoRotateDirection;
 
-  resetSettingsToDefault(); 
+  resetSettingsToDefault();
 
   const gridButton = document.getElementById('grid-view');
-  gridButton.classList.add('active-exf'); 
+  gridButton.classList.add('active-exf');
 
 
   setTimeout(() => {
@@ -1537,7 +1537,7 @@ function loadNewModel(modelName) {
 
           child.frustumCulled = true;     // hanya render yang terlihat
           child.matrixAutoUpdate = false; // tidak hitung ulang transform setiap frame
-          child.updateMatrix();     
+          child.updateMatrix();
 
           child.userData.originalMaterial = child.material.clone();
 
@@ -1545,16 +1545,16 @@ function loadNewModel(modelName) {
           const matName = child.material?.name?.toLowerCase() || "";
           if (matName.startsWith("bloom_effect")) {
             child.userData.isBloom = true;
-          }     
+          }
           if (matName.includes("glass")) {
-              glassObjects.push(child); // Menambahkan objek glass
+            glassObjects.push(child); // Menambahkan objek glass
           }
 
           if (matName.includes("metal") || child.material.metalness > 0) {
-              metallicObjects.push(child); // Menambahkan objek metallic
+            metallicObjects.push(child); // Menambahkan objek metallic
           }
 
-           applyGlassAndMetalMaterial(child); 
+          applyGlassAndMetalMaterial(child);
         }
       });
 
@@ -1659,13 +1659,13 @@ function removeActiveFreeAni() {
 }
 
 function closeAllPopups() {
-    const popups = [document.getElementById('popup2'), document.getElementById('popup3'), document.getElementById('popup4'), document.getElementById('popup5'),  document.getElementById('popup6'), document.getElementById('popup7'), document.getElementById('popup8')];
+  const popups = [document.getElementById('popup2'), document.getElementById('popup3'), document.getElementById('popup4'), document.getElementById('popup5'), document.getElementById('popup6'), document.getElementById('popup7'), document.getElementById('popup8')];
 
-    popups.forEach(popup => {
-        if (popup.classList.contains('show')) {
-            closePopup(popup);
-        }
-    });
+  popups.forEach(popup => {
+    if (popup.classList.contains('show')) {
+      closePopup(popup);
+    }
+  });
 }
 
 function removeActiveBottom() {
@@ -1778,14 +1778,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
-
 function isolateObjectByName(targetName) {
   if (!object) return;
 
   if (targetName === 'default') {
     object.children.forEach(child => (child.visible = true));
 
+    // Animasi Posisi Kamera (Kembali ke Posisi Awal)
     gsap.to(renderCamera.position, {
       duration: 1.2,
       x: initialCameraPosition.x,
@@ -1796,11 +1795,16 @@ function isolateObjectByName(targetName) {
         renderCamera.lookAt(initialCameraTarget);
         controls.target.copy(initialCameraTarget);
         controls.update();
+      },
+      // KODE DI DALAM onComplete DIHAPUS, sehingga tidak ada animasi zoom in kedua.
+      onComplete: () => {
+        // Setelah posisi awal tercapai, tidak ada lagi animasi yang dijalankan.
       }
     });
     return;
   }
 
+  // --- Blok ini yang harusnya memiliki zoom in otomatis (ke objek tertentu) ---
   object.children.forEach(child => {
     child.visible = (child.name === targetName);
   });
@@ -1822,6 +1826,7 @@ function focusCameraOnObject(target) {
   const direction = new THREE.Vector3(0, 0.5, 1).normalize();
   const newPos = center.clone().add(direction.multiplyScalar(distance));
 
+  // Animasi 1: Pindah posisi kamera dan target ke objek yang dipilih
   gsap.to(renderCamera.position, {
     duration: 1.2,
     x: newPos.x,
@@ -1832,6 +1837,27 @@ function focusCameraOnObject(target) {
       renderCamera.lookAt(center);
       controls.target.copy(center);
       controls.update();
+    },
+    onComplete: () => {
+      const minDistance = (controls.minDistance > 0) ? controls.minDistance : 5;
+      const directionVector = renderCamera.position.clone().sub(center).normalize();
+      const finalPositionForMaxZoom = center.clone().add(directionVector.multiplyScalar(minDistance));
+      const currentDistance = renderCamera.position.distanceTo(center);
+
+      if (currentDistance <= minDistance + 0.01) {
+        return; 
+      }
+
+      gsap.to(renderCamera.position, {
+        duration: 1.0,
+        x: finalPositionForMaxZoom.x,
+        y: finalPositionForMaxZoom.y,
+        z: finalPositionForMaxZoom.z,
+        ease: 'power2.out',
+        onUpdate: () => {
+          controls.update();
+        }
+      });
     }
   });
 }
@@ -1861,7 +1887,7 @@ function restoreOriginalMaterial() {
 function updateMeshDataDisplay(model) {
   let totalVertices = 0;
   let totalTriangles = 0;
-  let totalEdges = 0;  
+  let totalEdges = 0;
   let meshCount = 0;
 
   model.traverse((child) => {
@@ -1884,7 +1910,7 @@ function updateMeshDataDisplay(model) {
       }
 
       const edges = new THREE.EdgesGeometry(geometry);
-      totalEdges += edges.attributes.position.count / 2; 
+      totalEdges += edges.attributes.position.count / 2;
     }
   });
 
@@ -1903,7 +1929,7 @@ function updateMeshDataDisplay(model) {
     if (legendItems.length >= 4) {  // Update dengan jumlah legend yang lebih banyak
       legendItems[0].querySelector('.value').textContent = totalTriangles.toLocaleString();
       legendItems[1].querySelector('.value').textContent = totalVertices.toLocaleString();
-      legendItems[2].querySelector('.value').textContent = totalEdges.toLocaleString();  
+      legendItems[2].querySelector('.value').textContent = totalEdges.toLocaleString();
       legendItems[3].querySelector('.value').textContent = meshCount.toLocaleString();
     }
 
@@ -1914,12 +1940,12 @@ function updateMeshDataDisplay(model) {
 
     const progressTriangles = container.querySelector('.progress-triangles');
     const progressVertices = container.querySelector('.progress-vertices');
-    const progressEdges = container.querySelector('.progress-edges');  
+    const progressEdges = container.querySelector('.progress-edges');
     const progressMeshes = container.querySelector('.progress-meshes');
 
     if (progressTriangles) progressTriangles.style.width = `${calcWidth(totalTriangles)}%`;
     if (progressVertices) progressVertices.style.width = `${calcWidth(totalVertices)}%`;
-    if (progressEdges) progressEdges.style.width = `${calcWidth(totalEdges)}%`; 
+    if (progressEdges) progressEdges.style.width = `${calcWidth(totalEdges)}%`;
     if (progressMeshes) progressMeshes.style.width = `${calcWidth(meshCount)}%`;
   });
 }
@@ -1928,7 +1954,7 @@ modelCards.forEach(card => {
   card.addEventListener('click', () => {
     if (isModelLoading) {
       showErrorToast("Model Loading", "Please wait while the model loads.");
-      return; 
+      return;
     }
 
     const modelName = card.dataset.model;
@@ -1938,7 +1964,7 @@ modelCards.forEach(card => {
       c.classList.toggle('active-model', isActive);
     });
 
-    loadNewModel(modelName);  
+    loadNewModel(modelName);
   });
 });
 
@@ -1956,7 +1982,7 @@ function setAntialiasingVisibility(show) {
   currentAntialias = show;
 
   // Sinkronkan status checkbox hanya untuk elemen .aa-toggle
-  aaCheckbox.checked = show;  
+  aaCheckbox.checked = show;
 
   // Hanya ubah class 'active-exf' pada tombol dengan ID 'aa-toggle' (tombol non-input)
   if (show) {
@@ -2016,7 +2042,7 @@ function animateGridFade() {
   const sign = Math.sign(delta);
 
   gridHelper.material.opacity += sign * fadeSpeed;
-  gridHelper.material.opacity = THREE.MathUtils.clamp(gridHelper.material.opacity, 0, 1); 
+  gridHelper.material.opacity = THREE.MathUtils.clamp(gridHelper.material.opacity, 0, 1);
 
   if (gridHelper.material.opacity === 0) {
     gridHelper.visible = false;
@@ -2041,7 +2067,7 @@ function setGridVisibility(show) {
 // Set event listener untuk checkbox (input)
 gridToggles.forEach(toggle => {
   toggle.checked = true; // Set status default checkbox (checked)
-  
+
   toggle.addEventListener('change', (e) => {
     const show = e.target.checked; // Ambil status checkbox
     setGridVisibility(show); // Update gridHelper visibility
@@ -2100,7 +2126,7 @@ function setHDRIVisibility(show) {
 // Fungsi untuk menghapus class 'checked' pada tombol input dan 'active-exf' pada tombol non-input
 function resetButtonClasses() {
   // Hapus class 'checked' pada checkbox input jika HDRI dimatikan
-  hdriCheckbox.classList.remove('checked');  
+  hdriCheckbox.classList.remove('checked');
 
   // Hapus class 'active-exf' pada tombol non-input jika HDRI dimatikan
   hdriButton.classList.remove('active-exf');
@@ -2270,9 +2296,9 @@ function resetSettingsToDefault() {
   const hdriButton = document.getElementById('hdri-toggle');
   const hdriCheckbox = document.querySelector('.hdri-toggle');
 
-  hdriButton.classList.remove('active-exf');  
-  hdriCheckbox.checked = false;  
-  scene.environment = null;  
+  hdriButton.classList.remove('active-exf');
+  hdriCheckbox.checked = false;
+  scene.environment = null;
 
   // Reset Grid toggle
   resetToggle('.grid-view', true);
@@ -2366,7 +2392,7 @@ function setupBloomSliderControls() {
         });
 
         if (display) {
-          display.textContent = val.toFixed(1); 
+          display.textContent = val.toFixed(1);
         }
       });
     });
@@ -2577,7 +2603,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const toggleMaterialBtn = document.querySelector(".open-materiali"); 
+  const toggleMaterialBtn = document.querySelector(".open-materiali");
   const materialCard = document.querySelector(".Material-card-container-bottom");
   const viewMaterial = document.querySelector(".all-effect");
   const icon = toggleMaterialBtn.querySelector("i");
@@ -2600,7 +2626,7 @@ document.addEventListener("DOMContentLoaded", () => {
       materialCard.style.width = "126vw";
       viewMaterial.style.display = "flex";
       viewMaterial.style.opacity = "1";
-      
+
       icon.classList.remove("fa-plus");
       icon.classList.add("fa-minus");
     } else {
@@ -2647,7 +2673,7 @@ window.addEventListener("DOMContentLoaded", () => {
     showErrorToast("Access denied", "Developer tools detected.");
   });
 
-  document.addEventListener("keydown", function(e) {
+  document.addEventListener("keydown", function (e) {
     if (
       e.key === "F12" ||
       (e.ctrlKey && e.shiftKey && e.key === "I") ||
@@ -2662,9 +2688,9 @@ window.addEventListener("DOMContentLoaded", () => {
     if (
       window.outerHeight - window.innerHeight > 100 ||
       window.outerWidth - window.innerWidth > 100
-  ) {
-    document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-  }
-}, 1000);
+    ) {
+      document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+    }
+  }, 1000);
 });
 
