@@ -927,7 +927,7 @@ main {
 
   .card-mesh-bottom {
     width: 45%;
-    padding-bottom: 50px !important;
+    padding-bottom: 89px !important;
     transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
@@ -1151,7 +1151,7 @@ main {
 
   .card-mesh-bloom{
     right: 0px!important;
-    padding-bottom: 50px!important;
+    padding-bottom: 75px!important;
     width: 93%;
     overflow: hidden;
   }
@@ -1228,7 +1228,7 @@ main {
   }
 
   .camera-card-container-bottom{
-    padding-bottom: 50px!important;
+    padding-bottom: 75px!important;
   }
 
   .camera-card-container {

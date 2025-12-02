@@ -19,8 +19,8 @@
   background-color: #3b4b5d;
   color: #fff;
   left: 0;
-  bottom: 119px!important;
-  border-radius: 10px;
+  bottom: 105px!important;
+  border-radius: 10px 10px 0px 0px;
   padding: 20px;
   width: 0px;
   max-height: 250px;
@@ -37,9 +37,9 @@
   display: block;
   right: 0;
   bottom: 220px!important;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
   padding: 20px;
-  padding-bottom: 47px;
+  padding-bottom: 80px;
   width: 100;
   max-height: 250px;
   flex: 0 0 auto;
@@ -55,8 +55,8 @@
   left: 0;
   width: 250px;
   max-height: 250px;
-  bottom: 210px;
-  border-radius: 10px;
+  bottom: 215px!important;
+  border-radius: 10px 10px 0px 0px;
   zoom: .7;
 }
 
@@ -66,7 +66,7 @@
   padding: 20px;
   right: 0;
   min-width: 250px;
-  bottom: 76px;
+  bottom: 60px!important;
   border-radius: 10px;
   zoom: .7;
 }
