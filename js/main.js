@@ -676,33 +676,32 @@ document.querySelectorAll('.soft-shadow-btn').forEach(btn => {
 
 
 // HDRI environment
-const pmremGenerator = new THREE.PMREMGenerator(renderer);
+const cubeTextureLoader = new THREE.CubeTextureLoader();
 let envMapGlobal = null;
 
-new RGBELoader()
-  .setPath('./hdr/')
-  .load('paul_lobe_haus_1k.hdr', (texture) => {
-    hdrTexture = texture;
+cubeTextureLoader.load([
+  './hdr/px.png',  // Positive X
+  './hdr/nx.png',  // Negative X
+  './hdr/py.png',  // Positive Y
+  './hdr/ny.png',  // Negative Y
+  './hdr/pz.png',  // Positive Z
+  './hdr/nz.png',  // Negative Z
+], (texture) => {
+  // Gambar CubeMap telah dimuat
+  envMapGlobal = texture;
 
-    const newPMREM = new THREE.PMREMGenerator(renderer);
-    envMapGlobal = newPMREM.fromEquirectangular(hdrTexture).texture;
+  // HANYA AKTIFKAN scene.environment jika toggle HDRI aktif
+  if (hdriToggles && hdriToggles.checked) {
+    scene.environment = envMapGlobal;
+  } else {
+    scene.environment = null; // Nonaktifkan peta lingkungan jika toggle tidak aktif
+  }
 
-    // HANYA AKTIFKAN scene.environment jika toggle HDRI aktif
-    if (hdriToggles && hdriToggles.checked) {
-      scene.environment = envMapGlobal;
-    } else {
-      scene.environment = null; // pastikan nonaktif
-    }
-
-    // Kalau objek sudah ada, perbarui materialnya sesuai toggle
-    if (object) {
-      applyEnvMapToMaterials(object, hdriToggles && hdriToggles.checked ? envMapGlobal : null);
-    }
-
-    hdrTexture.dispose();
-    newPMREM.dispose();
-  });
-
+  // Kalau objek sudah ada, perbarui materialnya sesuai toggle
+  if (object) {
+    applyEnvMapToMaterials(object, hdriToggles && hdriToggles.checked ? envMapGlobal : null);
+  }
+});
 
 // Load model
 let object;
@@ -733,7 +732,7 @@ function normalizeModel(model, targetSize = 8) {
   model.position.y -= newBox.min.y;
 }
 
-function applyEnvMapToMaterials(model, envMap, intensity = 0.3) {
+function applyEnvMapToMaterials(model, envMap, intensity = 0.5) {
   model.traverse((child) => {
     if (child.isMesh && child.material) {
       child.material.envMap = envMap;
@@ -776,50 +775,47 @@ function applyGlassAndMetalMaterial(child) {
 
   // === 💎 MATERIAL GLASS ===
   // Hanya ganti jika tidak punya texture apapun
-  if (
-    isGlass &&
-    !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
-  ) {
+  if (isGlass) {
     child.material = new THREE.MeshPhysicalMaterial({
       color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
-      metalness: 0,
-      roughness: 0.5, // Make it more rough for a blurry look
-      transmission: 0.95, // Control the transparency
-      ior: 1.52,
-      thickness: 0.01,
-      clearcoat: 2.0,
-      clearcoatRoughness: 0.1,
+      metalness: 0.0,
+      roughness: 0.3, // Slight roughness to prevent overly sharp reflections
+      transmission: 0.95, // Simulate glass transparency
+      ior: 1.5, // Index of refraction for glass
+      thickness: 0.01, // Thin glass effect
+      clearcoat: 1.0, // Adding a glossy finish
+      clearcoatRoughness: 0.05, // Small roughness for the clearcoat layer
       reflectivity: 0.15,
       transparent: true,
-      opacity: 0.7, // Reduce opacity to make it less transparent
-      side: THREE.FrontSide,
+      opacity: 0.7, // Reduce opacity to prevent full transparency
+      side: THREE.DoubleSide,
       envMap: useEnvMap,
       envMapIntensity: useEnvMap ? 1.0 : 0,
-      depthWrite: false
+      depthWrite: false // To prevent depth sorting issues with transparent materials
     });
   }
 
   // === ⚙️ MATERIAL METAL ===
   // Hanya ganti jika tidak punya texture juga
   else if (
-    isMetal &&
-    !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
-  ) {
-    child.material = new THREE.MeshPhysicalMaterial({
-      color: child.material.color || 0xffffff,
-      metalness: 0.9,
-      roughness: 0.2,
-      reflectivity: 0.8,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.02,
-      side: THREE.DoubleSide,
-      envMap: useEnvMap,
-      envMapIntensity: useEnvMap ? 1.0 : 0
-    });
-  }
+  isMetal &&
+  !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
+) {
+  child.material = new THREE.MeshPhysicalMaterial({
+    color: child.material.color || 0xffffff,
+    metalness: 0.9,
+    roughness: 0.2,
+    reflectivity: 0.8,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.02,
+    side: THREE.DoubleSide,
+    envMap: useEnvMap,
+    envMapIntensity: useEnvMap ? 1.0 : 0
+  });
+}
 
-  // Simpan salinan original untuk restore nanti
-  child.userData.originalMaterial = child.material.clone();
+// Simpan salinan original untuk restore nanti
+child.userData.originalMaterial = child.material.clone();
 }
 
 function updateBloomLayerState() {
@@ -1845,7 +1841,7 @@ function focusCameraOnObject(target) {
       const currentDistance = renderCamera.position.distanceTo(center);
 
       if (currentDistance <= minDistance + 0.01) {
-        return; 
+        return;
       }
 
       gsap.to(renderCamera.position, {
