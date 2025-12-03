@@ -732,7 +732,7 @@ function normalizeModel(model, targetSize = 8) {
   model.position.y -= newBox.min.y;
 }
 
-function applyEnvMapToMaterials(model, envMap, intensity = 0.5) {
+function applyEnvMapToMaterials(model, envMap, intensity = 1.0) {
   model.traverse((child) => {
     if (child.isMesh && child.material) {
       child.material.envMap = envMap;
@@ -776,22 +776,14 @@ function applyGlassAndMetalMaterial(child) {
   // === 💎 MATERIAL GLASS ===
   // Hanya ganti jika tidak punya texture apapun
   if (isGlass) {
-    child.material = new THREE.MeshPhysicalMaterial({
+    child.material = new THREE.MeshBasicMaterial({
       color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
-      metalness: 0.0,
-      roughness: 0.3, // Slight roughness to prevent overly sharp reflections
-      transmission: 0.95, // Simulate glass transparency
-      ior: 1.5, // Index of refraction for glass
-      thickness: 0.01, // Thin glass effect
-      clearcoat: 1.0, // Adding a glossy finish
-      clearcoatRoughness: 0.05, // Small roughness for the clearcoat layer
-      reflectivity: 0.15,
-      transparent: true,
-      opacity: 0.7, // Reduce opacity to prevent full transparency
-      side: THREE.DoubleSide,
-      envMap: useEnvMap,
-      envMapIntensity: useEnvMap ? 1.0 : 0,
-      depthWrite: false // To prevent depth sorting issues with transparent materials
+      envMap: envMapGlobal,       // Gunakan CubeMap untuk pantulan
+      combine: THREE.MixOperation,  // Kombinasikan warna dengan pantulan
+      reflectivity: 1.0,    // Tingkat refleksi yang tinggi untuk efek kaca
+      opacity: 0.5,         // Transparansi (kaca transparan)
+      transparent: true,    // Menjadikan material transparan
+      side: THREE.DoubleSide, 
     });
   }
 
