@@ -5,6 +5,7 @@
 :root {
   /* Fallback standar jika JS gagal dimuat atau variabel belum dihitung */
   --doc-height: 100vh;
+  --legend-height: 17rem;
 }
 
 body {
@@ -943,7 +944,7 @@ main {
     border-radius: 10px;
     padding: 16px;
     zoom: .7;
-    height: 17rem;
+    height: var(--legend-height);
     overflow-y: auto;
     font-size: 22px !important;
     color: #fff;
