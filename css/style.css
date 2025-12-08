@@ -944,7 +944,7 @@ main {
     border-radius: 10px;
     padding: 16px;
     zoom: .7;
-    height: var(--legend-height);
+    height: 17rem!important;
     overflow-y: auto;
     font-size: 22px !important;
     color: #fff;
