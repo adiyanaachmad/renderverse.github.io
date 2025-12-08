@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
 :root {
   /* Fallback standar jika JS gagal dimuat atau variabel belum dihitung */
@@ -324,7 +325,7 @@ main {
   font-size: 20px;
   font-weight: 500;
   color: #fff;
-  font-family: "Saira", sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 .slider-bloom input[type="range"] {
@@ -932,26 +933,6 @@ main {
   }
 
   .legend {
-    flex: 0.8;
-    margin-top: 0px !important;
-    display: none;
-    pointer-events: auto;
-    flex-direction: column;
-    justify-content: flex-start;
-    background: #1e2a3a;
-    border-radius: 10px;
-    padding: 16px;
-    zoom: .7;
-    height: 273px;
-    /* overflow-y: auto; */
-    font-size: 22px !important;
-    color: #fff;
-    gap: 10px !important;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-  }
-
-  .legend {
     flex: 0.95;
     margin-top: 0px !important;
     display: none;
@@ -962,7 +943,7 @@ main {
     border-radius: 10px;
     padding: 16px;
     zoom: .7;
-    height: 273px;
+    height: 17rem;
     overflow-y: auto;
     font-size: 22px !important;
     color: #fff;
