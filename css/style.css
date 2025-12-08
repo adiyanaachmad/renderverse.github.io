@@ -1081,17 +1081,17 @@ main {
   }
 
   .legend-item {
-    display: flex;
-    justify-content: space-between;
+    /* display: flex;
+    justify-content: space-between; */
     align-items: center;
     /* padding: 8px; */
     border-radius: 8px;
     border-bottom: 0px !important;
     background-color: #3b4b5d;
-    padding-bottom: 5px;
+    /* padding-bottom: 5px;
     padding-top: 5px;
     padding-right: 16px;
-    padding-left: 0px;
+    padding-left: 0px; */
   }
 
   .camera-card-header {

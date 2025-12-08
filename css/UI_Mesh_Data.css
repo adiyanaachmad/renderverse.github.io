@@ -112,7 +112,7 @@
 
 .total-count,
 .total-fps {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: 500;
     color: #fff;
     font-family:   "Encode Sans Expanded", sans-serif;
@@ -188,17 +188,64 @@
 }
 
 .legend-item {
-  display: flex;
-  justify-content: space-between;
+  /* display: flex;
+  justify-content: space-between; */
   align-items: center;
   border-bottom: 4px solid #fff;
 }
 
 .legend-left {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding-right: 16px;
   gap: 8px;
 }
+
+.legend-bottom-triangles {
+  display: block;  
+  text-align: center;  
+  background-color: #f6c244;
+  text-transform: uppercase;
+  border-radius: 0px 0px 8px 8px;
+  color: #1e2a3a;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+.legend-bottom-vertices {
+  display: block;  
+  text-align: center;  
+  background-color: #5ec7bd;
+  text-transform: uppercase;
+  border-radius: 0px 0px 8px 8px;
+  color: #1e2a3a;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+.legend-bottom-meshes {
+  display: block;  
+  text-align: center;  
+  background-color: #f08080;
+  text-transform: uppercase;
+  border-radius: 0px 0px 8px 8px;
+  color: #1e2a3a;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+.legend-bottom-edges {
+  display: block;  
+  text-align: center;  
+  background-color: #f57c00;
+  text-transform: uppercase;
+  border-radius: 0px 0px 8px 8px;
+  color: #1e2a3a;
+  padding: 8px;
+  white-space: nowrap;
+}
+
 
 .dot-mesh {
   width: 10px;
@@ -209,6 +256,7 @@
 
 .label {
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .value {
