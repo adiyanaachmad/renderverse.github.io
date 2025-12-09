@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function expandPanel(key) {
     const panel = panels[key];
 
-    let height = "542px";
+    let height = "695px";
     if (key === "camera") height = "165px";
     if (key === "material") height = "335px";
     if (key === "bloom") height = "440px";

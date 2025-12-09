@@ -580,20 +580,21 @@ main {
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 10px!important;
   }
 
   .legend-item {
-    display: flex;
-    justify-content: space-between;
+    /* display: flex;
+    justify-content: space-between; */
     align-items: center;
     border-bottom: 0px !important;
     background-color: #1e2a3a;
-    padding-bottom: 4px;
+    /* padding-bottom: 4px;
     padding-top: 4px;
     padding-right: 16px;
-    padding-left: 0px;
+    padding-left: 0px; */
     border-radius: 8px;
+    zoom: .8;
   }
 
   .title-model {
@@ -732,6 +733,10 @@ main {
     background-color: #1e2a3a;
   }
 
+  .value {
+    font-size: 23px!important;
+    font-weight: 600;
+  }
 
   .info-data-mesh,
   .progress-bar-mesh {
@@ -938,17 +943,16 @@ main {
     margin-top: 0px !important;
     display: none;
     pointer-events: auto;
-    flex-direction: column;
-    justify-content: flex-start;
+    /* flex-direction: column; */
+    /* justify-content: flex-start; */
     background: #1e2a3a;
     border-radius: 10px;
     padding: 16px;
     zoom: .7;
-    height: 17rem!important;
-    overflow-y: auto;
+    height: 274px!important;
+    overflow-x: auto;
     font-size: 22px !important;
     color: #fff;
-    gap: 10px !important;
     transition: opacity 0.3s ease;
     opacity: 0;
   }
@@ -1070,6 +1074,7 @@ main {
     border-radius: 8px;
     border-bottom: 0px !important;
     background-color: #3b4b5d;
+    width: 250px;
     /* padding-bottom: 5px;
     padding-top: 5px;
     padding-right: 16px;
