@@ -286,7 +286,12 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 6px;
+  overflow-x: auto;
   
+}
+
+.legend-container::-webkit-scrollbar{
+  display: none;
 }
 
 

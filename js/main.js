@@ -2547,7 +2547,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isLegendOpen) {
       // 🔹 Buka legend
-      cardMesh.style.width = "94%";
+      cardMesh.style.width = "92%";
       legend.style.display = "flex";
       legend.style.pointerEvents = "auto";
 

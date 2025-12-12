@@ -16,6 +16,7 @@ body {
   line-height: 1.5;
   letter-spacing: 1.5px;
   height: var(--doc-height);
+  box-sizing: border-box;
 }
 
 .credit-info {
@@ -947,10 +948,10 @@ main {
     /* justify-content: flex-start; */
     background: #1e2a3a;
     border-radius: 10px;
+    overflow-x: auto;
     padding: 16px;
     zoom: .7;
     height: 274px!important;
-    overflow-x: auto;
     font-size: 22px !important;
     color: #fff;
     transition: opacity 0.3s ease;
@@ -1040,15 +1041,18 @@ main {
   .legend::-webkit-scrollbar {
     height: 6px;
     width: 6px;
+    display: none;
   }
 
   .legend::-webkit-scrollbar-thumb {
     background-color: #739eb2;
     border-radius: 4px;
+    display: none;
   }
 
   .legend::-webkit-scrollbar-track {
     background: transparent;
+    display: none;
   }
 
   .all-effect-item {
@@ -1074,7 +1078,7 @@ main {
     border-radius: 8px;
     border-bottom: 0px !important;
     background-color: #3b4b5d;
-    width: 250px;
+    width: 215px;
     /* padding-bottom: 5px;
     padding-top: 5px;
     padding-right: 16px;
