@@ -1118,7 +1118,6 @@ function animate() {
   animateCameraBack(deltaTime);
   floatAnimation(deltaTime);
 
-
   if (autoRotateEnabled && controls) {
     const now = performance.now();
     const timeSinceLastInteraction = now - lastInteractionTime;
@@ -2547,7 +2546,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isLegendOpen) {
       // 🔹 Buka legend
-      cardMesh.style.width = "92%";
+      cardMesh.style.width = "93%";
       legend.style.display = "flex";
       legend.style.pointerEvents = "auto";
 

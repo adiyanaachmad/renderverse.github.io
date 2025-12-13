@@ -54,7 +54,7 @@
   padding: 20px;
   left: 0;
   width: 250px;
-  max-height: 250px;
+  max-height: 250px!important;
   bottom: 215px!important;
   border-radius: 10px 10px 0px 0px;
   zoom: .7;
