@@ -518,6 +518,8 @@ function initRenderer(antialias = false) {
   finalComposer.setSize(window.innerWidth, window.innerHeight);
 
   if (ktx2Loader) {
+    // const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+    // ktx2Loader.setAnisotropy(maxAnisotropy);
     ktx2Loader.detectSupport(renderer); // Wajib dipanggil setelah renderer dibuat
   }
 }
