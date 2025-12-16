@@ -421,3 +421,81 @@
 .checkbox-wrapper-8 .tgl-skewed:checked + .tgl-btn:active:after {
   left: 10%;
 }
+
+.model-header {
+  text-align: center;
+  background-color: #3b4b5d;
+  padding: 20px;
+  border-radius: 10px 10px 0 0;
+  color: #fff;
+}
+
+.model-header h2 {
+  margin: 0;
+}
+
+/* Wrapper for Content */
+.model-content {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* Slider Section */
+.model-slider {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.slider-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.slide {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.slide img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Info Section */
+.model-info {
+  flex: 1;
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.model-info h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+/* Centered Style */
+.model-slider .slider-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.card-bottom-container{
+  display: flex;
+  overflow-x: auto;
+}
+
+.bottom-advc{
+  display: none!important;
+}

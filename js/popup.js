@@ -584,10 +584,10 @@ document.getElementById('toggleSkj').addEventListener('click', function() {
     const togglePjPopup = document.getElementById('popup8');
 
     // Cegah buka popup lain saat toggleMbg masih aktif
-    if (toggleMbgPopup.classList.contains('show')) return;
+    // if (toggleMbgPopup.classList.contains('show')) return;
 
     // Tutup popup lain
-    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleAniPopup, togglePjPopup ];
+    const popups = [toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleAniPopup, togglePjPopup ];
     popups.forEach(p => {
         if (p.classList.contains('show')) closePopup(p);
     });
@@ -624,10 +624,10 @@ document.getElementById('toggleAni').addEventListener('click', function() {
     const togglePjPopup = document.getElementById('popup8');
 
     // Cegah buka popup lain saat toggleMbg masih aktif
-    if (toggleMbgPopup.classList.contains('show')) return;
+    // if (toggleMbgPopup.classList.contains('show')) return;
 
     // Tutup popup lain
-    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup, togglePjPopup];
+    const popups = [toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup, togglePjPopup];
     popups.forEach(p => {
         if (p.classList.contains('show')) closePopup(p);
     });
@@ -663,11 +663,11 @@ document.getElementById('toggleParticle').addEventListener('click', function() {
     const toggleSkjPopup = document.getElementById('popup6');
     const toggleAniPopup = document.getElementById('popup7');
 
-    // Cegah buka popup lain saat toggleMbg masih aktif
-    if (toggleMbgPopup.classList.contains('show')) return;
+
+    // if (toggleMbgPopup.classList.contains('show')) return;
 
     // Tutup popup lain
-    const popups = [toggleMbgPopup, toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup, toggleAniPopup];
+    const popups = [toggleChartPopup, toggleBmPopup, toggleCamePopup, toggleMatePopup, toggleSkjPopup, toggleAniPopup];
     popups.forEach(p => {
         if (p.classList.contains('show')) closePopup(p);
     });
