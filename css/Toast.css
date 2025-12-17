@@ -145,15 +145,29 @@
     border-radius: 10px 10px 0 0;
     gap: 5px;
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: all 0.5s ease;
     background-color: #3b4b5d;
     z-index: 9;
 }
 
-.setg-container{
+.title-hed{
     display: flex;
+    gap: 10px;
+}
+
+#btn-icon.rotated {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.setg-container{
+    display: none;
     overflow-x: auto;
     gap: 10px;
+}
+
+.setg-container.active {
+    display: flex; /* Atau gunakan flex, tergantung layout */
 }
 
 .bottom-select.show {
