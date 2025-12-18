@@ -108,12 +108,25 @@ body {
   font-family: "Encode Sans Expanded", sans-serif;
 }
 
+.title-model-2 {
+  display: flex;
+  justify-content: space-between;
+  background-color: #3b4b5d;
+  align-items: center;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  font-family: "Encode Sans Expanded", sans-serif;
+  zoom: .5;
+}
+
 .title-model h2,
-.title-model-1 h2 {
+.title-model-1 h2,
+.title-model-2 h2 {
   background-color: #1e2a3a;
   border-radius: 10px;
   /* width: 56%; */
-  padding: 20px;
+  padding: 22px;
   color: #ffff;
   font-weight: 500;
   margin: 0;
@@ -817,6 +830,7 @@ main {
   .bottom-nav,
   .bottom-camera,
   .bottom-material,
+  .bottom-aje,
   .bottom-gif,
   .bottom-graphic,
   .bottom-particle {
@@ -847,6 +861,20 @@ main {
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+
+  .profile-card {
+    position: fixed;
+    background: #3b4b5d;
+    bottom: 20px;
+    border: 1px solid #3b4b5d;
+    border-radius: 10px;
+    padding: 13px;
+    left: 0;
+    height: 3.5rem;
+    min-width: 238px;
+    zoom: .8;
+    transition: 0.3s;
   }
 
 }
@@ -1129,9 +1157,17 @@ main {
   }
 
   .profile-card {
-    bottom: 139px !important;
-    zoom: .6 !important;
+    position: relative!important;
+    background-color: #1e2a3a;
+    padding: 12px 22px;
+    border-radius: 10px;
   }
+
+  .profile-info {
+    flex: 1;
+    margin-left: 0px!important;
+  }
+
 
   .dropdown-object {
       bottom: 117px !important;
@@ -1298,7 +1334,8 @@ main {
   .vertical-level-selector, .vertical-level-shadow, .vertical-level-orto{
     gap: 10px;
   } */
-  .title-model{
+  .title-model,
+  .title-model-2{
   zoom: .4;
   }
 
