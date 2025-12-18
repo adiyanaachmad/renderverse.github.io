@@ -681,9 +681,9 @@
     color: #cdd5e0;
     text-align: left;
     position: relative;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 500;
-    min-width: 200px;
+    min-width: 200px!important;
     /* width: 12.8rem; */
     height: 140px;
     zoom: .6;
