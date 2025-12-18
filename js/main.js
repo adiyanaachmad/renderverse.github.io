@@ -1666,72 +1666,68 @@ function removeActiveBottom() {
 }
 
 function populateObjectDropdown(model) {
-  const dropdown = document.querySelector('.dropdown-object');
-  const menu = dropdown.querySelector('.menu-by-object');
-  const select = dropdown.querySelector('.select-by-object');
+  const dropdown = document.querySelector('.card-object-r');  // Pastikan dropdown ada
+  const menu = dropdown.querySelector('.menu-by-object');      // Mendapatkan elemen menu
+  menu.innerHTML = ''; // Reset isi menu sebelum diisi ulang
 
-  const newSelect = select.cloneNode(true);
-  select.parentNode.replaceChild(newSelect, select);
-
-  const freshSelect = dropdown.querySelector('.select-by-object');
-  const selected = dropdown.querySelector('.selected-object');
-  const caret = dropdown.querySelector('.caret');
-
-  menu.innerHTML = '';
-
+  // Menambahkan item "Show All Objects"
   const allItem = document.createElement('li');
-  allItem.textContent = 'Show All Object';
+  allItem.textContent = 'Show All Objects';
   allItem.classList.add('active-view');
   menu.appendChild(allItem);
 
+  // Loop untuk menambahkan grup atau objek dalam model GLB
   model.children.forEach((child, i) => {
     if (child.isMesh || child.type === "Group" || child.type === "Object3D") {
       const li = document.createElement('li');
-      li.textContent = child.name || `Object ${i + 1}`;
-      li.dataset.objectName = child.name || `Object_${i + 1}`;
+      
+      // Mengubah nama objek dengan mengganti _ dengan spasi
+      const formattedName = (child.name || `Group ${i + 1}`).replace(/_/g, ' ');  // Ganti _ dengan spasi
+      
+      li.textContent = formattedName; // Menampilkan nama grup yang telah diformat
+      li.dataset.objectName = child.name || `Group_${i + 1}`; // Menyimpan nama grup asli
       menu.appendChild(li);
     }
   });
 
+  // Mengambil semua opsi dalam menu
   const options = menu.querySelectorAll('li');
 
-  freshSelect.addEventListener('click', () => {
-    caret.classList.toggle('caret-rotate');
-    menu.classList.toggle('buka-menu');
-  });
-
+  // Menambahkan event listener untuk menu dropdown
   options.forEach(option => {
     option.addEventListener('click', () => {
+      // Menyorot objek yang dipilih
+      const chosen = option.dataset.objectName || 'default';
+      if (option.innerText === 'Show All Objects') {
+        isolateObjectByName('default'); // Tampilkan semua objek
+      } else {
+        isolateObjectByName(chosen); // Fokus pada objek yang dipilih
+      }
 
-      selected.innerText = option.innerText;
-      selected.classList.add("text-fade-in");
-      setTimeout(() => selected.classList.remove("text-fade-in"), 300);
+      // Update UI setelah klik
+      // const selected = dropdown.querySelector('.selected-object');
+      // selected.innerText = option.innerText;
+      // selected.classList.add("text-fade-in");
+      // setTimeout(() => selected.classList.remove("text-fade-in"), 300);
 
-      caret.classList.remove('caret-rotate');
-      menu.classList.remove('buka-menu');
+      // Menutup menu setelah memilih
+      // const caret = dropdown.querySelector('.caret');
+      // caret.classList.remove('caret-rotate');
+      // menu.classList.remove('buka-menu');
 
       options.forEach(opt => opt.classList.remove('active-view'));
       option.classList.add('active-view');
-
-      const chosen = option.dataset.objectName || 'default';
-      if (option.innerText === 'Show All Object') {
-        isolateObjectByName('default');
-      } else {
-        isolateObjectByName(chosen);
-      }
     });
   });
 
-  window.onclick = (e) => {
-    if (!dropdown.contains(e.target)) {
-      caret.classList.remove('caret-rotate');
-      menu.classList.remove('buka-menu');
-    }
-  };
-
-  selected.innerText = "Show All Object";
-  options.forEach(opt => opt.classList.remove('active-view'));
-  if (allItem) allItem.classList.add('active-view');
+  // Menutup menu ketika area luar menu diklik
+  // window.onclick = (e) => {
+  //   if (!dropdown.contains(e.target)) {
+  //     const caret = dropdown.querySelector('.caret');
+  //     caret.classList.remove('caret-rotate');
+  //     menu.classList.remove('buka-menu');
+  //   }
+  // };
 }
 
 // === CLOSE POPUP 2, 4, 6, 7 SAAT DROPDOWN DIKLIK ===

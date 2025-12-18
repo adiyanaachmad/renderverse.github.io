@@ -96,7 +96,7 @@ maximizeBtn.addEventListener("click", toggleFullscreen);
 
 const setgToggle = document.getElementById('setg-toggle');
 const setgContainer = document.getElementById('setpi');
-const cardBottomContainer = document.querySelector('.card-bottom-container');
+const cardBottomContainer = document.querySelector('.card-object-r');
 const toggleIcon = document.getElementById('toggle-icon');
 
 setgToggle.addEventListener('click', function () {
