@@ -489,13 +489,13 @@
     font-size: 1.1rem;
     text-transform: uppercase;
     font-weight: 600;
-    margin: 0px 0px 8px 0px;
+    margin: 0px 0px 8px 0px!important;
 }
 
 .status {
     color: #cdd5e0;
     font-size: 0.9rem;
-    margin: 0;
+    margin: 0!important;
 }
 
 .btn-arrow {
