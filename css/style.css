@@ -302,6 +302,18 @@ main {
   overflow: hidden;
 }
 
+.single-card {
+  background-color: #1e2a3a;
+  color: #ffff;
+  border-radius: 8px;
+  /* padding: 21px 12px; */
+  flex: 1 1 30%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 .bloom-card-header,
 .particle-card-header {
   display: flex;
@@ -617,9 +629,28 @@ main {
     padding: 0;
   }
 
-  .menu-by-object {
-    bottom: 90px !important;
+  .menu-by-pc{
+    padding: 0.8em;
+    list-style: none;
+    background: #3b4b5d;
+    border-radius: 10px;
+    color: #cdd5e0;
+    text-align: left;
+    position: relative;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0px !important;
+    height: 160px;
+    transition: 500ms cubic-bezier(0.77, 0, 0.18, 1);
+    overflow-y: auto;
+    cursor: pointer;
+    pointer-events: auto;
+
   }
+
+  /* .menu-by-object {
+    bottom: 90px !important;
+  } */
 
   .hide-menu {
     display: block;
@@ -640,10 +671,10 @@ main {
     font-size: 30px;
   }
 
-  .menu-btn-rex {
+  /* .menu-btn-rex {
     width: 70px !important;
     height: 70px !important;
-  }
+  } */
 
   .card-container {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -694,7 +725,8 @@ main {
   }
 
   .material-card-container,
-  .particle-card-container {
+  .particle-card-container,
+  .single-object-container {
     background-color: #1e2a3a !important;
     min-width: 260px !important;
     margin-top: 20px;
@@ -864,6 +896,14 @@ main {
   }
 
   .profile-card {
+    background-color: #1e2a3a;
+    border-radius: 10px;
+    padding: 22px 20px;
+    text-transform: uppercase;
+    zoom: .8;
+  }
+
+  /* .profile-card {
     position: fixed;
     background: #3b4b5d;
     bottom: 20px;
@@ -875,7 +915,7 @@ main {
     min-width: 238px;
     zoom: .8;
     transition: 0.3s;
-  }
+  } */
 
 }
 
@@ -941,6 +981,11 @@ main {
     padding-bottom: 0px;
     zoom: .6;
     text-transform: uppercase;
+  }
+
+  .menu-btn-rex{
+    width: 85px!important;
+    height: 96px!important;
   }
 
   .title-btn{
@@ -1049,6 +1094,28 @@ main {
     gap: 10px !important;
     transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
     opacity: 0;
+  }
+
+  .menu-by-object {
+      padding: 0.8em;
+      list-style: none;
+      background: #1e2a3a;
+      border-radius: 10px;
+      color: #cdd5e0;
+      text-align: left;
+      position: relative;
+      font-size: 16px;
+      font-weight: 500;
+      min-width: 200px!important;
+      /* width: 12.8rem; */
+      height: 140px;
+      zoom: .6;
+      /* opacity: 1; */
+      margin: 0px !important;
+      transition: 500ms cubic-bezier(0.77, 0, 0.18, 1);
+      overflow-y: auto;
+      cursor: pointer;
+      pointer-events: auto;
   }
 
   .quality-card-container-bottom {

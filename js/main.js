@@ -1665,69 +1665,105 @@ function removeActiveBottom() {
   });
 }
 
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const gainNode = audioContext.createGain();
+gainNode.gain.value = 5.0;
+
+gainNode.connect(audioContext.destination);
+
+// 4. Memuat file suara
+const clickSound = new Audio('sounds/684505__saha213131__click.mp3');
+clickSound.crossOrigin = "anonymous";
+
+let source;
+clickSound.addEventListener('canplaythrough', () => {
+  source = audioContext.createMediaElementSource(clickSound);
+  source.connect(gainNode);
+});
+
+function playSoundEffect() {
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+  clickSound.currentTime = 0;
+  clickSound.play().catch(error => {
+    console.error('Gagal memutar sound:', error);
+  });
+}
+
+
 function populateObjectDropdown(model) {
-  const dropdown = document.querySelector('.card-object-r');  // Pastikan dropdown ada
-  const menu = dropdown.querySelector('.menu-by-object');      // Mendapatkan elemen menu
-  menu.innerHTML = ''; // Reset isi menu sebelum diisi ulang
+  // 1. Ambil semua menu dari seluruh dropdown sekaligus agar bisa disinkronkan secara global
+  const allMenus = document.querySelectorAll('.card-object-r .menu-by-object, .single-card .menu-by-pc');
 
-  // Menambahkan item "Show All Objects"
-  const allItem = document.createElement('li');
-  allItem.textContent = 'Show All Objects';
-  allItem.classList.add('active-view');
-  menu.appendChild(allItem);
+  // Reset semua menu terlebih dahulu
+  allMenus.forEach(menu => {
+    menu.innerHTML = '';
+  });
 
-  // Loop untuk menambahkan grup atau objek dalam model GLB
+  // 2. Buat item "Show All Objects"
+  const allItemTemplate = document.createElement('li');
+  allItemTemplate.textContent = 'Show All Objects';
+  allItemTemplate.classList.add('active-view');
+  allItemTemplate.dataset.objectName = 'default'; // Tambahkan dataset agar mudah diidentifikasi
+
+  allMenus.forEach(menu => {
+    menu.appendChild(allItemTemplate.cloneNode(true));
+  });
+
+  // 3. Tambahkan objek dari model GLB ke semua menu
   model.children.forEach((child, i) => {
     if (child.isMesh || child.type === "Group" || child.type === "Object3D") {
       const li = document.createElement('li');
+      const formattedName = (child.name || `Group ${i + 1}`).replace(/_/g, ' ');
       
-      // Mengubah nama objek dengan mengganti _ dengan spasi
-      const formattedName = (child.name || `Group ${i + 1}`).replace(/_/g, ' ');  // Ganti _ dengan spasi
+      li.textContent = formattedName;
+      li.dataset.objectName = child.name || `Group_${i + 1}`;
       
-      li.textContent = formattedName; // Menampilkan nama grup yang telah diformat
-      li.dataset.objectName = child.name || `Group_${i + 1}`; // Menyimpan nama grup asli
-      menu.appendChild(li);
+      allMenus.forEach(menu => {
+        menu.appendChild(li.cloneNode(true));
+      });
     }
   });
 
-  // Mengambil semua opsi dalam menu
-  const options = menu.querySelectorAll('li');
+  // 4. Fungsi Sinkronisasi Global
+  // Fungsi ini sekarang akan mencari ke seluruh menu yang ada di variabel allMenus
+  function syncActiveView(chosenName) {
+    allMenus.forEach(menu => {
+      const options = menu.querySelectorAll('li');
+      options.forEach(option => {
+        // Cek berdasarkan dataset objectName
+        if (option.dataset.objectName === chosenName) {
+          option.classList.add('active-view');
+        } else {
+          option.classList.remove('active-view');
+        }
+      });
+    });
+  }
 
-  // Menambahkan event listener untuk menu dropdown
-  options.forEach(option => {
-    option.addEventListener('click', () => {
-      // Menyorot objek yang dipilih
-      const chosen = option.dataset.objectName || 'default';
-      if (option.innerText === 'Show All Objects') {
-        isolateObjectByName('default'); // Tampilkan semua objek
+  // 5. Tambahkan Event Listener ke semua LI di semua menu
+  allMenus.forEach(menu => {
+    menu.addEventListener('click', (event) => {
+      // Gunakan event delegation agar lebih efisien
+      const target = event.target.closest('li');
+      if (!target) return;
+
+      playSoundEffect();
+
+      const chosen = target.dataset.objectName;
+
+      // Jalankan fungsi isolasi objek
+      if (chosen === 'default') {
+        isolateObjectByName('default');
       } else {
-        isolateObjectByName(chosen); // Fokus pada objek yang dipilih
+        isolateObjectByName(chosen);
       }
 
-      // Update UI setelah klik
-      // const selected = dropdown.querySelector('.selected-object');
-      // selected.innerText = option.innerText;
-      // selected.classList.add("text-fade-in");
-      // setTimeout(() => selected.classList.remove("text-fade-in"), 300);
-
-      // Menutup menu setelah memilih
-      // const caret = dropdown.querySelector('.caret');
-      // caret.classList.remove('caret-rotate');
-      // menu.classList.remove('buka-menu');
-
-      options.forEach(opt => opt.classList.remove('active-view'));
-      option.classList.add('active-view');
+      // Sinkronkan class active-view di SEMUA menu
+      syncActiveView(chosen);
     });
   });
-
-  // Menutup menu ketika area luar menu diklik
-  // window.onclick = (e) => {
-  //   if (!dropdown.contains(e.target)) {
-  //     const caret = dropdown.querySelector('.caret');
-  //     caret.classList.remove('caret-rotate');
-  //     menu.classList.remove('buka-menu');
-  //   }
-  // };
 }
 
 // === CLOSE POPUP 2, 4, 6, 7 SAAT DROPDOWN DIKLIK ===

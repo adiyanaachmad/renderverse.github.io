@@ -90,6 +90,12 @@ document.addEventListener("DOMContentLoaded", function () {
       toggleBtn: document.getElementById("particleVisible"),
       icon: document.getElementById("particleVisible").querySelector("i"),
       isExpanded: false
+    },
+    single: {
+      container: document.querySelector(".single-object-container"),
+      toggleBtn: document.getElementById("singleVisible"),
+      icon: document.getElementById("singleVisible").querySelector("i"),
+      isExpanded: false
     }
   };
 
@@ -109,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (key === "material") height = "335px";
     if (key === "bloom") height = "440px";
     if (key === "particle") height = "270px";
+    if (key === "single") height = "240px";
 
     panel.container.style.height = height;
     panel.icon.classList.remove("fa-plus");
@@ -160,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
   panels.camera.toggleBtn.addEventListener("click", () => togglePanel("camera"));
   panels.material.toggleBtn.addEventListener("click", () => togglePanel("material"));
   panels.particle.toggleBtn.addEventListener("click", () => togglePanel("particle"));
+  panels.single.toggleBtn.addEventListener("click", () => togglePanel("single"));
 
   openBtn.addEventListener("click", () => {
     panelSetting.style.display = "block";
