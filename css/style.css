@@ -1242,9 +1242,9 @@ main {
   width: 100%;
   }
 
-  .close-ads{
+  /* .close-ads{
     background-color: #e62d2d!important;
-  }
+  } */
 
   .title-model h2{
     padding: 30px 20px!important;
@@ -1379,6 +1379,13 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .icon-switch{
+    position: relative;
+    font-size: 30px;
+    justify-content: center;
+    bottom: -30px;
+  }
+
   .material-card {
     display: flex;
     gap: .5rem;
@@ -1453,10 +1460,16 @@ main {
     cursor: pointer;
   }
   .material-card{
+    display: flex;
     padding: 0px;
     background-color: transparent;
   }
-
+  .item-container{
+    padding-top: 20px;
+  }
+  .icon-switch{
+    display: none;
+  }
 }
 
 @media screen and (max-width: 360px) {

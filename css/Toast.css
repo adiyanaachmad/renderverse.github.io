@@ -150,6 +150,14 @@
     z-index: 9;
 }
 
+.minimize-des {
+  display: block; 
+}
+
+.minimize-des.hidden {
+  display: none; 
+}
+
 .bottom-select-ads {
     position: fixed;
     bottom: 10px;

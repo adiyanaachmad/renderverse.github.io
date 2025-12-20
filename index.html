@@ -18,8 +18,9 @@
     <link rel="stylesheet" href="css/style.css" />
 
     <!-- DEFAULT ALL ICON  -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-regular.css">
+    <!-- <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-regular.css">
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-solid.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0-beta3/css/all.min.css"> -->
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/all.css">
     <link rel="icon" type="image/x-icon" href="logo/BrowserLogo.webp">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
@@ -976,180 +977,185 @@
         <div class="title-btn">
           <button class="menu-btn-rex set-jut active-exf sound-init" id="set-adsl">
             <div class="line-effect"></div>
-            <i class="fa-duotone fa-regular fa-lightbulb-gear" id="toggle-icon-ads"></i>
+            <i class="fa-duotone fa-solid fa-circle-bolt" id="toggle-icon-ads"></i>
           </button>
           <button class="menu-btn-rex set-jut sound-init" id="minimize-ads">
             <div class="line-effect"></div>
-            <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center"></i>
+            <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center" id="btn-minim"></i>
           </button>
         </div>
       </div>
-      <div class="ads-container">
-        <div class="camera-card-container-bottom" id="cameraCard">
-          <div class="mesh-col-1">
-            <div class="camera-card-header">
-              <h2>Camera</h2>
-              <div class="close-mesh-data sound-init" id="cameraVisible"
-                style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-minus"></i></div>
+      <div class="minimize-des">
+        <div class="ads-container">
+          <div class="camera-card-container-bottom" id="cameraCard">
+            <div class="mesh-col-1">
+              <div class="camera-card-header">
+                <h2>Camera</h2>
+                <div class="close-mesh-data sound-init" id="cameraVisible"
+                  style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-minus"></i></div>
+              </div>
+              <div class="camera-card">
+                <button class="per-mode active-camera sound-init">Perspective</button>
+                <button class="orto-mode sound-init">Ortographic</button>
+              </div>
+              <div class="camera-card-header">
+                <h2>Auto Rotate</h2>
+                <label class="switch">
+                  <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
+                  <span class="slider-ads"></span>
+                </label>
+              </div>
             </div>
-            <div class="camera-card">
-              <button class="per-mode active-camera sound-init">Perspective</button>
-              <button class="orto-mode sound-init">Ortographic</button>
+          </div>
+          <div class="card-mesh-bottom card-tri">
+            <div class="mesh-col-1">
+              <div class="card-header-mesh">
+                <h2>Statistics</h2>
+                <div class="open-legend sound-init" style="font-size: 18px; cursor: pointer; color: #fff;"><i
+                    class="fa-solid fa-plus"></i></div>
+              </div>
+
+              <div class="info-data-mesh">
+                <div class="total-count">0</div>
+                <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
+              </div>
+
+              <div class="progress-bar-mesh">
+                <div class="progress-triangles"></div>
+                <div class="progress-vertices"></div>
+                <div class="progress-edges"></div>
+                <div class="progress-meshes"></div>
+              </div>
             </div>
-            <div class="camera-card-header">
-              <h2>Auto Rotate</h2>
+
+            <div class="legend" id="viewlegend">
+              <div class="legend-container">
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="dot-mesh dot-triangles"></span>
+                    <p class="value">0</p>
+                  </div>
+                  <div class="legend-bottom-triangles">
+                    <span class="label">Triangles</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="dot-mesh dot-vertices"></span>
+                    <p class="value">0</p>
+                  </div>
+                  <div class="legend-bottom-vertices">
+                    <span class="label">Vertices</span>
+                  </div>
+                </div>
+
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="dot-mesh dot-edges"></span>
+                    <p class="value">0</p>
+                  </div>
+                  <div class="legend-bottom-edges">
+                    <span class="label">Edges</span>
+                  </div>
+                </div>
+
+                <div class="legend-item">
+                  <div class="legend-left">
+                    <span class="dot-mesh dot-meshes"></span>
+                    <p class="value">0</p>
+                  </div>
+                  <div class="legend-bottom-meshes">
+                    <span class="label">Object</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ads-effect" id="ads-allk">
+          <div class="card-mesh-bloom bloom-indi">
+            <div class="card-header-mesh">
+              <h2>Bloom Effect</h2>
               <label class="switch">
-                <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
+                <input type="checkbox" id="bloomToggleMobile" class="bloom-toggle sound-init">
                 <span class="slider-ads"></span>
               </label>
             </div>
-          </div>
-        </div>
-        <div class="card-mesh-bottom card-tri">
-          <div class="mesh-col-1">
-            <div class="card-header-mesh">
-              <h2>Statistics</h2>
-              <div class="open-legend sound-init" style="font-size: 18px; cursor: pointer; color: #fff;"><i
-                  class="fa-solid fa-plus"></i></div>
-            </div>
-
-            <div class="info-data-mesh">
-              <div class="total-count">0</div>
-              <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
-            </div>
-
-            <div class="progress-bar-mesh">
-              <div class="progress-triangles"></div>
-              <div class="progress-vertices"></div>
-              <div class="progress-edges"></div>
-              <div class="progress-meshes"></div>
-            </div>
-          </div>
-
-          <div class="legend" id="viewlegend">
-            <div class="legend-container">
-              <div class="legend-item">
-                <div class="legend-left">
-                  <span class="dot-mesh dot-triangles"></span>
-                  <p class="value">0</p>
-                </div>
-                <div class="legend-bottom-triangles">
-                  <span class="label">Triangles</span>
-                </div>
-              </div>
-              <div class="legend-item">
-                <div class="legend-left">
-                  <span class="dot-mesh dot-vertices"></span>
-                  <p class="value">0</p>
-                </div>
-                <div class="legend-bottom-vertices">
-                  <span class="label">Vertices</span>
-                </div>
-              </div>
-
-              <div class="legend-item">
-                <div class="legend-left">
-                  <span class="dot-mesh dot-edges"></span>
-                  <p class="value">0</p>
-                </div>
-                <div class="legend-bottom-edges">
-                  <span class="label">Edges</span>
-                </div>
-              </div>
-
-              <div class="legend-item">
-                <div class="legend-left">
-                  <span class="dot-mesh dot-meshes"></span>
-                  <p class="value">0</p>
-                </div>
-                <div class="legend-bottom-meshes">
-                  <span class="label">Object</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="ads-effect" id="ads-allk">
-        <div class="card-mesh-bloom bloom-indi">
-          <div class="card-header-mesh">
-            <h2>Bloom Effect</h2>
-            <label class="switch">
-              <input type="checkbox" id="bloomToggleMobile" class="bloom-toggle sound-init">
-              <span class="slider-ads"></span>
-            </label>
-          </div>
-          <!-- <div class="info-data-mesh">
-            <div class="total-fps">0</div>
-          </div> -->
-
-          <div class="bloom-gred">
-            <div class="bloom-card">
-              <div class="bloom-card-header">
-                <h2>Strength</h2>
-                <span class="bloom-value">2.5</span>
-              </div>
-              <div class="slider-bloom">
-                <input type="range" id="bloomStrengthMobile" class="bloom-strength sound-init" min="0" max="5" step="0.5"
-                  value="2.5">
-              </div>
-            </div>
-            <div class="bloom-card">
-              <div class="bloom-card-header">
-                <h2>Radius</h2>
-                <span class="bloom-value">0.5</span>
-              </div>
-              <div class="slider-bloom">
-                <input type="range" id="bloomRadiusMobile" class="bloom-radius sound-init" min="0" max="1.5" step="0.5"
-                  value="0.5">
-              </div>
-            </div>
-            <!-- <div class="bloom-card">
-              <div class="bloom-card-header">
-                <h2>Threshold</h2>
-                <span class="bloom-value">0.0</span>
-              </div>
-              <div class="slider-bloom">
-                <input type="range" id="bloomThresholdMobile" class="bloom-threshold sound-init" min="0" max="1" step="0.5"
-                  value="0.5">
-              </div>
+            <!-- <div class="info-data-mesh">
+              <div class="total-fps">0</div>
             </div> -->
-          </div>
-        </div>
-        <div class="material-card-container-ads" id="materialCard">
-          <div class="material-card-header">
-            <h2>Material</h2>
-            <div class="close-mesh-data sound-init" id="materialVisible"
-              style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-          </div>
-          <div class="grid-helper-none">
-            <div class="material-card">
-              <div class="card-select colourfull-material active-material sound-init">
-                <img src="img/DefaultMaterial.webp" alt="">
+
+            <div class="bloom-gred">
+              <div class="bloom-card">
+                <div class="bloom-card-header">
+                  <h2>Strength</h2>
+                  <span class="bloom-value">2.5</span>
+                </div>
+                <div class="slider-bloom">
+                  <input type="range" id="bloomStrengthMobile" class="bloom-strength sound-init" min="0" max="5" step="0.5"
+                    value="2.5">
+                </div>
               </div>
-              <div class="card-select solid-material sound-init">
-                <img src="img/PlasticMoldWorn.webp" alt="">
+              <div class="bloom-card">
+                <div class="bloom-card-header">
+                  <h2>Radius</h2>
+                  <span class="bloom-value">0.5</span>
+                </div>
+                <div class="slider-bloom">
+                  <input type="range" id="bloomRadiusMobile" class="bloom-radius sound-init" min="0" max="1.5" step="0.5"
+                    value="0.5">
+                </div>
               </div>
+              <!-- <div class="bloom-card">
+                <div class="bloom-card-header">
+                  <h2>Threshold</h2>
+                  <span class="bloom-value">0.0</span>
+                </div>
+                <div class="slider-bloom">
+                  <input type="range" id="bloomThresholdMobile" class="bloom-threshold sound-init" min="0" max="1" step="0.5"
+                    value="0.5">
+                </div>
+              </div> -->
             </div>
-            <div class="item-container">
-              <div class="all-effect-item border-top">
-                <div class="effect-left">
-                  <!-- <span class="dot-mesh dot-triangles"></span> -->
-                  <span class="label">Glass</span>
+          </div>
+          <div class="material-card-container-ads" id="materialCard">
+            <div class="material-card-header">
+              <h2>Material</h2>
+              <div class="close-mesh-data sound-init" id="materialVisible"
+                style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+            </div>
+            <div class="grid-helper-none">
+              <div class="material-card">
+                <div class="card-select colourfull-material active-material sound-init">
+                  <img src="img/DefaultMaterial.webp" alt="">
                 </div>
-                <div class="checkbox-wrapper-8 glass-effect">
-                  <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
-                  <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                <div class="icon-switch">
+                  <i class="fa-duotone fa-solid fa-arrow-up-arrow-down fa-rotate-90"></i>
+                </div>
+                <div class="card-select solid-material sound-init">
+                  <img src="img/PlasticMoldWorn.webp" alt="">
                 </div>
               </div>
-              <div class="all-effect-item border-bottom">
-                <div class="effect-left">
-                  <!-- <span class="dot-mesh dot-triangles"></span> -->
-                  <span class="label">Metallic</span>
+              <div class="item-container">
+                <div class="all-effect-item border-top">
+                  <div class="effect-left">
+                    <!-- <span class="dot-mesh dot-triangles"></span> -->
+                    <span class="label">Glass</span>
+                  </div>
+                  <div class="checkbox-wrapper-8 glass-effect">
+                    <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
+                    <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                  </div>
                 </div>
-                <div class="checkbox-wrapper-8 metalic-effect">
-                  <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
-                  <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                <div class="all-effect-item border-bottom">
+                  <div class="effect-left">
+                    <!-- <span class="dot-mesh dot-triangles"></span> -->
+                    <span class="label">Metallic</span>
+                  </div>
+                  <div class="checkbox-wrapper-8 metalic-effect">
+                    <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
+                    <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                  </div>
                 </div>
               </div>
             </div>

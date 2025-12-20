@@ -126,35 +126,34 @@ setAdsl.addEventListener('click', function () {
 
   // Toggle visibility of card-bottom-container
   if (adsContainer.classList.contains('active')) {
-    adsBottomContainer.style.display = 'none';  // Hide the card-bottom-container
-    toggleIconAds.classList.remove('fa-lightbulb-gear');      // Remove the gear icon
-    toggleIconAds.classList.add('fa-times');        // Add the close icon
+    adsBottomContainer.style.display = 'none';  
+    toggleIconAds.classList.remove('fa-circle-bolt');     
+    toggleIconAds.classList.add('fa-circle-xmark');        
   } else {
-    adsBottomContainer.style.display = 'flex'; // Show the card-bottom-container
-    toggleIconAds.classList.remove('fa-times');     // Remove the close icon
-    toggleIconAds.classList.add('fa-lightbulb-gear');          // Add the gear icon
+    adsBottomContainer.style.display = 'flex'; 
+    toggleIconAds.classList.remove('fa-circle-xmark');    
+    toggleIconAds.classList.add('fa-circle-bolt');          
   }
 });
 
-const minimizeAdsButton = document.getElementById('minimize-ads');
-const adsContainer1 = document.querySelector('.ads-container');
-const adsEffect = document.querySelector('.ads-effect');
-const minimizeIcon = minimizeAdsButton.querySelector('i');  // Menyimpan elemen ikon di tombol
+// Mendapatkan elemen tombol minimize dan container minimize-des
+const minimizeButton = document.getElementById('minimize-ads');
+const minimizeContainer = document.querySelector('.minimize-des');
+const minimizeIcon = document.getElementById('btn-minim');
 
-minimizeAdsButton.addEventListener('click', function () {
-  // Cek apakah ads-container dan ads-effect sedang tersembunyi
-  if (adsContainer1.style.display === 'none' && adsEffect.style.display === 'none') {
-    // Kembalikan ke posisi awal
-    adsContainer1.style.display = 'flex';
-    adsEffect.style.display = 'block';
-    minimizeIcon.classList.remove('fa-arrow-up-right-and-arrow-down-left'); // Menghapus ikon "maximize"
-    minimizeIcon.classList.add('fa-arrow-down-left-and-arrow-up-right');  // Menambahkan ikon "minimize"
+// Menambahkan event listener pada tombol minimize
+minimizeButton.addEventListener('click', function () {
+  // Mengecek apakah container minimize-des memiliki kelas 'hidden'
+  if (minimizeContainer.classList.contains('hidden')) {
+    // Jika sudah tersembunyi, tampilkan dan ubah ikon<i class="fa-duotone fa-solid fa-arrows-maximize"></i>
+    minimizeContainer.classList.remove('hidden');
+    minimizeIcon.classList.remove('fa-arrow-down-left-and-arrow-up-right-to-center');
+    minimizeIcon.classList.add('fa-arrows-maximize');
   } else {
-    // Sembunyikan ads-container dan ads-effect
-    adsContainer1.style.display = 'none';
-    adsEffect.style.display = 'none';
-    minimizeIcon.classList.remove('fa-arrow-down-left-and-arrow-up-right'); // Menghapus ikon "minimize"
-    minimizeIcon.classList.add('fa-arrow-up-right-and-arrow-down-left');  // Menambahkan ikon "maximize"
+    // Jika terlihat, sembunyikan dan ubah ikon
+    minimizeContainer.classList.add('hidden');
+    minimizeIcon.classList.remove('fa-arrows-maximize');
+    minimizeIcon.classList.add('fa-arrow-down-left-and-arrow-up-right-to-center');
   }
 });
 
@@ -180,9 +179,3 @@ btn.addEventListener('click', function() {
     // Toggle status
     isOpen = !isOpen;
 });
-
-const btnMini = document.getElementById('minimize-ads');
-const bottomAdsf = document.querySelector('.bottom-select-ads');
-const btnAdsm = document.getElementById('btn-adsm');
-// arrow-down-left-and-arrow-up-right-to-center##
-let isOpenM = false;  // Menandakan apakah bottom-select sudah terbuka atau belum
