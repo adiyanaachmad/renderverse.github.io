@@ -15,7 +15,7 @@
   overflow: hidden;
 }
 
-.camera-card-container-bottom{
+/* .camera-card-container-bottom{
   position: fixed;
   background-color: #3b4b5d;
   color: #fff;
@@ -29,6 +29,19 @@
   min-width: 250px;
   overflow: hidden;
   zoom: .7;
+} */
+
+.camera-card-container-bottom{
+  position: relative;
+    background-color: #1e2a3a;
+    color: #fff;
+    padding: 20px;
+    width: 0;
+    border-radius: 10px;
+    flex: 0 0 auto;
+    min-width: 220px;
+    overflow: hidden;
+    zoom: .6;
 }
 
 .Material-card-container-bottom{
@@ -48,7 +61,7 @@
   overflow: hidden;
   zoom: .7;
 }
-
+/* 
 .card-mesh-bottom{
   position: relative;
   background-color: #3b4b5d;
@@ -59,17 +72,27 @@
   bottom: 215px!important;
   border-radius: 10px 10px 0px 0px;
   zoom: .7;
+} */
+
+.card-mesh-bottom,
+.material-card-container-ads{
+  position: relative;
+    background-color: #1e2a3a;
+    padding: 20px;
+    left: 0;
+    color: #fff;
+    width: 100%;
+    border-radius: 10px;
+    zoom: .6;
 }
 
 .card-mesh-bloom{
   position: relative;
-  background-color: #3b4b5d;
+  background-color: #1e2a3a;
   padding: 20px;
-  right: 0;
-  min-width: 250px;
-  bottom: 60px!important;
+  min-width: 220px; 
   border-radius: 10px;
-  zoom: .7;
+  zoom: .6;
 }
 
 .card-header-mesh,
@@ -131,7 +154,7 @@
 .info-data-mesh {
     text-align: center;
     align-items: center;
-    background-color: #1e2a3a;
+    background-color: #3b4b5d;
     border-radius: 8px;
     padding: 14px;
     display: flex;
@@ -144,7 +167,7 @@
     gap: 3px;
     padding: 20px;
     margin-top: 10px;
-    background-color: #1e2a3a;
+    background-color: #3b4b5d;
     border-radius: 8px;
 }
 

@@ -2374,7 +2374,7 @@ function updateSliderBackground(slider) {
   const percent = ((val - min) / (max - min)) * 100;
 
   let activeColor = '#2ecc71'; // default
-  let backgroundColor = '#1e2a3a'; // default
+  let backgroundColor = '#3b4b5d'; // default
 
   // Cek konteks slider
   if (slider.closest('.panel-setting-info')) {
@@ -2382,7 +2382,7 @@ function updateSliderBackground(slider) {
     backgroundColor = '#1e2a3a';
   } else if (slider.closest('.bloom-indi')) {
     activeColor = '#2ecc71'; // warna untuk card-wrapper
-    backgroundColor = '#3b4b5d';
+    backgroundColor = '#1e2a3a';
   }
 
   slider.style.background = `linear-gradient(to right, ${activeColor} ${percent}%, ${backgroundColor} ${percent}%)`;
@@ -2563,12 +2563,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleLegendBtn = document.querySelector(".open-legend");
   const legend = document.getElementById("viewlegend");
   const cardMesh = document.querySelector(".card-mesh-bottom");
+  const cardInit = document.querySelector(".camera-card-container-bottom");
   const icon = toggleLegendBtn.querySelector("i");
 
   // 🔹 Kondisi awal (legend tertutup)
   legend.style.display = "none";
   legend.style.pointerEvents = "none";
   cardMesh.style.width = "45%";
+  cardInit.style.display = "block";
   icon.classList.remove("fa-minus");
   icon.classList.add("fa-plus");
 
@@ -2581,6 +2583,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isLegendOpen) {
       // 🔹 Buka legend
       cardMesh.style.width = "93%";
+      cardInit.style.display = "none";
       legend.style.display = "flex";
       legend.style.pointerEvents = "auto";
 
@@ -2589,6 +2592,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       // 🔹 Tutup legend
       cardMesh.style.width = "45%";
+      cardInit.style.display = "block";
       legend.style.display = "none";
       legend.style.pointerEvents = "none";
 
@@ -2614,6 +2618,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // tutup legend
       isLegendOpen = false;
       cardMesh.style.width = "45%";
+      cardInit.style.display = "block";
       legend.style.display = "none";
       legend.style.pointerEvents = "none";
 

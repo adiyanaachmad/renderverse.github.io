@@ -320,6 +320,18 @@
     transition: .3s;
 }
 
+.slider-ads {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #3b4b5d;
+    border-radius: 34px;
+    transition: .3s;
+}
+
 .slider-cam {
     position: absolute;
     cursor: pointer;
@@ -333,7 +345,8 @@
 }
 
 .slider:before,
-.slider-cam::before {
+.slider-cam::before,
+.slider-ads::before {
     position: absolute;
     content: "";
     height: 16px;
@@ -346,11 +359,13 @@
 }
 
 input:checked+.slider,
-input:checked+.slider-cam {
+input:checked+.slider-cam,
+input:checked+.slider-ads {
     background-color: #2ecc71;
 }
 
 input:checked+.slider:before,
-input:checked+.slider-cam:before {
+input:checked+.slider-cam:before,
+input:checked+.slider-ads:before {
     transform: translateX(16px);
 }

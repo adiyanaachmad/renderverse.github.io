@@ -857,6 +857,7 @@ main {
   .bottom-nav-material,
   .bottom-nav-out,
   .bottom-select,
+  .bottom-select-ads,
   .bottom-data,
   .bottom-bloom,
   .bottom-nav,
@@ -952,7 +953,7 @@ main {
     opacity: 1;
   }
 
-  .card-mesh-bottom {
+  /* .card-mesh-bottom {
     position: static;
     background: transparent;
     padding: 0;
@@ -963,7 +964,7 @@ main {
     justify-content: space-between;
     gap: 15px;
     zoom: 1;
-  }
+  } */
 
   .title-model{
     padding-top: 0px;
@@ -1032,8 +1033,9 @@ main {
   }
 
   .card-mesh-bottom {
-    width: 45%;
-    padding-bottom: 89px !important;
+    width: 100%!important;
+    display: flex!important;
+    /* padding-bottom: 89px !important; */
     transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
@@ -1047,9 +1049,12 @@ main {
     background: #1e2a3a;
     border-radius: 10px;
     overflow-x: auto;
-    padding: 16px;
+    padding-top: 0px!important;
+    padding-bottom: 0px!important;
+    padding-right: 0px!important;
+    padding-left: 16px!important;
     zoom: .7;
-    height: 274px!important;
+    height: 305px!important;
     font-size: 22px !important;
     color: #fff;
     transition: opacity 0.3s ease;
@@ -1072,6 +1077,10 @@ main {
   .hide-menu-1 {
     display: none;
     opacity: 0;
+  }
+
+  .item-container{
+    padding-top: 20px;
   }
 
   .all-effect {
@@ -1179,7 +1188,8 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100px;
+    height: 45px;
+    color: #fff;
     padding: 8px;
     border-radius: 8px;
     border-bottom: 0px !important;
@@ -1198,7 +1208,7 @@ main {
     border-radius: 8px;
     border-bottom: 0px !important;
     background-color: #3b4b5d;
-    width: 215px;
+    width: 100%;
     /* padding-bottom: 5px;
     padding-top: 5px;
     padding-right: 16px;
@@ -1211,9 +1221,10 @@ main {
 
   .bloom-gred {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    overflow-x: auto !important;
+    flex-direction: column;
+    /* justify-content: space-between;
+    gap: 15px; */
+    /* overflow-x: auto !important; */
   }
 
   .legend-left,
@@ -1221,6 +1232,22 @@ main {
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+
+  .legend-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr)!important;
+  gap: 10px!important;
+  overflow-x: auto;
+  width: 100%;
+  }
+
+  .close-ads{
+    background-color: #e62d2d!important;
+  }
+
+  .title-model h2{
+    padding: 30px 20px!important;
   }
 
   .profile-card {
@@ -1272,11 +1299,19 @@ main {
     transform: translateX(18px)!important;
   }
 
-  .card-mesh-bloom{
+  /* .card-mesh-bloom{
     right: 0px!important;
     padding-bottom: 75px!important;
     width: 93%;
     overflow: hidden;
+  } */
+
+  .bloom-card{
+    background-color: #3b4b5d!important;
+  }
+
+  .bloom-value{
+    background-color: #1e2a3a!important;
   }
 
   .header-animate-speed{
@@ -1311,7 +1346,7 @@ main {
   }
 
   .card-select img {
-    height: 88px;
+    height: 80px;
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
@@ -1335,13 +1370,19 @@ main {
     border: 5px solid #3b4b5d;
     transition: all .3s ease !important;
     overflow: hidden;
-    aspect-ratio: 1 / 1;
+    /* aspect-ratio: 1 / 1; */
     padding: 8px;
+  }
+
+  .grid-helper{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .material-card {
     display: flex;
     gap: .5rem;
+    background-color: #1e2a3a;
     justify-content: space-between;
     flex-wrap: nowrap;
   }
@@ -1350,9 +1391,9 @@ main {
     width: 320px!important;
   }
 
-  .camera-card-container-bottom{
+  /* .camera-card-container-bottom{
     padding-bottom: 75px!important;
-  }
+  } */
 
   .camera-card-container {
     height: 165px !important;
@@ -1360,7 +1401,7 @@ main {
   }
 
   .camera-card {
-    background-color: #1e2a3a !important;
+    background-color: #3b4b5d !important;
     padding: 10px !important;
     margin-bottom: 0px;
     display: grid;
@@ -1404,6 +1445,16 @@ main {
   .title-model,
   .title-model-2{
   zoom: .4;
+  }
+  .card-select img {
+    height: 85px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .material-card{
+    padding: 0px;
+    background-color: transparent;
   }
 
 }

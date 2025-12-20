@@ -150,6 +150,25 @@
     z-index: 9;
 }
 
+.bottom-select-ads {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    box-sizing: border-box;
+    align-items: center;
+    width: 95%;
+    padding: 20px 15px;
+    border-radius: 10px;
+    gap: 5px;
+    opacity: 0;
+    transition: all 0.5s ease;
+    background-color: #3b4b5d;
+    z-index: 9;
+}
+
 .hid{
     display: none;
 }
@@ -197,7 +216,24 @@
     display: flex; /* Atau gunakan flex, tergantung layout */
 }
 
+.ads-effect{
+    display: none;
+}
+
+.ads-effect.active {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
 .bottom-select.show {
+    display: block!important;
+    opacity: 1;
+    left: 50%;
+}
+
+.bottom-select-ads.show {
     display: block!important;
     opacity: 1;
     left: 50%;
@@ -266,6 +302,14 @@
 .menu-by-pc::-webkit-scrollbar{
     display: none;
     position: absolute;
+}
+
+.border-top{
+    border-radius: 10px 10px 0px 0px;
+}
+
+.border-bottom{
+    border-radius: 0px 0px 10px 10px;
 }
 
 .card-bottom-container::-webkit-scrollbar-thumb,
@@ -668,7 +712,12 @@
     transition: 0.5s;
 }
 
-.card-object-r{
+/* .init-slider{
+    background-color: ;
+} */
+
+.card-object-r,
+.ads-container{
     position: relative;
     display: flex;
     justify-content: space-between;
