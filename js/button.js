@@ -136,25 +136,31 @@ setAdsl.addEventListener('click', function () {
   }
 });
 
-// Mendapatkan elemen tombol minimize dan container minimize-des
+// const minimizeButton = document.getElementById('minimize-ads');<i class="fa-duotone fa-regular fa-cube"></i>
+// const minimizeContainer = document.querySelector('.minimize-des');
+// const minimizeIcon = document.getElementById('btn-minim');
+
+// minimizeButton.addEventListener('click', function () {
+//     const isHidden = minimizeContainer.classList.toggle('hidden');
+
+//     if (isHidden) {
+//         minimizeIcon.classList.replace('fa-arrow-down-left-and-arrow-up-right-to-center', 'fa-arrow-down-left-and-arrow-up-right-to-center##');
+//     } else {
+//         minimizeIcon.classList.replace('fa-arrow-down-left-and-arrow-up-right-to-center##', 'fa-arrow-down-left-and-arrow-up-right-to-center');
+//     }
+// });
+
 const minimizeButton = document.getElementById('minimize-ads');
 const minimizeContainer = document.querySelector('.minimize-des');
 const minimizeIcon = document.getElementById('btn-minim');
 
-// Menambahkan event listener pada tombol minimize
 minimizeButton.addEventListener('click', function () {
-  // Mengecek apakah container minimize-des memiliki kelas 'hidden'
-  if (minimizeContainer.classList.contains('hidden')) {
-    // Jika sudah tersembunyi, tampilkan dan ubah ikon<i class="fa-duotone fa-solid fa-arrows-maximize"></i>
-    minimizeContainer.classList.remove('hidden');
-    minimizeIcon.classList.remove('fa-arrow-down-left-and-arrow-up-right-to-center');
-    minimizeIcon.classList.add('fa-arrows-maximize');
-  } else {
-    // Jika terlihat, sembunyikan dan ubah ikon
-    minimizeContainer.classList.add('hidden');
-    minimizeIcon.classList.remove('fa-arrows-maximize');
-    minimizeIcon.classList.add('fa-arrow-down-left-and-arrow-up-right-to-center');
-  }
+    // 1. Toggle class hidden pada container
+    minimizeContainer.classList.toggle('hidden');
+
+    // 2. Toggle class rotasi pada ikon
+    // Jika ada class 'rotate-180' maka dihapus, jika tidak ada maka ditambah
+    minimizeIcon.classList.toggle('rotate-180');
 });
 
 

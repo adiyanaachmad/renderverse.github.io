@@ -724,6 +724,15 @@
     background-color: ;
 } */
 
+#btn-minim {
+    transition: transform 0.3s ease-in-out;
+    display: inline-block;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
 .card-object-r,
 .ads-container{
     position: relative;
