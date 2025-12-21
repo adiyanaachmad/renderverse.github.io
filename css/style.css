@@ -1048,13 +1048,13 @@ main {
     /* justify-content: flex-start; */
     background: #1e2a3a;
     border-radius: 10px;
-    overflow-x: auto;
+    overflow-y: auto;
     padding-top: 0px!important;
     padding-bottom: 0px!important;
     padding-right: 0px!important;
     padding-left: 16px!important;
     zoom: .7;
-    height: 307px!important;
+    max-height: 305px!important;
     font-size: 22px !important;
     color: #fff;
     transition: opacity 0.3s ease;
