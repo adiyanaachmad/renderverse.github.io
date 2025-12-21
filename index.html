@@ -975,13 +975,13 @@
           </div>
         </div>
         <div class="title-btn">
-          <button class="menu-btn-rex set-jut active-exf sound-init" id="set-texture">
+          <button class="menu-btn-rex set-jut active-exf sound-init sehid" id="set-texture">
             <div class="line-effect"></div>
             <i class="fa-duotone fa-solid fa-image" id="toggle-icon-texture"></i>
           </button>
           <button class="menu-btn-rex set-jut active-exf sound-init" id="set-adsl">
             <div class="line-effect"></div>
-            <i class="fa-duotone fa-solid fa-circle-bolt" id="toggle-icon-ads"></i>
+            <i class="fa-solid fa-bolt-lightning" id="toggle-icon-ads"></i>
           </button>
           <button class="menu-btn-rex set-jut sound-init" id="minimize-ads">
             <div class="line-effect"></div>
@@ -1164,18 +1164,28 @@
             </div>
           </div>
         </div>
-        <div class="texture-iji">
-          <div class="texture-card-container-bottom" id="cameraCard">
+        <div class="texture-iji sehid">
+          <div class="animate-wrapper bloom-indi">
             <div class="mesh-col-1">
-              <div class="camera-card-header">
-                <h2>Texture Quality</h2>
-                <div class="close-mesh-data sound-init" id="cameraVisible"
-                  style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i></div>
+              <div class="header-animate-speed">
+                <h3>Texture Quality</h3>
               </div>
-              <div class="texture-card">
-                <button class="active-texture sound-init">LOW</button>
-                <button class="sound-init">MEDIUM</button>
-                <button class="sound-init">HIGH</button>
+              <div class="quality-card-container-bottom" id="cameraCard">
+                <div class="camera-card-particle">
+                  <button class="active-particle sound-init">LOW</button>
+                  <button class="sound-init">MEDIUM</button>
+                  <button class="sound-init">HIGH</button>
+                </div>
+              </div>
+            </div>
+            <div class="particle-card">
+              <div class="particle-card-header">
+                <h2>Speed</h2>
+                <span class="particle-value">5</span>
+              </div>
+              <div class="slider-bloom">
+                <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
+                  value="5">
               </div>
             </div>
           </div>

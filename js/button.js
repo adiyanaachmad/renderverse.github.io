@@ -127,12 +127,12 @@ setAdsl.addEventListener('click', function () {
   // Toggle visibility of card-bottom-container
   if (adsContainer.classList.contains('active')) {
     adsBottomContainer.style.display = 'none';  
-    toggleIconAds.classList.remove('fa-circle-bolt');     
-    toggleIconAds.classList.add('fa-circle-xmark');        
+    toggleIconAds.classList.remove('fa-bolt-lightning');     
+    toggleIconAds.classList.add('fa-video');        
   } else {
     adsBottomContainer.style.display = 'flex'; 
-    toggleIconAds.classList.remove('fa-circle-xmark');    
-    toggleIconAds.classList.add('fa-circle-bolt');          
+    toggleIconAds.classList.remove('fa-video');    
+    toggleIconAds.classList.add('fa-bolt-lightning');      
   }
 });
 
