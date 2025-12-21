@@ -211,7 +211,7 @@
 
 #btn-icon.rotated {
     transform: rotate(180deg);
-    transition: transform 0.3s ease;
+    /* transition: transform 0.3s ease; */
 }
 
 .setg-container{
@@ -229,6 +229,13 @@
 }
 
 .ads-effect.active {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.texture-iji {
     position: relative;
     display: flex;
     justify-content: space-between;

@@ -493,7 +493,8 @@ main {
   border-radius: 10px;
 }
 
-.camera-card {
+.camera-card,
+.texture-card {
   display: flex;
   align-items: center;
   background-color: #3b4b5d;
@@ -527,7 +528,8 @@ main {
 .camera-card button,
 .material-card-init button,
 .camera-card-quality button,
-.camera-card-particle button {
+.camera-card-particle button,
+.texture-card button {
   padding: 15px 10px;
   background: none;
   border: none;
@@ -1127,6 +1129,10 @@ main {
       pointer-events: auto;
   }
 
+  .texture-card-container-bottom{
+    margin-top: 20px;
+  }
+
   .quality-card-container-bottom {
     flex: 0.95;
     margin-top: 0px !important;
@@ -1414,6 +1420,14 @@ main {
     display: grid;
   }
 
+  .texture-card {
+    background-color: #3b4b5d !important;
+    padding: 10px !important;
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+  }
+
   .camera-card-quality,
   .camera-card-particle {
     background-color: #1e2a3a !important;
@@ -1422,7 +1436,8 @@ main {
 
   .camera-card button,
   .camera-card-quality button,
-  .camera-card-particle button {
+  .camera-card-particle button,
+  .texture-card button {
     font-size: 18px;
   }
 
