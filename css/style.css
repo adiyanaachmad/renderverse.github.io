@@ -1044,7 +1044,6 @@ main {
     margin-top: 0px !important;
     display: none;
     pointer-events: auto;
-    box-sizing: border-box !important;
     /* flex-direction: column; */
     /* justify-content: flex-start; */
     background: #1e2a3a;
