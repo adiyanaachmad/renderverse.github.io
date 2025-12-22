@@ -238,8 +238,12 @@
 .texture-iji {
     position: relative;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     gap: 8px;
+}
+
+.texture-width{
+    width: 100%!important;
 }
 
 .bottom-select.show {
@@ -786,6 +790,25 @@
     background-color: #739eb2;
     color: #fff;
     font-weight: 500;
+}
+
+.texture-size{
+    width: 100%;
+}
+
+.shadow-advance{
+    background-color: #1e2a3a;
+    border-radius: 10px;
+    padding: 20px;
+    zoom: .5;
+    width: 0;
+    min-width: 280px;
+}
+
+.shadow-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .text-fade-in {
