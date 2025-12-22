@@ -1174,6 +1174,12 @@ function updateActiveMaterialClassByMode(mode) {
 document.querySelectorAll('.solid-material').forEach(btn => {
   btn.addEventListener('click', () => {
     fadeTransitionMaterial('solid');
+    
+    // Update icon opacity on selection
+    const iconSwitch = document.querySelector('.icon-switch i');
+    iconSwitch.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
+    iconSwitch.style.setProperty('--fa-primary-opacity', '0.4');
+    iconSwitch.style.setProperty('--fa-secondary-opacity', '1');
   });
 });
 
@@ -1221,6 +1227,12 @@ document.querySelectorAll('.colourfull-material').forEach(btn => {
     isInSolidMode = false;
     updateActiveMaterialClassByMode('colourfull');
     fadeTransitionMaterial('colourfull');
+    
+    // Update icon opacity on selection
+    const iconSwitch = document.querySelector('.icon-switch i');
+    iconSwitch.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
+    iconSwitch.style.setProperty('--fa-primary-opacity', '1');
+    iconSwitch.style.setProperty('--fa-secondary-opacity', '0.4');
   });
 });
 

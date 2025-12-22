@@ -154,14 +154,28 @@ const minimizeButton = document.getElementById('minimize-ads');
 const minimizeContainer = document.querySelector('.minimize-des');
 const minimizeIcon = document.getElementById('btn-minim');
 
-minimizeButton.addEventListener('click', function () {
-    // 1. Toggle class hidden pada container
-    minimizeContainer.classList.toggle('hidden');
+// Awal nilai opacity
+const initialPrimaryOpacity = '1';
+const initialSecondaryOpacity = '0.4';
 
-    // 2. Toggle class rotasi pada ikon
-    // Jika ada class 'rotate-180' maka dihapus, jika tidak ada maka ditambah
-    minimizeIcon.classList.toggle('rotate-180');
+minimizeButton.addEventListener('click', function () {
+    // Toggle class hidden pada container
+    minimizeContainer.classList.toggle('hidden');
+    
+    // Periksa apakah container tersembunyi atau tidak
+    if (minimizeContainer.classList.contains('hidden')) {
+        // Jika tersembunyi, ubah opacity
+        minimizeIcon.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
+        minimizeIcon.style.setProperty('--fa-primary-opacity', '0.4');
+        minimizeIcon.style.setProperty('--fa-secondary-opacity', '1');
+    } else {
+        // Jika tidak tersembunyi, kembalikan ke nilai awal
+        minimizeIcon.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
+        minimizeIcon.style.setProperty('--fa-primary-opacity', initialPrimaryOpacity);
+        minimizeIcon.style.setProperty('--fa-secondary-opacity', initialSecondaryOpacity);
+    }
 });
+
 
 
 const btn = document.getElementById('set-des');

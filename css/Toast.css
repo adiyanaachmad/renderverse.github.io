@@ -611,6 +611,16 @@
     transition: 0.3s;
 }
 
+.icon-switch i {
+  --fa-primary-opacity: 1;
+  --fa-secondary-opacity: 0.4;
+}
+
+#btn-minim {
+  --fa-primary-opacity: 1;
+  --fa-secondary-opacity: 0.4;
+}
+
 .actions button:hover {
     background: #8b5cf6;
     color: white;
