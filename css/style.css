@@ -1438,7 +1438,6 @@ main {
     margin-bottom: 0px;
     display: flex;
     justify-content: space-between;
-    gap: 10px;
   }
 
   .camera-card-quality,
