@@ -9,7 +9,7 @@ import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/p
 import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
 import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
-import { SSAOPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/SSAOPass.js';
+import { Lensflare, LensflareElement } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/objects/Lensflare.js";
 
 import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
 
@@ -44,8 +44,6 @@ let floatDirection = 1;
 let time = 0;
 const frequency = 0.5;
 let ktx2Loader;
-let ssaoPass;
-let aoEnabled = false;
 
 let shadowRotationEnabled = false;
 let shadowTween = null;
@@ -55,6 +53,36 @@ let glassObjects = [];
 let metallicObjects = [];
 let nonMetallicObjects = [];
 
+let lensflare; // Variabel global untuk lensflare
+function createLensflareEffect() {
+  const textureLoader = new THREE.TextureLoader();
+  
+  // Tekstur ini aslinya PNG transparan, tapi butuh blending agar menyatu sempurna
+  const textureFlare0 = textureLoader.load('../logo/Lens.png');
+  const textureFlare3 = textureLoader.load('../logo');
+
+  lensflare = new Lensflare();
+  
+  // Argumen: (tekstur, ukuran, jarak, warna, mode_pencampuran)
+  // Menambahkan THREE.AdditiveBlending di sini otomatis menghilangkan background hitam
+  lensflare.addElement(new LensflareElement(textureFlare0, 500, 0, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+
+  if (lensflare && lensflare.elements && lensflare.elements.length > 0) {
+    for (let i = 0; i < lensflare.elements.length; i++) {
+        lensflare.elements[i].depthWrite = false;
+        lensflare.elements[i].depthTest = true;
+    }
+  }
+
+  // Tempelkan ke lampu agar posisinya sama dengan sumber bayangan
+  directionalLight.add(lensflare);
+  
+  // Set awal mati
+  lensflare.visible = false;
+}
 
 let bloomParams = {
   strength: 2.6,
@@ -532,18 +560,10 @@ function initRenderer(antialias = false) {
   bloomComposer.renderTarget1.depthBuffer = true;
   bloomComposer.renderTarget2.depthBuffer = true;
 
-  ssaoPass = new SSAOPass(scene, renderCamera, window.innerWidth, window.innerHeight);
-  ssaoPass.kernelRadius = 8;      // Radius jangkauan bayangan (kecil lebih tajam & ringan)
-  ssaoPass.kernelSize = 8;        // JUMLAH SAMPLE: Ubah ke 8 atau 16 (default biasanya 32)
-  ssaoPass.minDistance = 0.005;
-  ssaoPass.maxDistance = 0.1
-  ssaoPass.enabled = false;
-
   finalComposer = new EffectComposer(renderer, finalRenderTarget.clone());
   finalComposer.renderToScreen = true;
 
   finalComposer.addPass(new RenderPass(scene, renderCamera));
-  finalComposer.addPass(ssaoPass); 
   
   finalPass = new ShaderPass(AdditiveBlendShader);
   finalPass.uniforms['tAdd'].value = bloomComposer.renderTarget2.texture;
@@ -661,8 +681,19 @@ directionalLight.shadow.camera.top = 10;
 directionalLight.shadow.camera.bottom = -10;
 directionalLight.shadow.camera.near = 1;
 directionalLight.shadow.camera.far = 50;
+createLensflareEffect();
 
 scene.add(directionalLight);
+
+const lensCheckbox = document.querySelector('.cb-lens');
+if (lensCheckbox) {
+  lensCheckbox.checked = false; 
+  lensCheckbox.addEventListener('change', (e) => {
+    if (lensflare) {
+      lensflare.visible = e.target.checked;
+    }
+  });
+}
 
 const shadowQualityMap = {
   "Low": 256,
@@ -1190,7 +1221,7 @@ function animate() {
     }
   }
 
-  if (bloomEnabled || aoEnabled) {
+  if (bloomEnabled) {
     renderer.autoClear = false;
 
     if (bloomEnabled) {
@@ -1313,7 +1344,6 @@ window.addEventListener("resize", () => {
   renderer.setSize(width, height);
   bloomComposer.setSize(width, height);
   finalComposer.setSize(width, height);
-  if (ssaoPass) ssaoPass.setSize(window.innerWidth, window.innerHeight);
 });
 
 // === TOGGLE ANIMASI ===
@@ -2634,30 +2664,6 @@ function fadeTransitionMaterial(targetMode = 'solid', duration = 500) {
   };
 
   fadeOut();
-}
-
-// Logika untuk checkbox Ambient Occlusion
-const aoCheckbox = document.getElementById('ao-effect');
-
-if (aoCheckbox) {
-  // Set status awal di UI
-  aoCheckbox.checked = false;
-
-  aoCheckbox.addEventListener('change', (e) => {
-    aoEnabled = e.target.checked;
-    
-    if (ssaoPass) {
-      ssaoPass.enabled = aoEnabled;
-    }
-    
-    // Sinkronisasi jika ada checkbox lain dengan class yang sama
-    synchronizeCheckboxes('cb-ssao'); 
-  });
-
-  // Cegah event click tembus ke document (seperti logika checkbox lainnya di file Anda)
-  aoCheckbox.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
 }
 
 const modelCredits = {
