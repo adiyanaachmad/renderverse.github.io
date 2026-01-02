@@ -753,7 +753,7 @@
       </button>
       <button class="set-jut sound-init" id="toggleChart">
         <div class="line-effect"></div>
-        <i class="fa-solid fa-chart-simple"></i>
+        <i class="fa-duotone fa-solid fa-mountain-sun"></i>
       </button>
       <button class="set-jut plus sound-init" id="toggleMbg">
         <div class="line-effect"></div>
@@ -1132,76 +1132,104 @@
             </div>
           </div>
         </div>
-        <div class="texture-iji">
-          <div class="animate-wrapper texture-width">
-            <div class="mesh-col-1">
-              <div class="header-animate-speed">
-                <h3>Shadow Resolution</h3>
-                <label class="switch">
-                  <input type="checkbox" id="shadowToggleDesktop" class="shadow-toggle sound-init">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <div class="vertical-level-shadow" data-default="Low">
-                <div class="v-circle-shadow sound-init" data-level="Low">L</div>
-                <div class="v-line-wrapper-shadow">
-                  <div class="v-line-shadow"></div>
-                </div>
-                <div class="v-circle-shadow sound-init" data-level="Medium">M</div>
-                <div class="v-line-wrapper-shadow">
-                  <div class="v-line-shadow"></div>
-                </div>
-                <div class="v-circle-shadow sound-init" data-level="High">H</div>
-                <div class="v-line-wrapper-shadow">
-                  <div class="v-line-shadow"></div>
-                </div>
-                <div class="v-circle-shadow sound-init" data-level="Ultra">U</div>
-              </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-select-texture" id="textureAS">
+    <div class="title-model-3">
+      <div class="title-hed">
+        <button class="menu-btn-rex set-jut sound-init close-ads" id="closeAS">
+          <div class="line-effect"></div>
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="model-title">
+          <h2>shadow & texture</h2>
+        </div>
+      </div>
+      <div class="title-btn">
+        <button class="menu-btn-rex set-jut active-exf sound-init sehid" id="set-texture">
+          <div class="line-effect"></div>
+          <i class="fa-duotone fa-solid fa-image" id="toggle-icon-texture"></i>
+        </button>
+        <button class="menu-btn-rex set-jut active-exf sound-init" id="set-adsl">
+          <div class="line-effect"></div>
+          <i class="fa-solid fa-bolt-lightning" id="toggle-icon-ads"></i>
+        </button>
+        <button class="menu-btn-rex set-jut sound-init" id="minimize-ads">
+          <div class="line-effect"></div>
+          <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center" style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;" id="btn-minim"></i>
+        </button>
+      </div>
+    </div>
+    <div class="texture-iji">
+      <div class="animate-wrapper texture-width">
+        <div class="mesh-col-1">
+          <div class="header-animate-speed">
+            <h3>Shadow Resolution</h3>
+            <label class="switch">
+              <input type="checkbox" id="shadowToggleDesktop" class="shadow-toggle sound-init">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="vertical-level-shadow" data-default="Low">
+            <div class="v-circle-shadow sound-init" data-level="Low">L</div>
+            <div class="v-line-wrapper-shadow">
+              <div class="v-line-shadow"></div>
             </div>
-            <div class="quality-card-container-bottom" id="cameraCard">
-              <div class="camera-card-quality">
-                <button class="basic-shadow-btn active-qual sound-init">BASIC</button>
-                <button class="soft-shadow-btn sound-init">SOFT</button>
-              </div>
+            <div class="v-circle-shadow sound-init" data-level="Medium">M</div>
+            <div class="v-line-wrapper-shadow">
+              <div class="v-line-shadow"></div>
+            </div>
+            <div class="v-circle-shadow sound-init" data-level="High">H</div>
+            <div class="v-line-wrapper-shadow">
+              <div class="v-line-shadow"></div>
+            </div>
+            <div class="v-circle-shadow sound-init" data-level="Ultra">U</div>
+          </div>
+        </div>
+        <div class="quality-card-container-bottom" id="cameraCard">
+          <div class="camera-card-quality">
+            <button class="basic-shadow-btn active-qual sound-init">BASIC</button>
+            <button class="soft-shadow-btn sound-init">SOFT</button>
+          </div>
+        </div>
+      </div>
+      <div class="shadow-container">
+        <div class="shadow-advance">
+          <div class="all-effect-shadows">
+            <div class="effect-left">
+              <!-- <span class="dot-mesh dot-triangles"></span> -->
+              <span class="label">Ambient Occlusion</span>
+            </div>
+            <div class="checkbox-wrapper-8 glass-effect">
+              <input type="checkbox" id="ao-effect" class="tgl tgl-skewed cb-ssao">
+              <label for="ao-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn tgl-shadow"></label>
             </div>
           </div>
-          <div class="shadow-container">
-            <div class="shadow-advance">
-              <div class="all-effect-shadows">
-                <div class="effect-left">
-                  <!-- <span class="dot-mesh dot-triangles"></span> -->
-                  <span class="label">Ambient Occlusion</span>
-                </div>
-                <div class="checkbox-wrapper-8 glass-effect">
-                  <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
-                  <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn tgl-shadow"></label>
-                </div>
-              </div>
-              <div class="all-effect-shadows">
-                <div class="effect-left">
-                  <!-- <span class="dot-mesh dot-triangles"></span> -->
-                  <span class="label">Shadow Rotation</span>
-                </div>
-                <div class="checkbox-wrapper-8 glass-effect">
-                  <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
-                  <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn tgl-shadow"></label>
-                </div>
-              </div>
+          <div class="all-effect-shadows">
+            <div class="effect-left">
+              <!-- <span class="dot-mesh dot-triangles"></span> -->
+              <span class="label">Shadow Rotation</span>
             </div>
-            <div class="texture-size">
-              <div class= "texture-card-container-bottom" id="cameraCard">
-                <div class="mesh-col-1">
-                  <div class="camera-card-header">
-                    <h2>Texture Quality</h2>
-                    <div class="close-mesh-data sound-init" id="cameraVisible"
-                      style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i></div>
-                  </div>
-                  <div class="texture-card">
-                    <button class="active-camera sound-init">LOW</button>
-                    <!-- <button class="sound-init">MEDIUM</button> -->
-                    <button class="sound-init">HIGH</button>
-                  </div>
-                </div>
+            <div class="checkbox-wrapper-8 glass-effect">
+              <input type="checkbox" id="shadow-rot" class="tgl tgl-skewed cb-shadow-rot">
+              <label for="shadow-rot" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn tgl-shadow"></label>
+            </div>
+          </div>
+        </div>
+        <div class="texture-size">
+          <div class= "texture-card-container-bottom" id="cameraCard">
+            <div class="mesh-col-1">
+              <div class="camera-card-header">
+                <h2>Texture Quality</h2>
+                <div class="close-mesh-data sound-init" id="cameraVisible"
+                  style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i></div>
+              </div>
+              <div class="texture-card">
+                <button class="active-camera sound-init">LOW</button>
+                <!-- <button class="sound-init">MEDIUM</button> -->
+                <button class="sound-init">HIGH</button>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/p
 import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
 import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
+import { SSAOPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/SSAOPass.js';
 
 import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
 
@@ -43,6 +44,12 @@ let floatDirection = 1;
 let time = 0;
 const frequency = 0.5;
 let ktx2Loader;
+let ssaoPass;
+let aoEnabled = false;
+
+let shadowRotationEnabled = false;
+let shadowTween = null;
+const defaultShadowPos = new THREE.Vector3(5, 10, 7.5);
 
 let glassObjects = [];
 let metallicObjects = [];
@@ -273,6 +280,24 @@ function updateActiveCameraClassByMode(mode) {
     btn.classList.toggle('active-camera', isActive);
   });
 }
+
+
+function showErrorToast(message1 = "Error Message", message2 = "3D model belum tersedia.") {
+  const toast = document.getElementById('errorToast');
+  const text1 = toast.querySelector('.text-1');
+  const text2 = toast.querySelector('.text-2');
+
+  text1.textContent = message1;
+  text2.textContent = message2;
+
+  toast.classList.add('active-toast');
+
+  // Sembunyikan otomatis setelah 4 detik
+  setTimeout(() => {
+    toast.classList.remove('active-toast');
+  }, 10000);
+}
+
 
 function updateModelCredit(modelName) {
   const credit = modelCredits[modelName];
@@ -507,20 +532,28 @@ function initRenderer(antialias = false) {
   bloomComposer.renderTarget1.depthBuffer = true;
   bloomComposer.renderTarget2.depthBuffer = true;
 
-  finalPass = new ShaderPass(AdditiveBlendShader);
-  finalPass.uniforms['tAdd'].value = bloomComposer.renderTarget2.texture;
+  ssaoPass = new SSAOPass(scene, renderCamera, window.innerWidth, window.innerHeight);
+  ssaoPass.kernelRadius = 8;      // Radius jangkauan bayangan (kecil lebih tajam & ringan)
+  ssaoPass.kernelSize = 8;        // JUMLAH SAMPLE: Ubah ke 8 atau 16 (default biasanya 32)
+  ssaoPass.minDistance = 0.005;
+  ssaoPass.maxDistance = 0.1
+  ssaoPass.enabled = false;
 
   finalComposer = new EffectComposer(renderer, finalRenderTarget.clone());
   finalComposer.renderToScreen = true;
+
   finalComposer.addPass(new RenderPass(scene, renderCamera));
+  finalComposer.addPass(ssaoPass); 
+  
+  finalPass = new ShaderPass(AdditiveBlendShader);
+  finalPass.uniforms['tAdd'].value = bloomComposer.renderTarget2.texture;
   finalComposer.addPass(finalPass);
+
   finalComposer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
   finalComposer.setSize(window.innerWidth, window.innerHeight);
 
   if (ktx2Loader) {
-    // const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-    // ktx2Loader.setAnisotropy(maxAnisotropy);
-    ktx2Loader.detectSupport(renderer); // Wajib dipanggil setelah renderer dibuat
+    ktx2Loader.detectSupport(renderer);
   }
 }
 
@@ -1120,6 +1153,16 @@ function animate() {
   animateCameraBack(deltaTime);
   floatAnimation(deltaTime);
 
+  if (shadowRotationEnabled && directionalLight) {
+    // Gunakan clock.elapsedTime agar rotasi berjalan konstan seiring waktu
+    const t = clock.getElapsedTime() * 0.5; // Angka 0.5 adalah kecepatan rotasi
+    const radius = 10; // Jarak putaran lampu dari titik tengah
+    
+    directionalLight.position.x = Math.cos(t) * radius;
+    directionalLight.position.z = Math.sin(t) * radius;
+    directionalLight.position.y = 10; // Ketinggian matahari tetap
+  }
+
   if (autoRotateEnabled && controls) {
     const now = performance.now();
     const timeSinceLastInteraction = now - lastInteractionTime;
@@ -1147,13 +1190,18 @@ function animate() {
     }
   }
 
-  if (bloomEnabled) {
+  if (bloomEnabled || aoEnabled) {
     renderer.autoClear = false;
-    darkenNonBloomed(scene);
-    renderCamera.layers.set(1);
-    bloomComposer.render();
-    renderCamera.layers.set(0);
-    restoreMaterials(scene);
+
+    if (bloomEnabled) {
+      darkenNonBloomed(scene);
+      renderCamera.layers.set(1);
+      bloomComposer.render();
+      renderCamera.layers.set(0);
+      restoreMaterials(scene);
+    } else {
+      renderer.clear();
+    }
     finalComposer.render();
     renderer.autoClear = true;
   } else {
@@ -1265,6 +1313,7 @@ window.addEventListener("resize", () => {
   renderer.setSize(width, height);
   bloomComposer.setSize(width, height);
   finalComposer.setSize(width, height);
+  if (ssaoPass) ssaoPass.setSize(window.innerWidth, window.innerHeight);
 });
 
 // === TOGGLE ANIMASI ===
@@ -1341,6 +1390,36 @@ function returnToCenter() {
   }
 }
 
+const shadowRotToggle = document.getElementById('shadow-rot');
+const shadowToggless = document.querySelectorAll('.cb-shadow-rot'); // Sesuaikan class jika perlu
+
+shadowRotToggle.addEventListener('change', (e) => {
+  const isEnabled = e.target.checked;
+
+  // 1. CEK APAKAH SHADOW EFFECT SUDAH NYALA
+  // Kita cek melalui renderer.shadowMap.enabled
+  if (isEnabled && !renderer.shadowMap.enabled) {
+    e.target.checked = false; // Matikan kembali toggle-nya
+    showErrorToast("Shadow is Off", "Please enable 'Shadow Effect' first.");
+    return;
+  }
+
+  // 2. JALANKAN / MATIKAN ROTASI
+  shadowRotationEnabled = isEnabled;
+
+  if (!isEnabled) {
+    // Jika dimatikan, kembalikan posisi lampu ke default dengan smooth (GSAP)
+    if (shadowTween) shadowTween.kill();
+    shadowTween = gsap.to(directionalLight.position, {
+      duration: 1.5,
+      x: defaultShadowPos.x,
+      y: defaultShadowPos.y,
+      z: defaultShadowPos.z,
+      ease: "power2.inOut"
+    });
+  }
+});
+
 
 const shadowToggles = document.querySelectorAll('.shadow-toggle');
 shadowToggles.forEach(toggle => {
@@ -1360,6 +1439,18 @@ shadowToggles.forEach(toggle => {
       renderer.shadowMap.needsUpdate = true;
       renderer.compile(scene, camera);
 
+      shadowRotationEnabled = false;
+      if (shadowRotToggle) shadowRotToggle.checked = false;
+
+      if (shadowTween) shadowTween.kill();
+      shadowTween = gsap.to(directionalLight.position, {
+        duration: 1.5,
+        x: defaultShadowPos.x,
+        y: defaultShadowPos.y,
+        z: defaultShadowPos.z,
+        ease: "power2.inOut"
+      });
+
       object?.traverse(child => {
         if (child.isMesh) {
           child.castShadow = true;
@@ -1376,7 +1467,6 @@ shadowToggles.forEach(toggle => {
     }
   });
 });
-
 
 document.querySelectorAll('.vertical-level-shadow').forEach(wrapper => {
   const defaultShadow = wrapper.dataset.default;
@@ -2345,21 +2435,8 @@ function resetSettingsToDefault() {
   if (object) applyEnvMapToMaterials(object, null);
 }
 
-function showErrorToast(message1 = "Error Message", message2 = "3D model belum tersedia.") {
-  const toast = document.getElementById('errorToast');
-  const text1 = toast.querySelector('.text-1');
-  const text2 = toast.querySelector('.text-2');
 
-  text1.textContent = message1;
-  text2.textContent = message2;
 
-  toast.classList.add('active-toast');
-
-  // Sembunyikan otomatis setelah 4 detik
-  setTimeout(() => {
-    toast.classList.remove('active-toast');
-  }, 10000);
-}
 
 function updateTitleWithAnimation(newTitle) {
   const titleEls = document.querySelectorAll('.model-judul');
@@ -2557,6 +2634,30 @@ function fadeTransitionMaterial(targetMode = 'solid', duration = 500) {
   };
 
   fadeOut();
+}
+
+// Logika untuk checkbox Ambient Occlusion
+const aoCheckbox = document.getElementById('ao-effect');
+
+if (aoCheckbox) {
+  // Set status awal di UI
+  aoCheckbox.checked = false;
+
+  aoCheckbox.addEventListener('change', (e) => {
+    aoEnabled = e.target.checked;
+    
+    if (ssaoPass) {
+      ssaoPass.enabled = aoEnabled;
+    }
+    
+    // Sinkronisasi jika ada checkbox lain dengan class yang sama
+    synchronizeCheckboxes('cb-ssao'); 
+  });
+
+  // Cegah event click tembus ke document (seperti logika checkbox lainnya di file Anda)
+  aoCheckbox.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
 }
 
 const modelCredits = {

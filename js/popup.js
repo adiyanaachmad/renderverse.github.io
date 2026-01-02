@@ -340,7 +340,7 @@ buttons.forEach(button => {
 });
 
 function closeAllPopups() {
-    const popups = [document.getElementById('popup2'), document.getElementById('popup3'), document.getElementById('adsCard'), document.getElementById('popup5'),  document.getElementById('popup6'), document.getElementById('popup7')];
+    const popups = [document.getElementById('textureAS'), document.getElementById('popup3'), document.getElementById('adsCard'), document.getElementById('textureAS'), document.getElementById('popup5'),  document.getElementById('popup6'), document.getElementById('popup7')];
 
     popups.forEach(popup => {
         if (popup.classList.contains('show')) {
@@ -390,7 +390,7 @@ toggleMbgButton.addEventListener('click', function() {
 }); 
 
 document.getElementById('toggleChart').addEventListener('click', function() {
-    const popup = document.getElementById('popup2');
+    const popup = document.getElementById('textureAS');
     const toggleMbgPopup = document.getElementById('popup1');
     const toggleBmPopup = document.getElementById('popup3');
     const toggleCamePopup = document.getElementById('adsCard'); 
@@ -444,7 +444,7 @@ document.getElementById('toggleChart').addEventListener('click', function() {
 document.getElementById('toggleBm').addEventListener('click', function() {
     const popup = document.getElementById('popup3');
     const toggleMbgPopup = document.getElementById('popup1');
-    const toggleChartPopup = document.getElementById('popup2');
+    const toggleChartPopup = document.getElementById('textureAS');
     const toggleCamePopup = document.getElementById('adsCard'); 
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
@@ -496,7 +496,7 @@ document.getElementById('toggleBm').addEventListener('click', function() {
 document.getElementById('toggleCame').addEventListener('click', function() {
     const popup = document.getElementById('adsCard');
     const toggleMbgPopup = document.getElementById('popup1');
-    const toggleChartPopup = document.getElementById('popup2');
+    const toggleChartPopup = document.getElementById('textureAS');
     const toggleBmPopup = document.getElementById('popup3');
     const toggleMatePopup = document.getElementById('popup5');
     const toggleSkjPopup = document.getElementById('popup6');
@@ -555,6 +555,18 @@ document.getElementById('closeAds').addEventListener('click', function() {
     }
 });
 
+document.getElementById('closeAS').addEventListener('click', function() {
+    const popup = document.getElementById('textureAS');
+    
+    // Menutup popup jika terbuka
+    if (popup.classList.contains('show')) {
+        closePopup(popup, () => {
+            // Panggil removeActiveBottom setelah popup adsCard ditutup
+            removeActiveBottom();
+        });
+    }
+});
+
 function closePopup(popup, callback) {
     popup.classList.remove('show');  // Menghilangkan kelas 'show' untuk menyembunyikan popup
     if (callback) callback();  // Panggil callback jika ada
@@ -563,7 +575,7 @@ function closePopup(popup, callback) {
 document.getElementById('toggleMate').addEventListener('click', function() {
     const popup = document.getElementById('popup5'); 
     const toggleMbgPopup = document.getElementById('popup1');
-    const toggleChartPopup = document.getElementById('popup2');
+    const toggleChartPopup = document.getElementById('textureAS');
     const toggleBmPopup = document.getElementById('popup3');
     const toggleCamePopup = document.getElementById('adsCard');
     const toggleSkjPopup = document.getElementById('popup6');
@@ -601,7 +613,7 @@ document.getElementById('toggleSkj').addEventListener('click', function() {
     const popup = document.getElementById('popup6'); 
     const button = document.getElementById('toggleSkj');
     const toggleMbgPopup = document.getElementById('popup1');
-    const toggleChartPopup = document.getElementById('popup2');
+    const toggleChartPopup = document.getElementById('textureAS');
     const toggleBmPopup = document.getElementById('popup3');
     const toggleCamePopup = document.getElementById('adsCard');
     const toggleMatePopup = document.getElementById('popup5');
@@ -641,7 +653,7 @@ document.getElementById('toggleAni').addEventListener('click', function() {
     const popup = document.getElementById('popup7'); 
     const button = document.getElementById('toggleAni');
     const toggleMbgPopup = document.getElementById('popup1');
-    const toggleChartPopup = document.getElementById('popup2');
+    const toggleChartPopup = document.getElementById('textureAS');
     const toggleBmPopup = document.getElementById('popup3');
     const toggleCamePopup = document.getElementById('adsCard');
     const toggleMatePopup = document.getElementById('popup5');
@@ -681,7 +693,7 @@ document.getElementById('toggleParticle').addEventListener('click', function() {
     const popup = document.getElementById('popup8'); 
     const button = document.getElementById('toggleParticle');
     const toggleMbgPopup = document.getElementById('popup1');
-    const toggleChartPopup = document.getElementById('popup2');
+    const toggleChartPopup = document.getElementById('textureAS');
     const toggleBmPopup = document.getElementById('popup3');
     const toggleCamePopup = document.getElementById('adsCard');
     const toggleMatePopup = document.getElementById('popup5');
