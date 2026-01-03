@@ -807,13 +807,12 @@ main {
   .slider:before,
   .slider-cam::before {
     width: 35px !important;
-    top: 3px !important;
     height: 20px !important;
   }
 
   input:checked+.slider:before,
   input:checked+.slider-cam:before {
-    transform: translateX(20px) !important;
+    transform: translate(18px, -50%) !important;
   }
 
   .camera-card-quality {
@@ -1324,10 +1323,10 @@ main {
     /* padding-bottom: 0px !important; */
   }
 
-  input:checked+.slider:before,
+  /* input:checked+.slider:before,
   input:checked+.slider-cam:before {
     transform: translateX(18px) !important;
-  }
+  } */
 
   /* .card-mesh-bloom{
     right: 0px!important;
