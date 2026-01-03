@@ -154,7 +154,8 @@
   display: block; 
 }
 
-.minimize-des.hidden {
+.minimize-des.hidden,
+.texture-iji.hidden {
   display: none; 
 }
 
@@ -254,7 +255,9 @@
     gap: 8px;
 }
 
-.texture-iji {
+.texture-iji,
+.setup-gap,
+.setup-one {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -833,6 +836,14 @@
     display: flex;
     justify-content: space-between;
     gap: 8px;
+}
+
+.particle-sade{
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    zoom: .6;
+    padding-top: 20px;
 }
 
 .text-fade-in {

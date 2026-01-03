@@ -179,7 +179,7 @@
   flex: 0 0 auto;
   scroll-snap-align: start;
   background-color: #3b4b5d;
-  padding: 20px;
+  /* padding: 20px; */
   border-radius: 10px;
   width: 350px;
   zoom: .9;

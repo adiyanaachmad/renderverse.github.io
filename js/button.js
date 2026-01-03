@@ -176,6 +176,32 @@ minimizeButton.addEventListener('click', function () {
     }
 });
 
+const textureButton = document.getElementById('minimizeTexture');
+const textureContainer = document.querySelector('.texture-iji');
+const textureIcon = document.getElementById('btn-texture');
+
+// Awal nilai opacity
+const initialPOpacity = '1';
+const initialSOpacity = '0.4';
+
+textureButton.addEventListener('click', function () {
+    // Toggle class hidden pada container
+    textureContainer.classList.toggle('hidden');
+    
+    // Periksa apakah container tersembunyi atau tidak
+    if (textureContainer.classList.contains('hidden')) {
+        // Jika tersembunyi, ubah opacity
+        textureIcon.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
+        textureIcon.style.setProperty('--fa-primary-opacity', '0.4');
+        textureIcon.style.setProperty('--fa-secondary-opacity', '1');
+    } else {
+        // Jika tidak tersembunyi, kembalikan ke nilai awal
+        textureIcon.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
+        textureIcon.style.setProperty('--fa-primary-opacity', initialPOpacity);
+        textureIcon.style.setProperty('--fa-secondary-opacity', initialSOpacity);
+    }
+});
+
 
 
 const btn = document.getElementById('set-des');
