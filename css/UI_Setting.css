@@ -352,7 +352,7 @@
 .slider-ads::before {
     position: absolute;
     content: "";
-    height: 16px;
+    height: 13px;
     width: 25px;
     top: 50%; 
     transform: translateY(-50%); /* Menarik ke tengah secara vertikal */
@@ -365,7 +365,7 @@
 .slider:before{
     position: absolute;
     content: "";
-    height: 16px;
+    height: 13px;
     width: 25px;
     top: 50%; 
     transform: translateY(-50%); /* Menarik ke tengah secara vertikal */
@@ -378,7 +378,7 @@
 .slider-adsi::before {
     position: absolute;
     content: "";
-    height: 16px;
+    height: 13px;
     width: 25px;
     top: 50%; 
     transform: translateY(-50%); /* Menarik ke tengah secara vertikal */
@@ -400,5 +400,5 @@ input:checked+.slider:before,
 input:checked+.slider-cam:before,
 input:checked+.slider-ads:before,
 input:checked+.slider-adsi:before {
-    transform: translate(16px, -50%);
+    transform: translate(15px, -50%);
 }
