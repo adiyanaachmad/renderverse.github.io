@@ -400,5 +400,5 @@ input:checked+.slider:before,
 input:checked+.slider-cam:before,
 input:checked+.slider-ads:before,
 input:checked+.slider-adsi:before {
-    transform: translate(15px, -50%);
+    transform: translate(14px, -50%);
 }
