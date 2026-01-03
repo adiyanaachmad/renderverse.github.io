@@ -58,14 +58,14 @@ function createLensflareEffect() {
   const textureLoader = new THREE.TextureLoader();
   
   // Tekstur ini aslinya PNG transparan, tapi butuh blending agar menyatu sempurna
-  const textureFlare0 = textureLoader.load('../logo/Lens.png');
+  const textureFlare0 = textureLoader.load('../logo/Lens4.webp');
   const textureFlare3 = textureLoader.load('../logo');
 
   lensflare = new Lensflare();
   
   // Argumen: (tekstur, ukuran, jarak, warna, mode_pencampuran)
   // Menambahkan THREE.AdditiveBlending di sini otomatis menghilangkan background hitam
-  lensflare.addElement(new LensflareElement(textureFlare0, 500, 0, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare0, 200, 0, new THREE.Color(0xffffff), THREE.AdditiveBlending));
   lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6, new THREE.Color(0xffffff), THREE.AdditiveBlending));
   lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7, new THREE.Color(0xffffff), THREE.AdditiveBlending));
   lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9, new THREE.Color(0xffffff), THREE.AdditiveBlending));

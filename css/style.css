@@ -807,7 +807,7 @@ main {
   .slider:before,
   .slider-cam::before {
     width: 35px !important;
-    top: 5px !important;
+    top: 3px !important;
     height: 20px !important;
   }
 
