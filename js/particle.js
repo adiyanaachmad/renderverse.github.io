@@ -132,9 +132,19 @@ function loadParticleMode(modeName, initialSpeed) {
     // 4. Inisialisasi ulang particles.js
     particlesJS("particles-js", finalConfig);
 
+    let currentCount = 20; 
+    const countSlider = document.querySelector('.particle-count');
+    if (countSlider) {
+        currentCount = parseInt(countSlider.value);
+    }
+
     // **Penundaan Krusial**: Beri waktu sebentar agar pJSDom terisi dengan instance baru
     // sebelum kita mencoba mengaksesnya di setupParticleSpeedControls.
-    setTimeout(setupParticleSpeedControls, 100);
+    setTimeout(() => {
+        setupParticleSpeedControls();
+        setupParticleCountControls();
+        setupParticleFeatureToggles();
+    }, 100);
 }
 
 function setupParticleModeControls() {
@@ -295,6 +305,100 @@ function setupParticleSpeedControls() {
                     otherDisplay.textContent = newSpeed; // Update semua tampilan nilai!
                 }
             });
+        });
+    });
+}
+
+function setupParticleCountControls() {
+    // 1. Ambil semua slider dengan class 'particle-count'
+    const countSliders = document.querySelectorAll('.particle-count');
+
+    // Cek apakah particles.js sudah siap
+    if (typeof pJSDom[0] === 'undefined') {
+        return;
+    }
+
+    const pJS = pJSDom[0].pJS;
+    const initialCount = pJS.particles.number.value;
+
+    countSliders.forEach(slider => {
+        // Inisialisasi awal UI berdasarkan nilai partikel saat ini
+        slider.value = initialCount;
+        updateSliderBackground(slider);
+
+        const card = slider.closest('.particle-card');
+        const display = card?.querySelector('.particle-value-count');
+        if (display) {
+            display.textContent = initialCount;
+        }
+
+        // Listener saat slider digeser
+        slider.addEventListener('input', e => {
+            const newCount = parseInt(e.target.value);
+
+            // 2. Update nilai di instance particles.js
+            pJS.particles.number.value = newCount;
+            
+            // 3. Panggil density function untuk menerapkan perubahan secara instan
+            // Tanpa ini, jumlah partikel tidak akan berubah sampai re-inisialisasi
+            if (pJS.fn.particlesRefresh) {
+                pJS.fn.particlesRefresh();
+            }
+
+            // 4. Sinkronisasi semua UI Slider & Display
+            countSliders.forEach(s => {
+                s.value = newCount;
+                updateSliderBackground(s);
+                
+                const otherCard = s.closest('.particle-card');
+                const otherDisplay = otherCard?.querySelector('.particle-value-count');
+                if (otherDisplay) {
+                    otherDisplay.textContent = newCount;
+                }
+            });
+        });
+    });
+}
+
+function setupParticleFeatureToggles() {
+    const sizeRandomToggles = document.querySelectorAll('.cb-size-random');
+    const lineLinkedToggles = document.querySelectorAll('.cb-linked-line');
+
+    if (typeof pJSDom[0] === 'undefined') return;
+    const pJS = pJSDom[0].pJS;
+
+    // --- SINKRONISASI AWAL (Saat halaman dimuat) ---
+    const isSizeRandom = pJS.particles.size.random;
+    const isLineLinked = pJS.particles.line_linked.enable;
+
+    sizeRandomToggles.forEach(cb => cb.checked = isSizeRandom);
+    lineLinkedToggles.forEach(cb => cb.checked = isLineLinked);
+
+    // --- EVENT LISTENER: RANDOM SIZE ---
+    sizeRandomToggles.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const status = this.checked;
+            pJS.particles.size.random = status;
+            
+            // Sinkronkan semua checkbox dengan class yang sama
+            sizeRandomToggles.forEach(cb => cb.checked = status);
+            
+            // Refresh untuk melihat efeknya
+            if (pJS.fn.particlesRefresh) pJS.fn.particlesRefresh();
+        });
+    });
+
+    // --- EVENT LISTENER: LINE LINKED ---
+    lineLinkedToggles.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const status = this.checked;
+            pJS.particles.line_linked.enable = status;
+            
+            // Sinkronkan semua checkbox dengan class yang sama
+            lineLinkedToggles.forEach(cb => cb.checked = status);
+
+            // Refresh untuk merender ulang garis
+            if (pJS.fn.particlesRefresh) pJS.fn.particlesRefresh();
         });
     });
 }

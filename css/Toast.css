@@ -658,10 +658,24 @@
     color: white;
 }
 
+.particle-setting{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
 #grid-view.active-exf,
 #hdri-toggle.active-exf,
 #aa-toggle.active-exf {
     background-color: #739eb2 !important;
+}
+
+#showParticle.active-tor,
+#showVideo.active-tor,
+#showTexture.active-tor{
+    background-color: #739eb2!important;
 }
 
 #toggleSkj.active-free,
@@ -832,6 +846,14 @@
     min-width: 280px;
 }
 
+.particle-item{
+    background-color: #1e2a3a;
+    border-radius: 10px;
+    padding: 20px;
+    width: 0;
+    min-width: 230px;
+}
+
 .shadow-container{
     display: flex;
     justify-content: space-between;
@@ -843,7 +865,15 @@
     justify-content: space-between;
     gap: 8px;
     zoom: .6;
-    padding-top: 20px;
+}
+
+.shadow-ner{
+    display: block;
+}
+
+.particle-container,
+.speed-container{
+    display: none;
 }
 
 .text-fade-in {

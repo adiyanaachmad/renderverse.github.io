@@ -908,6 +908,10 @@ main {
     zoom: .8;
   }
 
+  .animate-wrapper{
+    padding: 20px;
+  }
+
   /* .profile-card {
     position: fixed;
     background: #3b4b5d;
@@ -1009,6 +1013,14 @@ main {
 
   /* === Kolom 1 === */
   .mesh-col-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 1;
+    gap: 20px;
+  }
+
+  .mesh-col-4 {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -1216,6 +1228,22 @@ main {
     padding-top: 4px;
     padding-right: 16px;
     padding-left: 16px;
+  }
+
+  .all-particle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 45px;
+    color: #fff;
+    /* padding: 8px; */
+    border-radius: 8px;
+    border-bottom: 0px !important;
+    background-color: #1e2a3a;
+    /* padding-bottom: 8px;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-left: 16px; */
   }
 
   .all-effect-shadows {

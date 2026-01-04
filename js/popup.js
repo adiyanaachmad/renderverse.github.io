@@ -822,3 +822,61 @@ function openPopup(popup) {
 //     }
 //   });
 // });
+
+function setupTabNavigation() {
+    // 1. Ambil semua elemen Button
+    const btnParticle = document.getElementById('showParticle');
+    const btnTexture = document.getElementById('showTexture');
+    const btnVideo = document.getElementById('showVideo');
+
+    // 2. Ambil semua elemen Container
+    const containerParticle = document.getElementById('particleContainer');
+    const containerSpeed = document.getElementById('speedContainer');
+    const containerShadow = document.getElementById('shadowNer');
+
+    const allButtons = [btnParticle, btnTexture, btnVideo];
+    const allContainers = [containerParticle, containerSpeed, containerShadow];
+
+    // Fungsi untuk menyembunyikan semua container dan menghapus class active
+    function resetDisplay() {
+        allContainers.forEach(container => {
+            if (container) container.style.display = 'none';
+        });
+        allButtons.forEach(btn => {
+            if (btn) btn.classList.remove('active-tor');
+        });
+    }
+
+    // Fungsi untuk mengaktifkan tab tertentu
+    function activateTab(button, container) {
+        resetDisplay();
+        if (container) container.style.display = 'block';
+        if (button) button.classList.add('active-tor');
+    }
+
+    // --- LOGIKA AWAL DIMUAT (Initial State) ---
+    // Tombol ShowTexture aktif, tapi yang tampil adalah ShadowNer
+    resetDisplay();
+    if (containerShadow) containerShadow.style.display = 'block';
+    if (btnTexture) btnTexture.classList.add('active-tor');
+
+    // --- EVENT LISTENERS ---
+
+    // Klik Show Particle -> Tampilkan Particle Container
+    btnParticle?.addEventListener('click', () => {
+        activateTab(btnParticle, containerParticle);
+    });
+
+    // Klik Show Texture -> Tampilkan Shadow Ner
+    btnTexture?.addEventListener('click', () => {
+        activateTab(btnTexture, containerShadow);
+    });
+
+    // Klik Show Video -> Tampilkan Speed Container
+    btnVideo?.addEventListener('click', () => {
+        activateTab(btnVideo, containerSpeed);
+    });
+}
+
+// Panggil fungsi saat DOM selesai dimuat
+document.addEventListener('DOMContentLoaded', setupTabNavigation);
