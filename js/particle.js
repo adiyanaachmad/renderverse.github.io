@@ -8,6 +8,48 @@ function getModeName() {
     return 'random'; // Default jika tidak ada yang aktif
 }
 
+function resetParticleUI() {
+    // Reset Slider Kecepatan
+    const speedSliders = document.querySelectorAll('.particle-speed');
+    speedSliders.forEach(slider => {
+        slider.value = DEFAULT_SETTINGS.speed;
+        updateSliderBackground(slider);
+        const display = slider.closest('.particle-card')?.querySelector('.particle-value');
+        if (display) display.textContent = DEFAULT_SETTINGS.speed;
+    });
+
+    // Reset Slider Jumlah
+    const countSliders = document.querySelectorAll('.particle-count');
+    countSliders.forEach(slider => {
+        slider.value = DEFAULT_SETTINGS.count;
+        updateSliderBackground(slider);
+        const display = slider.closest('.particle-card')?.querySelector('.particle-value-count');
+        if (display) display.textContent = DEFAULT_SETTINGS.count;
+    });
+
+    // Reset Checkbox Fitur
+    document.querySelectorAll('.cb-size-random').forEach(cb => {
+        cb.checked = DEFAULT_SETTINGS.sizeRandom;
+    });
+    document.querySelectorAll('.cb-linked-line').forEach(cb => {
+        cb.checked = DEFAULT_SETTINGS.lineLinked;
+    });
+}
+
+let userSettings = {
+    speed: 5,
+    count: 20,
+    sizeRandom: true,
+    lineLinked: false
+};
+
+const DEFAULT_SETTINGS = {
+    speed: 5,
+    count: 20,
+    sizeRandom: true,
+    lineLinked: false
+};
+
 const particlePresets = {
     // Mode Default/Random (Sesuai dengan kode inisialisasi awal Anda)
     'random': {
@@ -30,69 +72,44 @@ const particlePresets = {
         "move": { "enable": true, "speed": 1, "direction": "bottom", "random": true, "straight": false, "out_mode": "out" }
     }
 };
-
 function setupParticleToggle() {
-    // 1. Ambil semua checkbox dengan class 'animation-particle'
     const animationToggles = document.querySelectorAll('.animation-particle');
-
-    // 2. Ambil elemen WADAH particles.js menggunakan ID
     const particlesContainer = document.getElementById('particles-js');
 
-    if (!particlesContainer) {
-        console.error("Wadah dengan ID 'particles-js' tidak ditemukan. Partikel Anda tersesat di dimensi lain!");
-        return;
-    }
+    if (!particlesContainer) return;
 
-    // Ambil konfigurasi default dari preset (dipakai saat diaktifkan kembali)
-    const initialConfig = particlePresets['random'];
-
-    // 3. Tambahkan event listener ke setiap toggle
     animationToggles.forEach(clickedCheckbox => {
         clickedCheckbox.addEventListener('change', function () {
-
-            // --- SINKRONISASI KRUSIAL --- 
             const isChecked = this.checked;
 
-            // Paksa semua toggle (termasuk yang baru diklik) memiliki status yang SAMA
+            // Sinkronkan semua toggle
             animationToggles.forEach(otherCheckbox => {
                 otherCheckbox.checked = isChecked;
             });
 
-            // --- LOGIKA MENGHEMAT CPU: HANCURKAN/RE-INISIALISASI ---
             if (isChecked) {
-                // 1. Dapatkan kecepatan saat ini dari kontrol slider
-                let currentSpeed = 5;
-                // Kita akan menggunakan nilai dari slider UI jika ada, 
-                // karena instance particles.js saat ini sudah dihancurkan
-                const speedSlider = document.querySelector('.particle-speed');
-                if (speedSlider) {
-                    currentSpeed = parseFloat(speedSlider.value);
-                }
+                // Gunakan nilai yang ada di userSettings (bisa nilai default atau hasil perubahan terakhir)
+                loadParticleMode(getModeName(), userSettings.speed); 
 
-                // 2. Inisialisasi ulang (membuat partikel baru)
-                loadParticleMode(getModeName(), currentSpeed); // Fungsi ini akan membuat ulang partikel
-
-                // 3. Tampilkan kontainer
                 particlesContainer.style.visibility = 'visible';
                 particlesContainer.style.opacity = '1';
 
             } else {
-                // 1. Sembunyikan dengan fade-out
+                // 1. Sembunyikan kontainer
                 particlesContainer.style.opacity = '0';
 
-                // 2. Hancurkan instance setelah fade-out selesai (500ms)
+                // 2. RESET STATE ke nilai default
+                userSettings = { ...DEFAULT_SETTINGS };
+
+                // 3. RESET UI (Slider & Checkbox) ke nilai default agar tidak 'menipu' saat dinyalakan lagi
+                resetParticleUI();
+
                 setTimeout(() => {
                     particlesContainer.style.visibility = 'hidden';
-
-                    // === LOGIKA PENGHEMATAN CPU KRUSIAL ===
-                    // Hapus elemen DOM kanvas particles.js
                     particlesContainer.innerHTML = '';
-                    // Hapus instance dari array global particles.js (menghentikan perulangan)
                     if (pJSDom.length > 0) {
                         pJSDom.splice(0, 1);
                     }
-                    // =====================================
-
                 }, 500);
             }
         });
@@ -100,46 +117,29 @@ function setupParticleToggle() {
 }
 
 function loadParticleMode(modeName, initialSpeed) {
-    // console.log("Memuat mode: " + modeName);
     const particlesContainer = document.getElementById('particles-js');
-    if (!particlesContainer) {
-        console.error("Elemen dengan ID 'particles-js' tidak ditemukan!");
-        return;
-    }
+    if (!particlesContainer) return;
 
-    // 1. Dapatkan konfigurasi preset
-    const modeConfig = particlePresets[modeName] || particlePresets['random'];
+    const modeConfig = JSON.parse(JSON.stringify(particlePresets[modeName] || particlePresets['random']));
 
-    // 2. Buat konfigurasi particlesJS lengkap
+    // Terapkan semua setting dari state userSettings
+    modeConfig.move.speed = userSettings.speed;
+    modeConfig.number.value = userSettings.count;
+    modeConfig.size.random = userSettings.sizeRandom;
+    modeConfig.line_linked.enable = userSettings.lineLinked;
+
     const finalConfig = {
         "particles": modeConfig,
         "retina_detect": false
     };
 
-    // Terapkan kecepatan dari kontrol terakhir jika tersedia
-    if (initialSpeed !== undefined) {
-        finalConfig.particles.move.speed = initialSpeed;
-    }
-
-    // 3. Hapus instance particles.js yang lama (jika ada)
-    // Menghapus elemen DOM dan memanggil pJSDom.splice(0, 1) adalah cara yang umum
-    // untuk 'menghancurkan' instance particles.js
     if (pJSDom.length > 0) {
         particlesContainer.innerHTML = '';
         pJSDom.splice(0, 1);
     }
 
-    // 4. Inisialisasi ulang particles.js
     particlesJS("particles-js", finalConfig);
 
-    let currentCount = 20; 
-    const countSlider = document.querySelector('.particle-count');
-    if (countSlider) {
-        currentCount = parseInt(countSlider.value);
-    }
-
-    // **Penundaan Krusial**: Beri waktu sebentar agar pJSDom terisi dengan instance baru
-    // sebelum kita mencoba mengaksesnya di setupParticleSpeedControls.
     setTimeout(() => {
         setupParticleSpeedControls();
         setupParticleCountControls();
@@ -289,6 +289,7 @@ function setupParticleSpeedControls() {
         // 2. Tambahkan event listener 'input'
         slider.addEventListener('input', e => {
             const newSpeed = parseFloat(e.target.value);
+            userSettings.speed = newSpeed;
 
             // --- PERUBAHAN KECEPATAN particles.js KRUSIAL ---
             pJS_move.speed = newSpeed; // Update particles.js sekali
@@ -335,6 +336,7 @@ function setupParticleCountControls() {
         // Listener saat slider digeser
         slider.addEventListener('input', e => {
             const newCount = parseInt(e.target.value);
+            userSettings.count = newCount;
 
             // 2. Update nilai di instance particles.js
             pJS.particles.number.value = newCount;
@@ -378,6 +380,7 @@ function setupParticleFeatureToggles() {
     sizeRandomToggles.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const status = this.checked;
+            userSettings.sizeRandom = this.checked;
             pJS.particles.size.random = status;
             
             // Sinkronkan semua checkbox dengan class yang sama
@@ -392,6 +395,7 @@ function setupParticleFeatureToggles() {
     lineLinkedToggles.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const status = this.checked;
+            userSettings.lineLinked = this.checked;
             pJS.particles.line_linked.enable = status;
             
             // Sinkronkan semua checkbox dengan class yang sama
