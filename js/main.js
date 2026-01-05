@@ -45,6 +45,9 @@ let time = 0;
 const frequency = 0.5;
 let ktx2Loader;
 
+let currentTextureQuality = 'LOW'; 
+let currentModelPath = '';
+
 let shadowRotationEnabled = false;
 let shadowTween = null;
 const defaultShadowPos = new THREE.Vector3(5, 10, 7.5);
@@ -986,6 +989,7 @@ window.addEventListener("DOMContentLoaded", () => {
       updateMeshDataDisplay(object);
       checkForGlassObjects();
       checkForMetallicObjects();
+      setupTextureQualityControls();
 
       floatYStart = object.position.y;
 
@@ -1597,10 +1601,16 @@ const disposeOfScene = (scene, renderer) => {
   renderer.dispose();  // Hapus renderer
 };
 
-function loadNewModel(modelName) {
+function loadNewModel(modelName, fileName = 'scene.glb') {
   isModelLoading = true;
   showLoader();
   removeCurrentModel();
+
+  if (fileName === 'scene.glb') {
+    resetTextureUItoLow();
+  }
+
+  window.currentModelName = modelName;
 
   if (renderCamera?.isOrthographicCamera) {
     switchCameraMode('perspective');
@@ -1647,7 +1657,10 @@ function loadNewModel(modelName) {
     // newLoader.setMeshoptDecoder(MeshoptDecoder);
     // newLoader.setKTX2Loader(ktx2Loader);
 
-    loader.load(`./models/${modelName}/scene.glb`, (gltf) => {
+    const cacheBuster = Date.now();
+    const finalPath = `./models/${modelName}/${fileName}?v=${cacheBuster}`;
+
+    loader.load(finalPath, (gltf) => {
       object = gltf.scene;
       normalizeModel(object, 9);
 
@@ -2244,6 +2257,65 @@ gridButton.addEventListener('click', () => {
   // Update status gridHelper sesuai dengan status tombol
   setGridVisibility(show);
 });
+
+function setupTextureQualityControls() {
+  const qualityButtons = document.querySelectorAll('.texture-card button');
+
+  qualityButtons.forEach(btn => {
+      btn.addEventListener('click', async function() {
+          const selectedQuality = this.textContent.trim().toUpperCase();
+          
+          // 1. If already in the same quality, do nothing
+          if (window.currentTextureQuality === selectedQuality) return;
+
+          // 2. Check file availability if user selects HIGH
+          if (selectedQuality === 'HIGH') {
+              const targetPath = `./models/${window.currentModelName}/scene_high.glb`;
+              
+              try {
+                  const response = await fetch(targetPath, { method: 'HEAD' });
+                  
+                  if (!response.ok) {
+                      // FILE NOT FOUND: Call your English toast
+                      showErrorToast("Not Available", "High-res texture not found.");
+                      return; // Stop execution, don't change the UI button
+                  }
+              } catch (error) {
+                  // Connection or server issue
+                  showErrorToast("Connection Error", "Failed to verify high-resolution texture availability.");
+                  return;
+              }
+          }
+
+          // 3. If check passes (or LOW clicked), update UI buttons
+          qualityButtons.forEach(b => b.classList.remove('active-camera'));
+          this.classList.add('active-camera');
+          window.currentTextureQuality = selectedQuality;
+
+          const targetFile = (selectedQuality === 'HIGH') ? 'scene_high.glb' : 'scene.glb';
+          
+          // 4. Load the model
+          if (window.currentModelName) {
+              console.log(`Switching to ${selectedQuality} quality...`);
+              loadNewModel(window.currentModelName, targetFile);
+          }
+      });
+  });
+}
+
+function resetTextureUItoLow() {
+    const qualityButtons = document.querySelectorAll('.texture-card button');
+    qualityButtons.forEach(btn => {
+        const isLow = btn.textContent.trim().toUpperCase() === 'LOW';
+        if (isLow) {
+            btn.classList.add('active-camera');
+        } else {
+            btn.classList.remove('active-camera');
+        }
+    });
+    // Reset global state jika Anda menggunakannya
+    window.currentTextureQuality = 'LOW';
+}
 
 // Mengambil tombol non-input berdasarkan ID
 const hdriButton = document.getElementById('hdri-toggle');
