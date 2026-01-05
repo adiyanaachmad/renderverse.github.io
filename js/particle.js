@@ -116,14 +116,15 @@ function setupParticleToggle() {
     });
 }
 
-function loadParticleMode(modeName, initialSpeed) {
+function loadParticleMode(modeName) { 
     const particlesContainer = document.getElementById('particles-js');
     if (!particlesContainer) return;
 
+    // Ambil template dari preset
     const modeConfig = JSON.parse(JSON.stringify(particlePresets[modeName] || particlePresets['random']));
 
-    // Terapkan semua setting dari state userSettings
-    modeConfig.move.speed = userSettings.speed;
+    // PAKSA menggunakan nilai dari userSettings
+    modeConfig.move.speed = userSettings.speed; 
     modeConfig.number.value = userSettings.count;
     modeConfig.size.random = userSettings.sizeRandom;
     modeConfig.line_linked.enable = userSettings.lineLinked;
@@ -138,8 +139,10 @@ function loadParticleMode(modeName, initialSpeed) {
         pJSDom.splice(0, 1);
     }
 
+    // Jalankan inisialisasi
     particlesJS("particles-js", finalConfig);
 
+    // Re-attach kontrol setelah library selesai render
     setTimeout(() => {
         setupParticleSpeedControls();
         setupParticleCountControls();
@@ -169,12 +172,12 @@ function setupParticleModeControls() {
             }
 
             const newMode = this.classList.contains('random-btn') ? 'random' : 'snow';
-            let currentSpeed = 5;
+            // let currentSpeed = 5;
 
             if (typeof pJSDom[0] !== 'undefined') {
                 currentSpeed = pJSDom[0].pJS.particles.move.speed;
             }
-            loadParticleMode(newMode, currentSpeed);
+            loadParticleMode(newMode, userSettings.speed);
             updateActiveModeUI(newMode);
         });
     });
@@ -345,6 +348,7 @@ function setupParticleCountControls() {
             // Tanpa ini, jumlah partikel tidak akan berubah sampai re-inisialisasi
             if (pJS.fn.particlesRefresh) {
                 pJS.fn.particlesRefresh();
+                pJS.particles.move.speed = userSettings.speed;
             }
 
             // 4. Sinkronisasi semua UI Slider & Display
@@ -387,7 +391,10 @@ function setupParticleFeatureToggles() {
             sizeRandomToggles.forEach(cb => cb.checked = status);
             
             // Refresh untuk melihat efeknya
-            if (pJS.fn.particlesRefresh) pJS.fn.particlesRefresh();
+            if (pJS.fn.particlesRefresh) {
+                pJS.fn.particlesRefresh();
+                pJS.particles.move.speed = userSettings.speed;
+            }
         });
     });
 
@@ -402,7 +409,10 @@ function setupParticleFeatureToggles() {
             lineLinkedToggles.forEach(cb => cb.checked = status);
 
             // Refresh untuk merender ulang garis
-            if (pJS.fn.particlesRefresh) pJS.fn.particlesRefresh();
+            if (pJS.fn.particlesRefresh) {
+                pJS.fn.particlesRefresh();
+                pJS.particles.move.speed = userSettings.speed;
+            }
         });
     });
 }
