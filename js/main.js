@@ -1,17 +1,18 @@
-import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
-import { RGBELoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/RGBELoader.js";
-import { DRACOLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/DRACOLoader.js";
-import { KTX2Loader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/KTX2Loader.js";
-import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
-import Stats from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/libs/stats.module.js";
-import { Lensflare, LensflareElement } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/objects/Lensflare.js";
+import * as THREE from "three"; 
 
-import { gsap } from "https://cdn.skypack.dev/gsap@3.12.2";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import { RGBELoader } from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/loaders/RGBELoader.js";
+import { DRACOLoader } from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/loaders/DRACOLoader.js";
+import { KTX2Loader } from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/loaders/KTX2Loader.js";
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
+import Stats from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/libs/stats.module.js";
+import { Lensflare, LensflareElement } from "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/objects/Lensflare.js";
+import { gsap } from "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js";
+import TWEEN from "https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.6.4/dist/tween.esm.js";
 
 
 // Global Default
