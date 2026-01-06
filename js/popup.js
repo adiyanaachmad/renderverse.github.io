@@ -880,3 +880,46 @@ function setupTabNavigation() {
 
 // Panggil fungsi saat DOM selesai dimuat
 document.addEventListener('DOMContentLoaded', setupTabNavigation);
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Seleksi elemen-elemen yang dibutuhkan
+  const buttons = {
+    camera: document.getElementById("pageCamera"),
+    effect: document.getElementById("pageEffect"),
+    lighting: document.getElementById("pageLighting")
+  };
+
+  const contents = {
+    camera: document.querySelector(".ads-container"),
+    effect: document.querySelector(".ads-effect"),
+    lighting: document.querySelector(".mood-lighting-container")
+  };
+
+  // Fungsi utama untuk mengganti tab
+  function switchTab(activeKey) {
+    // Reset semua tombol (hapus class active-page)
+    Object.values(buttons).forEach(btn => btn.classList.remove("active-page"));
+    
+    // Reset semua konten (sembunyikan/hapus class active)
+    Object.values(contents).forEach(content => {
+      content.classList.remove("active");
+      // Khusus ads-container karena defaultnya flex, kita sembunyikan manual jika bukan yang aktif
+      content.style.display = "none"; 
+    });
+
+    // Aktifkan tombol yang diklik
+    buttons[activeKey].classList.add("active-page");
+
+    // Tampilkan konten yang sesuai
+    contents[activeKey].classList.add("active");
+    contents[activeKey].style.display = "flex";
+  }
+
+  // 2. Event Listeners untuk setiap tombol
+  buttons.camera.addEventListener("click", () => switchTab('camera'));
+  buttons.effect.addEventListener("click", () => switchTab('effect'));
+  buttons.lighting.addEventListener("click", () => switchTab('lighting'));
+
+  // 3. Inisialisasi awal (State saat halaman dimuat)
+  switchTab('camera');
+});

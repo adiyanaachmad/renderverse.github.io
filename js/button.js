@@ -115,26 +115,26 @@ setgToggle.addEventListener('click', function () {
   }
 });
 
-const setAdsl = document.getElementById('set-adsl');
-const adsContainer = document.getElementById('ads-allk');
-const adsBottomContainer = document.querySelector('.ads-container');
-const toggleIconAds = document.getElementById('toggle-icon-ads');
+// const setAdsl = document.getElementById('set-adsl');
+// const adsContainer = document.getElementById('ads-allk');
+// const adsBottomContainer = document.querySelector('.ads-container');
+// const toggleIconAds = document.getElementById('toggle-icon-ads');
 
-setAdsl.addEventListener('click', function () {
-  // Toggle visibility of setg-container
-  adsContainer.classList.toggle('active');
+// setAdsl.addEventListener('click', function () {
+//   // Toggle visibility of setg-container
+//   adsContainer.classList.toggle('active');
 
-  // Toggle visibility of card-bottom-container
-  if (adsContainer.classList.contains('active')) {
-    adsBottomContainer.style.display = 'none';  
-    toggleIconAds.classList.remove('fa-bolt-lightning');     
-    toggleIconAds.classList.add('fa-video');        
-  } else {
-    adsBottomContainer.style.display = 'flex'; 
-    toggleIconAds.classList.remove('fa-video');    
-    toggleIconAds.classList.add('fa-bolt-lightning');      
-  }
-});
+//   // Toggle visibility of card-bottom-container
+//   if (adsContainer.classList.contains('active')) {
+//     adsBottomContainer.style.display = 'none';  
+//     toggleIconAds.classList.remove('fa-bolt-lightning');     
+//     toggleIconAds.classList.add('fa-video');        
+//   } else {
+//     adsBottomContainer.style.display = 'flex'; 
+//     toggleIconAds.classList.remove('fa-video');    
+//     toggleIconAds.classList.add('fa-bolt-lightning');      
+//   }
+// });
 
 // const minimizeButton = document.getElementById('minimize-ads');<i class="fa-duotone fa-regular fa-cube"></i>
 // const minimizeContainer = document.querySelector('.minimize-des');

@@ -2,37 +2,38 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width">
-    <meta name="description"
-      content="This website is an interactive application built using Three.js, a JavaScript library for rendering 3D graphics directly in the browser. Leveraging the power of WebGL, this project allows users to interact with 3D models, explore objects, and experience stunning visualizations within a three-dimensional space.">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="A simple Three.JS App">
-    <meta property="og:description" content="Explore interactive 3D models and stunning visualizations built with Three.js. Engage with 3D objects and see the power of WebGL in action.">
-    <meta property="og:image" content="logo/BrowserLogo.webp"> <!-- Ganti URL dengan gambar yang relevan -->
-    
-    <title>A simple Three.JS App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width">
+  <meta name="description"
+    content="This website is an interactive application built using Three.js, a JavaScript library for rendering 3D graphics directly in the browser. Leveraging the power of WebGL, this project allows users to interact with 3D models, explore objects, and experience stunning visualizations within a three-dimensional space.">
 
-    <!-- DEFAULT UI CSS -->
-    <link rel="stylesheet" href="css/style.css" />
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="A simple Three.JS App">
+  <meta property="og:description"
+    content="Explore interactive 3D models and stunning visualizations built with Three.js. Engage with 3D objects and see the power of WebGL in action.">
+  <meta property="og:image" content="logo/BrowserLogo.webp"> <!-- Ganti URL dengan gambar yang relevan -->
 
-    <!-- DEFAULT ALL ICON  -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-regular.css">
-    <!-- <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-solid.css"> -->
-     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0-beta3/css/all.min.css"> -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/all.css">
-    <link rel="icon" type="image/x-icon" href="logo/BrowserLogo.webp">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
+  <title>A simple Three.JS App</title>
 
-    <!-- UI CUSTOM CSS -->
-    <link rel="stylesheet" href="css/UI_Mesh_Data.css">
-    <link rel="stylesheet" href="css/Animate_Popup_And_Button.css">
-    <link rel="stylesheet" href="css/UI_Select_Models.css">
-    <link rel="stylesheet" href="css/UI_Buttons.css">
-    <link rel="stylesheet" href="css/UI_Setting.css">
-    <link rel="stylesheet" href="css/loader.css">
-    <link rel="stylesheet" href="css/Toast.css">
+  <!-- DEFAULT UI CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- DEFAULT ALL ICON  -->
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-regular.css">
+  <!-- <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/duotone-solid.css"> -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0-beta3/css/all.min.css"> -->
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/all.css">
+  <link rel="icon" type="image/x-icon" href="logo/BrowserLogo.webp">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
+
+  <!-- UI CUSTOM CSS -->
+  <link rel="stylesheet" href="css/UI_Mesh_Data.css">
+  <link rel="stylesheet" href="css/Animate_Popup_And_Button.css">
+  <link rel="stylesheet" href="css/UI_Select_Models.css">
+  <link rel="stylesheet" href="css/UI_Buttons.css">
+  <link rel="stylesheet" href="css/UI_Setting.css">
+  <link rel="stylesheet" href="css/loader.css">
+  <link rel="stylesheet" href="css/Toast.css">
 </head>
 
 </head>
@@ -751,106 +752,108 @@
         <div class="line-effect"></div>
         <i class="fa-solid fa-sun-haze"></i>
       </button>
-      <button class="set-jut sound-init" id="toggleChart">
-        <div class="line-effect"></div>
-        <i class="fa-solid fa-gear"></i>
-      </button>
       <button class="set-jut plus sound-init" id="toggleMbg">
         <div class="line-effect"></div>
         <i class="fa-solid fa-folder" id="toggleFolder"></i>
       </button>
-      <button class="set-jut sound-init" id="toggleBm">
+      <button class="set-jut sound-init" id="toggleChart">
+        <div class="line-effect"></div>
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button class="set-jut sound-init sehid" id="toggleBm">
         <div class="line-effect"></div>
         <i class="fa-solid fa-bolt-lightning"></i>
       </button>
-      <button class="set-jut sound-init" id="toggleMate">
+      <button class="set-jut sound-init sehid" id="toggleMate">
         <div class="line-effect"></div>
         <i class="fa-solid fa-cube"></i>
       </button>
     </div>
 
-    <div class="bottom-select" id="popup1">
-      <div class="title-model">
-        <div class="title-hed">
-          <button class="menu-btn-rex set-jut sound-init" id="set-des">
-            <div class="line-effect"></div>
-            <i class="fa-solid fa-chevron-down" id="btn-icon"></i>
-          </button>
-          <div class="profile-card">
-            <div class="profile-top">
-              <!-- <img src="logo/Profile.webp" alt="Profile" class="avatar"> -->
-              <div class="profile-info">
-                <h3 class="name model-kjul">Soccer Icon</h3>
-                <p class="status link-yt"><i class="fa-solid fa-copyright"></i> Polygon Runway</p>
-              </div>
-              <!-- <button class="btn-arrow">
-              <i class="fa-solid fa-arrow-right"></i>
-            </button> -->
-            </div>
 
-            <!-- <div class="profile-bottom">
-            <h2 class="score">43</h2>
-            <p class="title">Design Unity</p>
-            <div class="actions">
-              <button><i class="fa-solid fa-phone"></i></button>
-              <button><i class="fa-regular fa-comment"></i></button>
-              <button><i class="fa-solid fa-ellipsis"></i></button>
+    <div class="bottom-select" id="popup1">
+      <div class="setup-one">
+        <div class="title-model">
+          <div class="title-hed">
+            <button class="menu-btn-rex set-jut sound-init" id="set-des">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-chevron-down" id="btn-icon"></i>
+            </button>
+            <div class="profile-card">
+              <div class="profile-top">
+                <!-- <img src="logo/Profile.webp" alt="Profile" class="avatar"> -->
+                <div class="profile-info">
+                  <h3 class="name model-kjul">Soccer Icon</h3>
+                  <p class="status link-yt"><i class="fa-solid fa-copyright"></i> Polygon Runway</p>
+                </div>
+                <!-- <button class="btn-arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button> -->
+              </div>
+
+              <!-- <div class="profile-bottom">
+              <h2 class="score">43</h2>
+              <p class="title">Design Unity</p>
+              <div class="actions">
+                <button><i class="fa-solid fa-phone"></i></button>
+                <button><i class="fa-regular fa-comment"></i></button>
+                <button><i class="fa-solid fa-ellipsis"></i></button>
+              </div>
+            </div> -->
             </div>
-          </div> -->
+          </div>
+          <div class="title-btn">
+            <!-- <button class="menu-btn-rex animate-btn close-btn-lr sound-init" id="closhMeshData">
+              <i class="fa-solid fa-xmark"></i>
+            </button> -->
+            <button class="menu-btn-rex set-jut sound-init" id="hdri-toggle">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-lightbulb"></i>
+              <!-- <img src="logo/Profile.webp" alt=""> -->
+            </button>
+            <button class="menu-btn-rex set-jut active-exf sound-init" id="grid-view">
+              <div class="line-effect"></div>
+              <i class="fa-light fa-th"></i>
+            </button>
+            <button class="menu-btn-rex set-jut sound-init" id="aa-toggle">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-high-definition"></i>
+            </button>
+            <button class="menu-btn-rex set-jut sound-init sehid" id="setg-toggle">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-gear" id="toggle-icon"></i>
+            </button>
           </div>
         </div>
-        <div class="title-btn">
-          <!-- <button class="menu-btn-rex animate-btn close-btn-lr sound-init" id="closhMeshData">
-            <i class="fa-solid fa-xmark"></i>
-          </button> -->
-          <button class="menu-btn-rex set-jut sound-init" id="hdri-toggle">
-            <div class="line-effect"></div>
-            <i class="fa-solid fa-lightbulb"></i>
-            <!-- <img src="logo/Profile.webp" alt=""> -->
-          </button>
-          <button class="menu-btn-rex set-jut active-exf sound-init" id="grid-view">
-            <div class="line-effect"></div>
-            <i class="fa-light fa-th"></i>
-          </button>
-          <button class="menu-btn-rex set-jut sound-init" id="aa-toggle">
-            <div class="line-effect"></div>
-            <i class="fa-solid fa-high-definition"></i>
-          </button>
-          <button class="menu-btn-rex set-jut sound-init sehid" id="setg-toggle">
-            <div class="line-effect"></div>
-            <i class="fa-solid fa-gear"  id="toggle-icon"></i>
-          </button>
+        <div class="card-object-r">
+          <div class="card-bottom-container">
+            <div class="model-sdfr card-bottom group-1 active-model sound-init" data-model="Soccer Icon">
+              <img src="img/stadion 800-800.webp" alt="Card Image 1">
+            </div>
+            <div class="model-sdfr card-bottom group-1 sound-init" data-model="Fox">
+              <img src="img/fox 800-800.webp" alt="Card Image 5">
+            </div>
+            <div class="model-sdfr card-bottom group-1 sound-init" data-model="Urban Cafe">
+              <img src="img/UrbanCAfePage1.webp" alt="Card Image 3">
+            </div>
+            <div class="model-sdfr card-bottom group-1 sound-init" data-model="Lion Bear">
+              <img src="img/untitled.png" alt="Card Image 6">
+            </div>
+            <div class="model-sdfr card-bottom group-1 sound-init" data-model="Home Office">
+              <img src="img/HomeOfficePage1.webp" alt="Card Image 2">
+            </div>
+          </div>
+          <ul class="menu-by-object">
+            <li class="active-view">Show All Object</li>
+            <li>Object 2</li>
+            <li>Object 3</li>
+            <li>Object 4</li>
+            <li>Object 5</li>
+          </ul>
         </div>
-      </div>
-      <div class="card-object-r">
-        <div class="card-bottom-container">
-          <div class="model-sdfr card-bottom group-1 active-model sound-init" data-model="Soccer Icon">
-            <img src="img/stadion 800-800.webp" alt="Card Image 1">
-          </div>
-          <div class="model-sdfr card-bottom group-1 sound-init" data-model="Fox">
-            <img src="img/fox 800-800.webp" alt="Card Image 5">
-          </div>
-          <div class="model-sdfr card-bottom group-1 sound-init" data-model="Urban Cafe">
-            <img src="img/UrbanCAfePage1.webp" alt="Card Image 3">
-          </div>
-          <div class="model-sdfr card-bottom group-1 sound-init" data-model="Lion Bear">
-            <img src="img/untitled.png" alt="Card Image 6">
-          </div>
-          <div class="model-sdfr card-bottom group-1 sound-init" data-model="Home Office">
-            <img src="img/HomeOfficePage1.webp" alt="Card Image 2">
-          </div>
-        </div>
-        <ul class="menu-by-object">
-          <li class="active-view">Show All Object</li>
-          <li>Object 2</li>
-          <li>Object 3</li>
-          <li>Object 4</li>
-          <li>Object 5</li>
-        </ul>
-      </div>
-      <!-- <div class="setg-container" id="setpi">
-      </div> -->
-      <!-- <div class="title-model-1">
+        <!-- <div class="setg-container" id="setpi">
+        </div> -->
+        <!-- <div class="title-model-1">
         <h2 class="model-title model-judul">0.2.0</h2>
         <div class="title-btn">
           <button class="menu-btn-rex animate-btn close-btn-lr sound-init" id="closhMeshData">
@@ -870,203 +873,254 @@
           </button>
         </div>
       </div> -->
+      </div>
     </div>
 
+
     <div class="bottom-select-ads" id="adsCard">
-      <div class="title-model">
-        <div class="title-hed">
-          <button class="menu-btn-rex set-jut sound-init close-ads" id="closeAds">
-            <div class="line-effect"></div>
-             <i class="fa-solid fa-xmark"></i>
-          </button>
-          <div class="model-title">
-            <h2>Scenes</h2>
+      <div class="setup-one">
+        <div class="title-model">
+          <div class="title-hed">
+            <button class="menu-btn-rex set-jut sound-init close-ads" id="closeAds">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="model-title">
+              <h2>Scenes</h2>
+            </div>
+          </div>
+          <div class="title-btn">
+            <button class="menu-btn-rex set-jut active-exf sound-init sehid" id="set-texture">
+              <div class="line-effect"></div>
+              <i class="fa-duotone fa-solid fa-image" id="toggle-icon-texture"></i>
+            </button>
+            <button class="menu-btn-rex set-jut active-page sound-init" id="pageEffect">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </button>
+            <button class="menu-btn-rex set-jut active-page sound-init" id="pageCamera">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-video"></i>
+            </button>
+            <button class="menu-btn-rex set-jut active-page sound-init" id="pageLighting">
+              <div class="line-effect"></div>
+              <i class="fa-solid fa-flashlight"></i>
+            </button>
+            <button class="menu-btn-rex set-jut sound-init" id="minimize-ads">
+              <div class="line-effect"></div>
+              <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center"
+                style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;" id="btn-minim"></i>
+            </button>
           </div>
         </div>
-        <div class="title-btn">
-          <button class="menu-btn-rex set-jut active-exf sound-init sehid" id="set-texture">
-            <div class="line-effect"></div>
-            <i class="fa-duotone fa-solid fa-image" id="toggle-icon-texture"></i>
-          </button>
-          <button class="menu-btn-rex set-jut active-exf sound-init" id="set-adsl">
-            <div class="line-effect"></div>
-            <i class="fa-solid fa-bolt-lightning" id="toggle-icon-ads"></i>
-          </button>
-          <button class="menu-btn-rex set-jut sound-init" id="minimize-ads">
-            <div class="line-effect"></div>
-            <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center" style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;" id="btn-minim"></i>
-          </button>
-        </div>
-      </div>
-      <div class="minimize-des">
-        <div class="ads-container">
-          <div class="camera-card-container-bottom" id="cameraCard">
-            <div class="mesh-col-1">
-              <div class="camera-card-header">
-                <h2>Camera</h2>
-                <div class="close-mesh-data sound-init" id="cameraVisible"
-                  style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i></div>
+        <div class="minimize-des">
+          <div class="ads-container">
+            <div class="camera-card-container-bottom" id="cameraCard">
+              <div class="mesh-col-1">
+                <div class="camera-card-header">
+                  <h2>Camera</h2>
+                  <div class="close-mesh-data sound-init" id="cameraVisible"
+                    style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i>
+                  </div>
+                </div>
+                <div class="camera-card">
+                  <button class="per-mode active-camera sound-init">Perspective</button>
+                  <button class="orto-mode sound-init">Ortographic</button>
+                </div>
+                <div class="camera-card-header">
+                  <h2>Auto Rotate</h2>
+                  <label class="switch">
+                    <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
+                    <span class="slider-ads"></span>
+                  </label>
+                </div>
               </div>
-              <div class="camera-card">
-                <button class="per-mode active-camera sound-init">Perspective</button>
-                <button class="orto-mode sound-init">Ortographic</button>
+            </div>
+            <div class="card-mesh-bottom card-tri">
+              <div class="mesh-col-1">
+                <div class="card-header-mesh">
+                  <h2>Statistics</h2>
+                  <div class="open-legend sound-init" style="font-size: 18px; cursor: pointer; color: #fff;"><i
+                      class="fa-duotone fa-regular fa-plus"></i></div>
+                </div>
+
+                <div class="info-data-mesh">
+                  <div class="total-count">0</div>
+                  <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
+                </div>
+
+                <div class="progress-bar-mesh">
+                  <div class="progress-triangles"></div>
+                  <div class="progress-vertices"></div>
+                  <div class="progress-edges"></div>
+                  <div class="progress-meshes"></div>
+                </div>
               </div>
-              <div class="camera-card-header">
-                <h2>Auto Rotate</h2>
+
+              <div class="legend" id="viewlegend">
+                <div class="legend-container">
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="dot-mesh dot-triangles"></span>
+                      <p class="value">0</p>
+                    </div>
+                    <div class="legend-bottom-triangles">
+                      <span class="label">Triangles</span>
+                    </div>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="dot-mesh dot-vertices"></span>
+                      <p class="value">0</p>
+                    </div>
+                    <div class="legend-bottom-vertices">
+                      <span class="label">Vertices</span>
+                    </div>
+                  </div>
+
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="dot-mesh dot-edges"></span>
+                      <p class="value">0</p>
+                    </div>
+                    <div class="legend-bottom-edges">
+                      <span class="label">Edges</span>
+                    </div>
+                  </div>
+
+                  <div class="legend-item">
+                    <div class="legend-left">
+                      <span class="dot-mesh dot-meshes"></span>
+                      <p class="value">0</p>
+                    </div>
+                    <div class="legend-bottom-meshes">
+                      <span class="label">Object</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ads-effect">
+            <div class="card-mesh-bloom bloom-indi">
+              <div class="card-header-mesh">
+                <h2>Bloom Effect</h2>
                 <label class="switch">
-                  <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
-                  <span class="slider-ads"></span>
+                  <input type="checkbox" id="bloomToggleMobile" class="bloom-toggle sound-init">
+                  <span class="slider-adsi"></span>
                 </label>
               </div>
-            </div>
-          </div>
-          <div class="card-mesh-bottom card-tri">
-            <div class="mesh-col-1">
-              <div class="card-header-mesh">
-                <h2>Statistics</h2>
-                <div class="open-legend sound-init" style="font-size: 18px; cursor: pointer; color: #fff;"><i class="fa-duotone fa-regular fa-plus"></i></div>
-              </div>
-
-              <div class="info-data-mesh">
-                <div class="total-count">0</div>
-                <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
-              </div>
-
-              <div class="progress-bar-mesh">
-                <div class="progress-triangles"></div>
-                <div class="progress-vertices"></div>
-                <div class="progress-edges"></div>
-                <div class="progress-meshes"></div>
-              </div>
-            </div>
-
-            <div class="legend" id="viewlegend">
-              <div class="legend-container">
-                <div class="legend-item">
-                  <div class="legend-left">
-                    <span class="dot-mesh dot-triangles"></span>
-                    <p class="value">0</p>
-                  </div>
-                  <div class="legend-bottom-triangles">
-                    <span class="label">Triangles</span>
-                  </div>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-left">
-                    <span class="dot-mesh dot-vertices"></span>
-                    <p class="value">0</p>
-                  </div>
-                  <div class="legend-bottom-vertices">
-                    <span class="label">Vertices</span>
-                  </div>
-                </div>
-
-                <div class="legend-item">
-                  <div class="legend-left">
-                    <span class="dot-mesh dot-edges"></span>
-                    <p class="value">0</p>
-                  </div>
-                  <div class="legend-bottom-edges">
-                    <span class="label">Edges</span>
-                  </div>
-                </div>
-
-                <div class="legend-item">
-                  <div class="legend-left">
-                    <span class="dot-mesh dot-meshes"></span>
-                    <p class="value">0</p>
-                  </div>
-                  <div class="legend-bottom-meshes">
-                    <span class="label">Object</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ads-effect" id="ads-allk">
-          <div class="card-mesh-bloom bloom-indi">
-            <div class="card-header-mesh">
-              <h2>Bloom Effect</h2>
-              <label class="switch">
-                <input type="checkbox" id="bloomToggleMobile" class="bloom-toggle sound-init">
-                <span class="slider-adsi"></span>
-              </label>
-            </div>
-            <!-- <div class="info-data-mesh">
-              <div class="total-fps">0</div>
-            </div> -->
-
-            <div class="bloom-gred">
-              <div class="bloom-card">
-                <div class="bloom-card-header">
-                  <h2>Strength</h2>
-                  <span class="bloom-value">2.5</span>
-                </div>
-                <div class="slider-bloom">
-                  <input type="range" id="bloomStrengthMobile" class="bloom-strength sound-init" min="0" max="5" step="0.5"
-                    value="2.5">
-                </div>
-              </div>
-              <div class="bloom-card">
-                <div class="bloom-card-header">
-                  <h2>Radius</h2>
-                  <span class="bloom-value">0.5</span>
-                </div>
-                <div class="slider-bloom">
-                  <input type="range" id="bloomRadiusMobile" class="bloom-radius sound-init" min="0" max="1.5" step="0.5"
-                    value="0.5">
-                </div>
-              </div>
-              <!-- <div class="bloom-card">
-                <div class="bloom-card-header">
-                  <h2>Threshold</h2>
-                  <span class="bloom-value">0.0</span>
-                </div>
-                <div class="slider-bloom">
-                  <input type="range" id="bloomThresholdMobile" class="bloom-threshold sound-init" min="0" max="1" step="0.5"
-                    value="0.5">
-                </div>
+              <!-- <div class="info-data-mesh">
+                <div class="total-fps">0</div>
               </div> -->
-            </div>
-          </div>
-          <div class="material-card-container-ads" id="materialCard">
-            <div class="material-card-header">
-              <h2>Material</h2>
-              <div class="close-mesh-data sound-init" id="materialVisible"
-                style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i></div>
-            </div>
-            <div class="grid-helper-none">
-              <div class="material-card">
-                <div class="card-select colourfull-material active-material sound-init">
-                  <img src="img/DefaultMaterial.webp" alt="">
+
+              <div class="bloom-gred">
+                <div class="bloom-card">
+                  <div class="bloom-card-header">
+                    <h2>Strength</h2>
+                    <span class="bloom-value">2.5</span>
+                  </div>
+                  <div class="slider-bloom">
+                    <input type="range" id="bloomStrengthMobile" class="bloom-strength sound-init" min="0" max="5"
+                      step="0.5" value="2.5">
+                  </div>
                 </div>
-                <div class="icon-switch">
-                  <i class="fa-duotone fa-solid fa-arrow-left-arrow-right" style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;"></i>
+                <div class="bloom-card">
+                  <div class="bloom-card-header">
+                    <h2>Radius</h2>
+                    <span class="bloom-value">0.5</span>
+                  </div>
+                  <div class="slider-bloom">
+                    <input type="range" id="bloomRadiusMobile" class="bloom-radius sound-init" min="0" max="1.5"
+                      step="0.5" value="0.5">
+                  </div>
                 </div>
-                <div class="card-select solid-material sound-init">
-                  <img src="img/PlasticMoldWorn.webp" alt="">
+                <!-- <div class="bloom-card">
+                  <div class="bloom-card-header">
+                    <h2>Threshold</h2>
+                    <span class="bloom-value">0.0</span>
+                  </div>
+                  <div class="slider-bloom">
+                    <input type="range" id="bloomThresholdMobile" class="bloom-threshold sound-init" min="0" max="1" step="0.5"
+                      value="0.5">
+                  </div>
+                </div> -->
+              </div>
+            </div>
+            <div class="material-card-container-ads" id="materialCard">
+              <div class="material-card-header">
+                <h2>Material</h2>
+                <div class="close-mesh-data sound-init" id="materialVisible"
+                  style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i>
                 </div>
               </div>
-              <div class="item-container">
-                <div class="all-effect-item border-top">
-                  <div class="effect-left">
-                    <!-- <span class="dot-mesh dot-triangles"></span> -->
-                    <span class="label">Glass</span>
+              <div class="grid-helper-none">
+                <div class="material-card">
+                  <div class="card-select colourfull-material active-material sound-init">
+                    <img src="img/DefaultMaterial.webp" alt="">
                   </div>
-                  <div class="checkbox-wrapper-8 glass-effect">
-                    <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
-                    <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                  <div class="icon-switch">
+                    <i class="fa-duotone fa-solid fa-arrow-left-arrow-right"
+                      style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;"></i>
+                  </div>
+                  <div class="card-select solid-material sound-init">
+                    <img src="img/PlasticMoldWorn.webp" alt="">
                   </div>
                 </div>
-                <div class="all-effect-item border-bottom">
-                  <div class="effect-left">
-                    <!-- <span class="dot-mesh dot-triangles"></span> -->
-                    <span class="label">Metallic</span>
+                <div class="item-container">
+                  <div class="all-effect-item border-top">
+                    <div class="effect-left">
+                      <!-- <span class="dot-mesh dot-triangles"></span> -->
+                      <span class="label">Glass</span>
+                    </div>
+                    <div class="checkbox-wrapper-8 glass-effect">
+                      <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
+                      <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                    </div>
                   </div>
-                  <div class="checkbox-wrapper-8 metalic-effect">
-                    <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
-                    <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                  <div class="all-effect-item border-bottom">
+                    <div class="effect-left">
+                      <!-- <span class="dot-mesh dot-triangles"></span> -->
+                      <span class="label">Metallic</span>
+                    </div>
+                    <div class="checkbox-wrapper-8 metalic-effect">
+                      <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
+                      <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mood-lighting-container">
+            <div class="lighting-mood">
+              <div class="lighting-card-container-bottom" id="cameraCard">
+                <div class="mesh-col-1">
+                  <div class="camera-card-header">
+                    <h2>Mood Lighting</h2>
+                    <div class="close-mesh-data sound-init" id="cameraVisible"
+                      style="font-size: 20px; cursor: pointer; color: black;"><i
+                        class="fa-duotone fa-solid fa-minus"></i></div>
+                  </div>
+                  <div class="lighting-card">
+                    <button class="light-btn active-light sound-init">NATURAL</button>
+                    <button class="light-btn sound-init">WARM</button>
+                    <button class="light-btn sound-init">COLD</button>
+                    <button class="light-btn sound-init">NIGHT</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-mesh-bloom texture-width">
+              <div class="bloom-gred bloom-indi">
+                <div class="light-card">
+                  <div class="bloom-card-header">
+                    <h2>Strength</h2>
+                    <span class="light-value">2.5</span>
+                  </div>
+                  <div class="slider-bloom">
+                    <input type="range" id="lightPi" class="light-strength sound-init" min="0" max="5"
+                      step="0.5" value="2.5">
                   </div>
                 </div>
               </div>
@@ -1083,7 +1137,7 @@
         <div class="title-hed">
           <button class="menu-btn-rex set-jut sound-init close-ads" id="closeAS">
             <div class="line-effect"></div>
-              <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-xmark"></i>
           </button>
           <div class="model-title">
             <h2>Configure</h2>
@@ -1108,7 +1162,8 @@
           </button>
           <button class="menu-btn-rex set-jut sound-init" id="minimizeTexture">
             <div class="line-effect"></div>
-            <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center" style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;" id="btn-texture"></i>
+            <i class="fa-duotone fa-solid fa-arrow-down-left-and-arrow-up-right-to-center"
+              style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;" id="btn-texture"></i>
           </button>
         </div>
       </div>
@@ -1171,12 +1226,13 @@
                 </div>
               </div>
               <div class="texture-size">
-                <div class= "texture-card-container-bottom" id="cameraCard">
+                <div class="texture-card-container-bottom" id="cameraCard">
                   <div class="mesh-col-1">
                     <div class="camera-card-header">
                       <h2>Texture Quality</h2>
                       <div class="close-mesh-data sound-init" id="cameraVisible"
-                        style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-duotone fa-solid fa-minus"></i></div>
+                        style="font-size: 20px; cursor: pointer; color: black;"><i
+                          class="fa-duotone fa-solid fa-minus"></i></div>
                     </div>
                     <div class="texture-card">
                       <button class="quality-btn active-camera sound-init">LOW</button>
@@ -1214,8 +1270,8 @@
                     <span class="particle-value">5</span>
                   </div>
                   <div class="slider-bloom">
-                    <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
-                      value="5">
+                    <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10"
+                      step="1" value="5">
                   </div>
                 </div>
               </div>
@@ -1249,8 +1305,8 @@
                   <span class="particle-value particle-value-count">20</span>
                 </div>
                 <div class="slider-bloom">
-                  <input type="range" id="bloomRadiusMobile" class="particle-count sound-init" min="10" max="100" step="10"
-                    value="20">
+                  <input type="range" id="bloomRadiusMobile" class="particle-count sound-init" min="10" max="100"
+                    step="10" value="20">
                 </div>
               </div>
             </div>
@@ -1325,7 +1381,7 @@
       </div>
       <div class="title-btn">
         <div class="model-title">
-           <h2 class="model-judul-q">Show All Object</h2>
+          <h2 class="model-judul-q">Show All Object</h2>
         </div>
         <button class="menu-btn-rex set-jut sound-init" id="set-des">
           <div class="line-effect"></div>

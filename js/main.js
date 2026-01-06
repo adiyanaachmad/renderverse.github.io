@@ -688,6 +688,108 @@ createLensflareEffect();
 
 scene.add(directionalLight);
 
+const lightingModes = {
+    'NATURAL': { 
+        dirColor: 0xffffff, dirInt: 1.0, 
+        ambColor: 0xffffff, ambInt: 0.3, 
+        bloomStr: 2.5 
+    },
+    'WARM': { 
+        dirColor: 0xffa54f, dirInt: 1.2, 
+        ambColor: 0xffd1a4, ambInt: 0.4, 
+        bloomStr: 3.0 
+    },
+    'COLD': { 
+        dirColor: 0x00aaff, dirInt: 1.1, 
+        ambColor: 0x4466ff, ambInt: 0.4,
+        bloomStr: 1.5 
+    },
+    'NIGHT': { 
+        dirColor: 0x224488, dirInt: 0.5, 
+        ambColor: 0x050510, ambInt: 0.2, 
+        bloomStr: 4.0 
+    }
+};
+
+// --- Fungsi Reset ke Nilai Awal (Dipanggil saat ganti model) ---
+function resetLightingToDefault() {
+    const defaultMode = 'NATURAL';
+    const config = lightingModes[defaultMode];
+    
+    // Reset UI Button
+    document.querySelectorAll('.light-btn').forEach(btn => {
+        btn.classList.toggle('active-light', btn.innerText === defaultMode);
+    });
+
+    // Reset Slider
+    const slider = document.getElementById('lightPi');
+    if (slider) {
+        slider.value = config.bloomStr;
+        updateSliderBackground(slider);
+        document.querySelector('.light-value').innerText = config.bloomStr;
+    }
+
+    // Apply Lighting (tanpa animasi untuk instan reset)
+    directionalLight.color.setHex(config.dirColor);
+    directionalLight.intensity = config.dirInt;
+    ambientLight.color.setHex(config.ambColor);
+    ambientLight.intensity = config.ambInt;
+    if(bloomPass) bloomPass.strength = config.bloomStr;
+}
+
+// --- Event Listeners Mood Buttons ---
+document.querySelectorAll('.light-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const modeName = this.innerText;
+        const config = lightingModes[modeName];
+
+        // 1. Update Class Active
+        document.querySelectorAll('.light-btn').forEach(b => b.classList.remove('active-light'));
+        this.classList.add('active-light');
+
+        // 2. Transisi Halus (GSAP)
+        if (config) {
+            // Animasi Warna & Intensitas Directional Light
+            gsap.to(directionalLight.color, { r: ((config.dirColor >> 16) & 255) / 255, g: ((config.dirColor >> 8) & 255) / 255, b: (config.dirColor & 255) / 255, duration: 1 });
+            gsap.to(directionalLight, { intensity: config.dirInt, duration: 1 });
+
+            // Animasi Ambient Light
+            gsap.to(ambientLight.color, { r: ((config.ambColor >> 16) & 255) / 255, g: ((config.ambColor >> 8) & 255) / 255, b: (config.ambColor & 255) / 255, duration: 1 });
+            gsap.to(ambientLight, { intensity: config.ambInt, duration: 1 });
+
+            // Update Slider & Bloom Strength secara sinkron
+            const slider = document.getElementById('lightPi');
+            gsap.to(bloomPass, { strength: config.bloomStr, duration: 1, onUpdate: () => {
+                if(slider) {
+                    slider.value = bloomPass.strength.toFixed(1);
+                    document.querySelector('.light-value').innerText = slider.value;
+                    updateSliderBackground(slider);
+                }
+            }});
+        }
+    });
+});
+
+// --- Event Listener Slider Strength ---
+const strengthSlider = document.getElementById('lightPi');
+if (strengthSlider) {
+    // Inisialisasi awal background
+    updateSliderBackground(strengthSlider);
+
+    strengthSlider.addEventListener('input', function() {
+        const val = parseFloat(this.value);
+        
+        // 1. Update UI
+        updateSliderBackground(this);
+        document.querySelector('.light-value').innerText = val.toFixed(1);
+
+        // 2. Update Bloom Pass (Langsung agar responsif)
+        if (bloomPass) {
+            bloomPass.strength = val;
+        }
+    });
+}
+
 const lensCheckbox = document.querySelector('.cb-lens');
 if (lensCheckbox) {
   lensCheckbox.checked = false; 
@@ -1700,6 +1802,7 @@ function loadNewModel(modelName, fileName = 'scene.glb') {
       updateModelCredit(modelName);
       checkForGlassObjects();
       checkForMetallicObjects();
+      resetLightingToDefault();
 
       floatYStart = object.position.y;
 

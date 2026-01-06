@@ -44,7 +44,8 @@
     zoom: .6;
 }
 
-.texture-card-container-bottom{
+.texture-card-container-bottom,
+.lighting-card-container-bottom{
     position: relative;
     background-color: #1e2a3a;
     color: #fff;
@@ -98,7 +99,7 @@
   position: relative;
   background-color: #1e2a3a;
   padding: 20px;
-  min-width: 230px; 
+  min-width: 220px; 
   border-radius: 10px;
   zoom: .6;
 }

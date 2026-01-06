@@ -66,6 +66,11 @@
     z-index: 3;
 }
 
+.new-nav{
+    position: fixed;
+    bottom: 10px;
+}
+
 .bottom-data {
     position: fixed;
     bottom: 20px;
@@ -244,11 +249,13 @@
     display: flex; /* Atau gunakan flex, tergantung layout */
 }
 
-.ads-effect{
+.ads-effect,
+.mood-lighting-container{
     display: none;
 }
 
-.ads-effect.active {
+.ads-effect.active,
+.mood-lighting-container.active {
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -257,7 +264,7 @@
 
 .texture-iji,
 .setup-gap,
-.setup-one {
+.setup-one{
     position: relative;
     display: flex;
     flex-direction: column;
@@ -405,13 +412,13 @@
 
 .bottom-bloom {
     position: fixed;
-    display: none;
+    /* display: none; */
     bottom: 20px;
     left: 50%;
     transform: translateX(60%);
     display: flex;
     align-items: center;
-    opacity: 0;
+    opacity: 1;
     width: 95%;
     padding: 10px 0;
     border-radius: 10px;
@@ -675,6 +682,12 @@
 #showParticle.active-tor,
 #showVideo.active-tor,
 #showTexture.active-tor{
+    background-color: #739eb2!important;
+}
+
+#pageCamera.active-page,
+#pageEffect.active-page,
+#pageLighting.active-page{
     background-color: #739eb2!important;
 }
 

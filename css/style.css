@@ -8,6 +8,7 @@
   --legend-height: 17rem;
 }
 
+
 body {
   margin: 0px;
   padding: 0px;
@@ -292,7 +293,31 @@ main {
   overflow: hidden;
 }
 
+.light-card {
+  background-color: #1e2a3a;
+  color: #ffff;
+  border-radius: 8px;
+  padding: 20px 12px;
+  flex: 1 1 30%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 .particle-card {
+  background-color: #1e2a3a;
+  color: #ffff;
+  border-radius: 8px;
+  padding: 21px 12px;
+  flex: 1 1 30%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.lighting-setup {
   background-color: #1e2a3a;
   color: #ffff;
   border-radius: 8px;
@@ -347,7 +372,8 @@ main {
 }
 
 .bloom-value,
-.particle-value {
+.particle-value,
+.light-value {
   background: #3b4b5d;
   padding: 8px;
   border-radius: 8px;
@@ -505,6 +531,16 @@ main {
   padding: 8px;
 }
 
+.lighting-card {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  background-color: #3b4b5d;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 8px;
+}
+
 .camera-card-quality,
 .camera-card-particle {
   display: flex;
@@ -531,7 +567,8 @@ main {
 .material-card-init button,
 .camera-card-quality button,
 .camera-card-particle button,
-.texture-card button {
+.texture-card button,
+.lighting-card button {
   padding: 15px 10px;
   background: none;
   border: none;
@@ -978,7 +1015,7 @@ main {
     padding-top: 0px;
     padding-left: 0px;
     padding-right: 0px;
-    padding-bottom: 20px;
+    padding-bottom: 0px;
     zoom: .5;
     text-transform: uppercase;
   }
@@ -1155,6 +1192,10 @@ main {
 
   .texture-card-container-bottom{
     zoom: .5;
+  }
+
+  .lighting-card-container-bottom{
+    zoom: .6;
   }
 
   .quality-card-container-bottom {
@@ -1363,11 +1404,13 @@ main {
     overflow: hidden;
   } */
 
-  .bloom-card {
+  .bloom-card,
+  .light-card {
     background-color: #3b4b5d !important;
   }
 
-  .bloom-value {
+  .bloom-value,
+  .light-value {
     background-color: #1e2a3a !important;
   }
 
@@ -1394,6 +1437,7 @@ main {
   }
 
   .active-camera,
+  .active-light,
   .active-qual,
   .active-unit,
   .active-particle,
