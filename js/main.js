@@ -845,6 +845,31 @@ document.querySelectorAll('.soft-shadow-btn').forEach(btn => {
   });
 });
 
+function applyModelMaterials(object) {
+  object.traverse((child) => {
+    if (child.isMesh) {
+      const name = child.name.toLowerCase();
+      const isGlass = name.includes("glass");
+      const isMetal = name.includes("metal");
+
+      if (isGlass || isMetal) {
+        // Panggil fungsi material khusus glass/metal yang sudah Anda punya
+        applyGlassAndMetalMaterial(child);
+      } else {
+        // Logika untuk Displacement & Bump otomatis
+        if (child.material.displacementMap) {
+          child.material.displacementScale = 0.02; 
+        }
+        if (child.material.bumpMap) {
+          child.material.bumpScale = 0.5;
+        }
+      }
+      
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+}
 
 // HDRI environment
 const cubeTextureLoader = new THREE.CubeTextureLoader();
@@ -1092,6 +1117,7 @@ window.addEventListener("DOMContentLoaded", () => {
       checkForGlassObjects();
       checkForMetallicObjects();
       setupTextureQualityControls();
+      applyModelMaterials(object);
 
       floatYStart = object.position.y;
 
@@ -1803,6 +1829,7 @@ function loadNewModel(modelName, fileName = 'scene.glb') {
       checkForGlassObjects();
       checkForMetallicObjects();
       resetLightingToDefault();
+      applyModelMaterials(object);
 
       floatYStart = object.position.y;
 
