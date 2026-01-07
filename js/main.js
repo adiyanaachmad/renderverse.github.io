@@ -62,17 +62,17 @@ function createLensflareEffect() {
   const textureLoader = new THREE.TextureLoader();
   
   // Tekstur ini aslinya PNG transparan, tapi butuh blending agar menyatu sempurna
-  const textureFlare0 = textureLoader.load('../logo/Lens4.webp');
-  const textureFlare3 = textureLoader.load('../logo');
+  const textureFlare0 = textureLoader.load('../logo/sun.png');
+  const textureFlare3 = textureLoader.load('../logo/sun.png');
 
   lensflare = new Lensflare();
   
   // Argumen: (tekstur, ukuran, jarak, warna, mode_pencampuran)
   // Menambahkan THREE.AdditiveBlending di sini otomatis menghilangkan background hitam
-  lensflare.addElement(new LensflareElement(textureFlare0, 200, 0, new THREE.Color(0xffffff), THREE.AdditiveBlending));
-  lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6, new THREE.Color(0xffffff), THREE.AdditiveBlending));
-  lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7, new THREE.Color(0xffffff), THREE.AdditiveBlending));
-  lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare0, 500, 0, new THREE.Color(0xffffff), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6, new THREE.Color(0x444444), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7, new THREE.Color(0x444444), THREE.AdditiveBlending));
+  lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9, new THREE.Color(0x444444), THREE.AdditiveBlending));
 
   if (lensflare && lensflare.elements && lensflare.elements.length > 0) {
     for (let i = 0; i < lensflare.elements.length; i++) {
@@ -791,15 +791,15 @@ if (strengthSlider) {
     });
 }
 
-const lensCheckbox = document.querySelector('.cb-lens');
-if (lensCheckbox) {
-  lensCheckbox.checked = false; 
-  lensCheckbox.addEventListener('change', (e) => {
-    if (lensflare) {
-      lensflare.visible = e.target.checked;
-    }
-  });
-}
+// const lensCheckbox = document.querySelector('.cb-lens');
+// if (lensCheckbox) {
+//   lensCheckbox.checked = false; 
+//   lensCheckbox.addEventListener('change', (e) => {
+//     if (lensflare) {
+//       lensflare.visible = e.target.checked;
+//     }
+//   });
+// }
 
 const shadowQualityMap = {
   "Low": 256,
@@ -849,22 +849,21 @@ document.querySelectorAll('.soft-shadow-btn').forEach(btn => {
 function applyModelMaterials(object) {
   object.traverse((child) => {
     if (child.isMesh) {
-      const name = child.name.toLowerCase();
-      const isGlass = name.includes("glass");
-      const isMetal = name.includes("metal");
+      const mat = child.material;
 
-      if (isGlass || isMetal) {
-        // Panggil fungsi material khusus glass/metal yang sudah Anda punya
-        applyGlassAndMetalMaterial(child);
-      } else {
-        // Logika untuk Displacement & Bump otomatis
-        if (child.material.displacementMap) {
-          child.material.displacementScale = 0.02; 
-        }
-        if (child.material.bumpMap) {
-          child.material.bumpScale = 0.5;
-        }
+      // 1. Cek apakah ada texture bawaan dari file GLB
+      if (mat.bumpMap) {
+        mat.bumpScale = 1.3;
       }
+
+      if (mat.displacementMap) {
+        mat.displacementScale = 5;
+        // Tips: Displacement butuh kalkulasi ulang bounding box
+        child.geometry.computeBoundingBox();
+      }
+
+      // 2. Pastikan Material mendukung efek tersebut
+      // Jika material bawaan GLTF adalah MeshStandardMaterial, itu sudah bagus.
       
       child.castShadow = true;
       child.receiveShadow = true;
@@ -1319,7 +1318,7 @@ function animate() {
 
   if (shadowRotationEnabled && directionalLight) {
     // Gunakan clock.elapsedTime agar rotasi berjalan konstan seiring waktu
-    const t = clock.getElapsedTime() * 0.5; // Angka 0.5 adalah kecepatan rotasi
+    const t = clock.getElapsedTime() * 0.1; // Angka 0.5 adalah kecepatan rotasi
     const radius = 10; // Jarak putaran lampu dari titik tengah
     
     directionalLight.position.x = Math.cos(t) * radius;
@@ -1553,58 +1552,66 @@ function returnToCenter() {
   }
 }
 
-const shadowRotToggle = document.getElementById('shadow-rot');
-const shadowToggless = document.querySelectorAll('.cb-shadow-rot'); // Sesuaikan class jika perlu
-
-shadowRotToggle.addEventListener('change', (e) => {
-  const isEnabled = e.target.checked;
-
-  // 1. CEK APAKAH SHADOW EFFECT SUDAH NYALA
-  // Kita cek melalui renderer.shadowMap.enabled
-  if (isEnabled && !renderer.shadowMap.enabled) {
-    e.target.checked = false; // Matikan kembali toggle-nya
-    showErrorToast("Shadow is Off", "Please enable 'Shadow Effect' first.");
-    return;
-  }
-
-  // 2. JALANKAN / MATIKAN ROTASI
-  shadowRotationEnabled = isEnabled;
-
-  if (!isEnabled) {
-    // Jika dimatikan, kembalikan posisi lampu ke default dengan smooth (GSAP)
-    if (shadowTween) shadowTween.kill();
-    shadowTween = gsap.to(directionalLight.position, {
-      duration: 1.5,
-      x: defaultShadowPos.x,
-      y: defaultShadowPos.y,
-      z: defaultShadowPos.z,
-      ease: "power2.inOut"
-    });
-  }
-});
-
-
+// 1. Deklarasi Elemen UI
 const shadowToggles = document.querySelectorAll('.shadow-toggle');
+const shadowRotToggle = document.getElementById('shadow-rot');
+const lensCheckbox = document.querySelector('.cb-lens');
+
+// 2. Logic untuk Shadow Rotation Toggle
+if (shadowRotToggle) {
+  shadowRotToggle.addEventListener('change', (e) => {
+    const isEnabled = e.target.checked;
+
+    // Proteksi: Jangan biarkan rotasi nyala jika Shadow Map mati
+    if (isEnabled && !renderer.shadowMap.enabled) {
+      e.target.checked = false;
+      if (typeof showErrorToast === "function") {
+        showErrorToast("Shadow is Off", "Please enable 'Shadow Effect' first.");
+      }
+      return;
+    }
+
+    shadowRotationEnabled = isEnabled;
+
+    if (!isEnabled) {
+      // Kembalikan posisi lampu ke default jika rotasi dimatikan
+      if (shadowTween) shadowTween.kill();
+      shadowTween = gsap.to(directionalLight.position, {
+        duration: 1.5,
+        x: defaultShadowPos.x,
+        y: defaultShadowPos.y,
+        z: defaultShadowPos.z,
+        ease: "power2.inOut"
+      });
+    }
+  });
+}
+
+// 3. Logic Master Switch (Shadow Toggles)
 shadowToggles.forEach(toggle => {
   toggle.checked = false;
   toggle.addEventListener('change', (e) => {
     const enabled = e.target.checked;
+    
     shadowToggles.forEach(t => t.checked = enabled);
     renderer.shadowMap.enabled = enabled;
     directionalLight.castShadow = enabled;
 
     if (enabled) {
+      // --- JIKA SHADOW ON ---
       const res = shadowQualityMap[currentShadowQuality];
       directionalLight.shadow.mapSize.set(res, res);
-      directionalLight.shadow.map?.dispose();
-      directionalLight.shadow.map = null;
+      
+      if (directionalLight.shadow.map) {
+        directionalLight.shadow.map.dispose();
+        directionalLight.shadow.map = null;
+      }
+      
       directionalLight.shadow.camera.updateProjectionMatrix();
       renderer.shadowMap.needsUpdate = true;
       renderer.compile(scene, camera);
 
-      shadowRotationEnabled = false;
-      if (shadowRotToggle) shadowRotToggle.checked = false;
-
+      // Jalankan animasi ke posisi default saat menyalakan
       if (shadowTween) shadowTween.kill();
       shadowTween = gsap.to(directionalLight.position, {
         duration: 1.5,
@@ -1620,16 +1627,63 @@ shadowToggles.forEach(toggle => {
           child.receiveShadow = true;
         }
       });
+
     } else {
+      // --- JIKA SHADOW OFF ---
+      
+      // 1. KEMBALIKAN POSISI LAMPU KE DEFAULT (Ini yang sebelumnya terlewat)
+      if (shadowTween) shadowTween.kill();
+      shadowTween = gsap.to(directionalLight.position, {
+        duration: 1.5,
+        x: defaultShadowPos.x,
+        y: defaultShadowPos.y,
+        z: defaultShadowPos.z,
+        ease: "power2.inOut"
+      });
+
+      // 2. Matikan Rotasi
+      shadowRotationEnabled = false;
+      if (shadowRotToggle) shadowRotToggle.checked = false;
+
+      // 3. Matikan Lens Flare
+      if (lensCheckbox) lensCheckbox.checked = false;
+      if (lensflare) lensflare.visible = false;
+
+      // 4. Matikan Shadow pada Mesh
       object?.traverse(child => {
         if (child.isMesh) {
           child.castShadow = false;
           child.receiveShadow = false;
         }
       });
+      
+      // 5. Cleanup Memory
+      if (directionalLight.shadow.map) {
+        directionalLight.shadow.map.dispose(); 
+        directionalLight.shadow.map = null;
+      }
+      renderer.shadowMap.enabled = false;
     }
   });
 });
+
+// 4. Logic Mandiri Lens Flare
+if (lensCheckbox) {
+  lensCheckbox.addEventListener('change', (e) => {
+    if (lensflare) {
+      lensflare.visible = e.target.checked;
+    }
+  });
+}
+
+// 4. Logic Mandiri Lens Flare
+if (lensCheckbox) {
+  lensCheckbox.addEventListener('change', (e) => {
+    if (lensflare) {
+      lensflare.visible = e.target.checked;
+    }
+  });
+}
 
 document.querySelectorAll('.vertical-level-shadow').forEach(wrapper => {
   const defaultShadow = wrapper.dataset.default;
