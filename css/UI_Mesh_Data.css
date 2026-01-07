@@ -104,6 +104,18 @@
   zoom: .6;
 }
 
+.card-mesh-bloom-L{
+  position: relative;
+  background-color: #1e2a3a;
+  padding: 20px;
+  min-width: 220px; 
+  border-radius: 10px;
+  zoom: .6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .card-header-mesh,
 .bloom-card-header-container {
     display: flex;

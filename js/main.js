@@ -701,9 +701,9 @@ const lightingModes = {
         bloomStr: 3.0 
     },
     'COLD': { 
-        dirColor: 0x00aaff, dirInt: 1.1, 
-        ambColor: 0x4466ff, ambInt: 0.4,
-        bloomStr: 1.5 
+      dirColor: 0xddeeff, dirInt: 0.8, 
+      ambColor: 0x88aaff, ambInt: 0.4,
+      bloomStr: 0.8
     },
     'NIGHT': { 
         dirColor: 0x224488, dirInt: 0.5, 
