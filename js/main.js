@@ -2329,22 +2329,36 @@ const aaCheckbox = document.querySelector('.aa-toggle');
 
 // Fungsi untuk mengubah status Antialiasing
 function setAntialiasingVisibility(show) {
-  // Aktifkan atau nonaktifkan antialiasing di renderer
   currentAntialias = show;
 
-  // Sinkronkan status checkbox hanya untuk elemen .aa-toggle
-  aaCheckbox.checked = show;
+  // 2. Sinkronkan SEMUA checkbox yang memiliki class .aa-toggle
+  aaToggles.forEach(checkbox => {
+    // Pastikan kita hanya menyentuh elemen input checkbox
+    if (checkbox.type === 'checkbox') {
+      checkbox.checked = show;
+    }
+  });
 
-  // Hanya ubah class 'active-exf' pada tombol dengan ID 'aa-toggle' (tombol non-input)
-  if (show) {
-    aaButton.classList.add('active-exf');  // Tambahkan class active-exf jika antialiasing aktif
-  } else {
-    aaButton.classList.remove('active-exf');  // Hapus class active-exf jika antialiasing non-aktif
+  // Sinkronkan class active pada tombol utama (ID aa-toggle)
+  if (aaButton) {
+    if (show) {
+      aaButton.classList.add('active-exf');
+    } else {
+      aaButton.classList.remove('active-exf');
+    }
   }
 
-  // Panggil initRenderer untuk mengubah setting antialiasing
   initRenderer(show);
 }
+
+aaToggles.forEach(element => {
+  element.addEventListener('change', (e) => {
+    // Jika yang diklik adalah checkbox, ambil status .checked-nya
+    if (e.target.type === 'checkbox') {
+      setAntialiasingVisibility(e.target.checked);
+    }
+  });
+});
 
 // Event listener untuk tombol non-input (tombol dengan ID 'aa-toggle')
 aaButton.addEventListener('click', () => {

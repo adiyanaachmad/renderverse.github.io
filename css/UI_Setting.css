@@ -418,7 +418,7 @@
 
 input:checked+.slider,
 input:checked+.slider-cam,
-input:checked+.slider-ads,
+input:checked+.slider-adsi,
 input:checked+.slider-adsi-N,
 input:checked+.slider-adsi-K {
     background-color: #2ecc71;
@@ -427,7 +427,7 @@ input:checked+.slider-adsi-K {
 
 input:checked+.slider:before,
 input:checked+.slider-cam:before,
-input:checked+.slider-ads:before,
+input:checked+.slider-adsi:before,
 input:checked+.slider-adsi-N:before,
 input:checked+.slider-adsi-K:before {
     transform: translate(14px, -50%);
