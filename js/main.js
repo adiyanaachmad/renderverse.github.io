@@ -942,26 +942,28 @@ function applyGlassAndMetalMaterial(child) {
   if (!child.isMesh || !child.material) return;
 
   const matName = child.material.name?.toLowerCase() || "";
-
   const isGlass = matName.includes("glass") || matName.includes("kaca");
   const isMetal = matName.includes("metal") || child.material.metalness > 0;
   const isBloom = child.userData?.isBloom === true || matName === "bloom_effect";
 
+  // Simpan material asli HANYA JIKA belum pernah disimpan sebelumnya
+  // Ini kunci agar material asli GLB tidak hilang tertimpa material kaca baru
+  if (!child.userData.originalMaterial) {
+    child.userData.originalMaterial = child.material.clone();
+  }
+
   // === Handle efek bloom ===
   if (isBloom) {
     child.userData.isBloom = true;
-
     if (bloomEnabled) {
       child.layers.enable(1);
     } else {
       child.layers.disable(1);
     }
-
     if (!child.material.emissive || child.material.emissive.equals(new THREE.Color(0x000000))) {
       child.material.emissive = child.material.color.clone();
     }
     child.material.emissiveIntensity = bloomEnabled ? 1.0 : 0.3;
-    child.material.needsUpdate = true;
   } else {
     child.userData.isBloom = false;
     child.layers.disable(1);
@@ -970,40 +972,39 @@ function applyGlassAndMetalMaterial(child) {
   const useEnvMap = envMapGlobal ?? null;
 
   // === 💎 MATERIAL GLASS ===
-  // Hanya ganti jika tidak punya texture apapun
   if (isGlass) {
+    child.userData.isGlass = true; // Tandai agar saat restore kita tahu ini kaca
     child.material = new THREE.MeshBasicMaterial({
       color: child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff),
-      envMap: envMapGlobal,       // Gunakan CubeMap untuk pantulan
-      combine: THREE.MixOperation,  // Kombinasikan warna dengan pantulan
-      reflectivity: 1.0,    // Tingkat refleksi yang tinggi untuk efek kaca
-      opacity: 0.5,         // Transparansi (kaca transparan)
-      transparent: true,    // Menjadikan material transparan
-      side: THREE.DoubleSide, 
+      envMap: useEnvMap, 
+      combine: THREE.MixOperation,
+      reflectivity: 1.0,
+      opacity: 0.5,
+      transparent: true,
+      side: THREE.FrontSide, // Tetap gunakan FrontSide untuk performa zoom
     });
+    child.material.needsUpdate = true;
   }
 
   // === ⚙️ MATERIAL METAL ===
-  // Hanya ganti jika tidak punya texture juga
   else if (
-  isMetal &&
-  !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
-) {
-  child.material = new THREE.MeshPhysicalMaterial({
-    color: child.material.color || 0xffffff,
-    metalness: 0.9,
-    roughness: 0.2,
-    reflectivity: 0.8,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.02,
-    side: THREE.DoubleSide,
-    envMap: useEnvMap,
-    envMapIntensity: useEnvMap ? 1.0 : 0
-  });
-}
-
-// Simpan salinan original untuk restore nanti
-child.userData.originalMaterial = child.material.clone();
+    isMetal &&
+    !(child.material.map || child.material.normalMap || child.material.roughnessMap || child.material.metalnessMap)
+  ) {
+    child.userData.isMetal = true; // Tandai agar saat restore kita tahu ini metal
+    child.material = new THREE.MeshPhysicalMaterial({
+      color: child.material.color || 0xffffff,
+      metalness: 0.9,
+      roughness: 0.2,
+      reflectivity: 0.8,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      side: THREE.FrontSide,
+      envMap: useEnvMap,
+      envMapIntensity: useEnvMap ? 1.0 : 0
+    });
+    child.material.needsUpdate = true;
+  }
 }
 
 function updateBloomLayerState() {
@@ -1102,10 +1103,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
           child.userData.originalMaterial = child.material.clone();
 
+          if (child.material) {
+              child.material.side = THREE.FrontSide;
+          }
+
           const matName = child.material?.name?.toLowerCase() || "";
           if (matName.startsWith("bloom_effect")) {
             child.userData.isBloom = true;
           }
+
+          if (matName.includes("glass") || matName.includes("kaca")) {
+            child.userData.isGlass = true;
+          }
+
           applyGlassAndMetalMaterial(child);
         }
       });
@@ -1395,43 +1405,47 @@ document.querySelectorAll('.solid-material').forEach(btn => {
 });
 
 function applySolidMaterial() {
+  if (!object) return;
+  
   isInSolidMode = true;
   updateActiveMaterialClassByMode('solid');
 
   const useHDRI = Array.from(hdriToggles).some(t => t.checked);
   const useEnvMap = useHDRI ? envMapGlobal : null;
 
-  if (object) {
-    object.traverse(child => {
-      if (child.isMesh) {
-        child.material = new THREE.MeshStandardMaterial({
-          color: 0x808080,
-          roughness: 0.3,
-          metalness: 0.0,
-          side: THREE.DoubleSide,
-          flatShading: false,
-          transparent: true,
-          opacity: 0
-        });
-
-        // Tambahkan envMap jika HDRI masih aktif
-        child.material.envMap = useEnvMap;
-        child.material.envMapIntensity = 0.3;
-        child.material.needsUpdate = true;
-
-        child.userData.isBloom = false;
-        child.layers.disable(1);
+  object.traverse(child => {
+    if (child.isMesh) {
+      
+      if (child.userData.isGlass) {
+        return; 
       }
-    });
-  }
+
+      if (!child.userData.originalMaterial) {
+        child.userData.originalMaterial = child.material.clone();
+      }
+
+      // 3. TERAPKAN MATERIAL SOLID (Hanya untuk non-glass)
+      child.material = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.5,
+        metalness: 0.1,
+        side: THREE.FrontSide // Tetap gunakan FrontSide untuk optimasi FPS
+      });
+
+      // Tambahkan envMap jika HDRI masih aktif agar objek putih tidak flat
+      child.material.envMap = useEnvMap;
+      child.material.envMapIntensity = 0.3;
+      child.material.needsUpdate = true;
+      child.userData.isBloom = false;
+      child.layers.disable(1);
+    }
+  });
 
   bloomEnabled = false;
   bloomToggles.forEach(t => t.checked = false);
 
   scene.environment = useEnvMap;
 }
-
-
 
 document.querySelectorAll('.colourfull-material').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1858,13 +1872,22 @@ function loadNewModel(modelName, fileName = 'scene.glb') {
 
           child.userData.originalMaterial = child.material.clone();
 
+          if (child.material) {
+              child.material.side = THREE.FrontSide;
+              if (Array.isArray(child.material)) {
+                  child.material.forEach(m => m.side = THREE.FrontSide);
+              }
+          }
+
           // 🌟 Tandai bloom layer jika material name cocok
           const matName = child.material?.name?.toLowerCase() || "";
           if (matName.startsWith("bloom_effect")) {
             child.userData.isBloom = true;
           }
-          if (matName.includes("glass")) {
-            glassObjects.push(child); // Menambahkan objek glass
+
+          if (matName.includes("glass") || matName.includes("kaca")) {
+            child.userData.isGlass = true; // Ini adalah "ID Card" si objek kaca
+            glassObjects.push(child);
           }
 
           if (matName.includes("metal") || child.material.metalness > 0) {
@@ -2217,22 +2240,32 @@ function restoreOriginalMaterial() {
   if (!object) return;
 
   object.traverse((child) => {
-    if (child.isMesh && child.userData.originalMaterial) {
-      child.material = child.userData.originalMaterial.clone();
-      child.material.needsUpdate = true;
+    if (child.isMesh) {
+     
+      if (child.userData.isGlass) {
+        return;
+      }
 
-      const matName = child.userData.originalMaterial.name?.toLowerCase() || "";
+      if (child.userData.originalMaterial) {
+        child.material = child.userData.originalMaterial.clone();
+        child.material.side = THREE.FrontSide;
+        child.material.needsUpdate = true;
+      }
+
+      const matName = child.material.name?.toLowerCase() || "";
+
       if (matName.startsWith("bloom_effect")) {
         child.userData.isBloom = true;
       }
 
-      applyGlassAndMetalMaterial(child);
     }
   });
 
   const useEnvMap = Array.from(hdriToggles).some(t => t.checked) ? envMapGlobal : null;
   scene.environment = useEnvMap;
   applyEnvMapToMaterials(object, useEnvMap);
+  
+  isInSolidMode = false;
 }
 
 function updateMeshDataDisplay(model) {
