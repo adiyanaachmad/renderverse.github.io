@@ -497,3 +497,112 @@ input:checked ~ .btn .btn-text {
     transform: translateX(20px);
     transition-delay: .2s;
 }
+
+.popup-inf{
+    position: fixed;
+    left: 100px;
+    bottom: 5px;
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    gap: 10px;
+    grid-template-columns: repeat(2,1fr);
+    background-color: transparent;
+    padding: 10px;
+    z-index: 3;
+    zoom: .7;
+}
+
+.set-mat,
+.set-par{
+    display: flex;
+    flex-direction: column;
+    width: 100%!important;
+}
+
+.popup-inf1{
+    position: fixed;
+    /* left: 400px; */
+    left: 100px;
+    bottom: 5px;
+    display: none;
+   opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    gap: 10px;
+    grid-template-columns: repeat(2,1fr);
+    background-color: transparent;
+    padding: 10px;
+    z-index: 3;
+    zoom: .7;
+}
+
+.popup-inf2{
+    position: fixed;
+    /* left: 700px; */
+    left: 100px;
+    bottom: -250px;
+    min-width: 260px;
+    /* display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3,1fr); */
+    background-color: transparent;
+    padding: 10px;
+    z-index: 3;
+    zoom: .7;
+}
+
+.popup-inf3{
+    position: fixed;
+    left: 395px;
+    /* left: 50%;
+    transform: translateX(-50%) translateY(0); */
+    bottom: -250px;
+    min-width: 260px;
+    /* display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3,1fr); */
+    background-color: transparent;
+    padding: 10px;
+    z-index: 3;
+    zoom: .7;
+}
+
+.popup-inf4{
+    position: fixed;
+    left: 100px;
+    /* left: 50%;
+    transform: translateX(-50%) translateY(0); */
+    bottom: 5px;
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    gap: 10px;
+    grid-template-columns: repeat(2,1fr);
+    background-color: transparent;
+    padding: 10px;
+    z-index: 3;
+    zoom: .7;
+}
+
+.popup-active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transform: translateY(0) ;
+}
+.red{
+    background-color: red!important;
+}
+
+.margin-hid{
+    margin-top: 0px!important;
+    margin-bottom: 0px!important;
+}
+

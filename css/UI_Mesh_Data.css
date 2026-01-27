@@ -3,7 +3,8 @@
 .camera-card-container,
 .material-card-container,
 .particle-card-container,
-.single-object-container {
+.single-object-container,
+.setting-add-container {
   background-color: #3b4b5d;
   color: #fff;
   border-radius: 10px;

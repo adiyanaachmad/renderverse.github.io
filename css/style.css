@@ -74,6 +74,19 @@ body {
   z-index: 2;
 }
 
+.btn-bottom-container{
+  position: absolute;
+  left: 20px;
+  /* right: 20px; */
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  align-items: center;
+  color: white;
+  z-index: 2;
+}
+
 .jobs-overview {
   width: 250px;
   text-align: center;
@@ -599,7 +612,7 @@ main {
 
 .card-select:hover,
 .active-material {
-  border: 5px solid #FFA726 !important;
+  border: 5px solid #739eb2 !important;
   border-radius: 10px;
 }
 
@@ -614,6 +627,27 @@ main {
   margin-top: 0px !important;
   flex: 0 0 auto !important;
   width: 300px !important;
+}
+
+#cardMeshDesktop {
+    min-width: 260px !important;
+    transition: min-width 0.5s ease !important;
+    overflow: hidden;
+}
+
+#legend-item {
+    display: none;
+    pointer-events: none;
+}
+
+/* Kondisi Saat Terbuka (Active) */
+#cardMeshDesktop.is-open {
+    min-width: 470px !important;
+}
+
+#cardMeshDesktop.is-open #legend-item {
+    display: flex;
+    pointer-events: auto;
 }
 
 @media screen and (min-width: 768px) {
@@ -632,22 +666,47 @@ main {
     justify-self: left;
     width: 25px !important;
     height: 20px !important;
-    border: 5px solid #3b4b5d;
+    border: 5px solid #1e2a3a;
     position: relative;
     rotate: 90deg;
     border-radius: 20px 20px 0px 0px !important;
     display: inline-block;
   }
 
+  .legend[style*="display: flex"] {
+    opacity: 1;
+  }
+
+  .legend::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+    display: none;
+  }
+
+  .legend::-webkit-scrollbar-thumb {
+    background-color: #739eb2;
+    border-radius: 4px;
+    display: none;
+  }
+
+  .legend::-webkit-scrollbar-track {
+    background: transparent;
+    display: none;
+  }
+
   .legend {
     font-size: 18px;
     font-weight: 400;
     color: #fff;
-    background-color: #3b4b5d;
-    margin-top: 10px;
-    padding: 16px;
+    background-color: #1e2a3a;
+    margin-top: 0px!important;
+    width: 100%;
+    padding: 18px;
+    zoom: .8;
     border-radius: 10px;
     display: flex;
+    height: 215px;
+    overflow-y: auto;
     flex-direction: column;
     gap: 10px !important;
   }
@@ -657,7 +716,7 @@ main {
     justify-content: space-between; */
     align-items: center;
     border-bottom: 0px !important;
-    background-color: #1e2a3a;
+    background-color: #3b4b5d;
     /* padding-bottom: 4px;
     padding-top: 4px;
     padding-right: 16px;
@@ -681,7 +740,7 @@ main {
     font-size: 16px;
     font-weight: 500;
     margin: 0px !important;
-    height: 160px;
+    height: 220px;
     transition: 500ms cubic-bezier(0.77, 0, 0.18, 1);
     overflow-y: auto;
     cursor: pointer;
@@ -699,9 +758,14 @@ main {
   }
 
   .active-camera {
-    background-color: #1e2a3a !important;
+    background-color: #739eb2 !important;
+    width: 100%;
     border-radius: 8px;
     color: #fff !important;
+  }
+
+  .active-popup{
+    background-color: #739eb2 !important;
   }
 
   .title-model h2 {
@@ -737,22 +801,48 @@ main {
     padding-bottom: 1rem;
   }
 
+   .all-particle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 45px;
+    color: #fff;
+    /* padding: 8px; */
+    border-radius: 8px;
+    border-bottom: 0px !important;
+    background-color: #1e2a3a;
+    /* padding-bottom: 8px;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-left: 16px; */
+  }
+
+  .particle-item{
+    width: 0px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    min-width: 220px!important;
+  }
+
   .card-container-desktop {
     transition: opacity 0.5s ease !important;
     opacity: 1;
   }
 
   .card-container-desktop.hidden {
-    opacity: 0;
-    pointer-events: none;
+    opacity: 1;
+    /* pointer-events: none; */
   }
 
   .card-mesh {
-    min-width: 260px !important;
+    min-width: 0px;
     position: relative;
-    background-color: #1e2a3a !important;
-    margin-top: 20px;
-    height: 30px;
+    background-color: #3b4b5d !important;
+    /* margin-top: 0px!important; */
+    display: flex;
+    gap: 10px;
+    height: 200px;
     transition: height 0.5s ease !important;
   }
 
@@ -765,8 +855,6 @@ main {
     transition: height 0.5s ease !important;
   }
 
-  .material-card-container,
-  .particle-card-container,
   .single-object-container {
     background-color: #1e2a3a !important;
     min-width: 260px !important;
@@ -776,18 +864,52 @@ main {
     transition: height 0.5s ease !important;
   }
 
+  .setting-add-container {
+    background-color: #1e2a3a !important;
+    min-width: 260px !important;
+    margin-top: 20px;
+    position: relative;
+    height: 295px;
+    transition: height 0.5s ease !important;
+  }
+
+  .particle-card-container{
+        background-color: #3b4b5d !important;
+    min-width: 530px !important;
+    /* margin-top: 20px; */
+    position: relative;
+    display: flex;
+    gap: 10px;
+    height: 301px;
+    zoom: .7;
+    transition: height 0.5s ease !important;
+  }
+
+  .material-card-container{
+     background-color: #3b4b5d !important;
+    min-width: 366px !important;
+    /* margin-top: 10px; */
+    position: relative;
+    /* display: flex;
+    gap: 10px; */
+    zoom: .7;
+    height: 301px;
+    transition: height 0.5s ease !important;
+  }
+
   .material-card {
     display: flex;
     gap: .5rem;
     justify-content: space-between;
     flex-wrap: nowrap;
+    margin-bottom: 10px;
   }
 
   .card-select {
     flex: 0 0 auto;
-    background-color: #3b4b5d;
+    background-color: #1e2a3a;
     border-radius: 10px;
-    border: 5px solid #3b4b5d;
+    border: 5px solid #1e2a3a;
     transition: all .3s ease !important;
     overflow: hidden;
     aspect-ratio: 1 / 1;
@@ -803,14 +925,20 @@ main {
 
   .camera-card {
     margin-bottom: 20px;
+    display: flex;
+    padding: 10px!important;
+    flex-direction: column;
+     background-color: #1e2a3a !important;
   }
 
   .camera-card-container {
-    background-color: #1e2a3a !important;
+    background-color: #3b4b5d !important;
     min-width: 260px !important;
-    margin-top: 20px;
+    padding: 28px!important;
+    zoom: .9;
+    /* margin-top: 10px; */
     position: relative;
-    height: 30px;
+    height: 210px;
     transition: height 0.5s ease !important;
   }
 
@@ -829,7 +957,7 @@ main {
 
   .info-data-mesh,
   .progress-bar-mesh {
-    background-color: #3b4b5d !important;
+    background-color: #1e2a3a !important;
   }
 
   /* .setting-mod {
@@ -858,8 +986,10 @@ main {
   }
 
   .camera-card-particle {
-    background-color: #3b4b5d !important;
+    background-color: #1e2a3a !important;
     padding: 12px !important;
+    display: grid;
+    margin-top: 0px;
   }
 
   .active-maximize,
@@ -886,12 +1016,19 @@ main {
   }
 
   .particle-card {
-    background-color: #3b4b5d !important;
-    margin-top: 20px;
+    background-color: #1e2a3a !important;
+    margin-top: 10px;
   }
 
   .particle-value {
-    background-color: #1e2a3a !important;
+    background-color: #3b4b5d !important;
+  }
+
+  .icon-switch {
+    position: relative;
+    font-size: 30px;
+    justify-content: center;
+    bottom: -30px;
   }
 
   .bottom-nav-material,
@@ -924,11 +1061,28 @@ main {
     font-size: 18px;
     font-weight: 500;
     border-bottom: 0px !important;
-    background-color: #3b4b5d;
+    background-color: #1e2a3a;
     padding-bottom: 4px;
     padding-top: 4px;
     padding-right: 16px;
     padding-left: 16px;
+  }
+
+  .all-effect-shadows {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 45px;
+    color: #fff;
+    border-bottom: 0px !important;
+    background-color: transparent;
+  }
+
+
+  .shadow-container{
+    display: flex;
+    flex-direction: column;
+    zoom: .7;
   }
 
   .effect-left {
@@ -946,7 +1100,9 @@ main {
   }
 
   .animate-wrapper{
-    padding: 20px;
+    padding: 28px;
+    display: flex;
+    gap: 22px;
   }
 
   /* .profile-card {
@@ -962,6 +1118,18 @@ main {
     zoom: .8;
     transition: 0.3s;
   } */
+
+    .mesh-col-qc {
+    display: flex;
+    flex-direction: column;
+    min-width: 260px;
+  }
+
+    .mesh-col-qck {
+    display: flex;
+    flex-direction: column;
+    min-width: 360px;
+  }
 
 }
 
@@ -1463,6 +1631,17 @@ main {
   .credit-info {
     display: none;
     opacity: 0;
+  }
+
+  .btn-bottom-container,
+  .popup-inf,
+  .popup-inf1,
+  .popup-inf2,
+  .popup-inf3,
+  .popup-inf4{
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   .card-select {

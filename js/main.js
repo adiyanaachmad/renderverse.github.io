@@ -1392,16 +1392,30 @@ function updateActiveMaterialClassByMode(mode) {
   });
 }
 
-document.querySelectorAll('.solid-material').forEach(btn => {
-  btn.addEventListener('click', () => {
-    fadeTransitionMaterial('solid');
+function updateIconSwitchOpacity(mode) {
+    const iconSwitches = document.querySelectorAll('.icon-switch i');
     
-    // Update icon opacity on selection
-    const iconSwitch = document.querySelector('.icon-switch i');
-    iconSwitch.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
-    iconSwitch.style.setProperty('--fa-primary-opacity', '0.4');
-    iconSwitch.style.setProperty('--fa-secondary-opacity', '1');
-  });
+    iconSwitches.forEach(icon => {
+        icon.style.transition = 'opacity 0.3s ease'; // Pastikan transisi aktif
+        
+        if (mode === 'colourfull') {
+            icon.style.setProperty('--fa-primary-opacity', '1');
+            icon.style.setProperty('--fa-secondary-opacity', '0.4');
+        } else if (mode === 'solid') {
+            icon.style.setProperty('--fa-primary-opacity', '0.4');
+            icon.style.setProperty('--fa-secondary-opacity', '1');
+        }
+    });
+}
+
+document.querySelectorAll('.solid-material').forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Jika ada logic state solid, masukkan di sini
+        fadeTransitionMaterial('solid');
+        
+        // Update semua icon switch ke mode solid
+        updateIconSwitchOpacity('solid');
+    });
 });
 
 function applySolidMaterial() {
@@ -1448,17 +1462,14 @@ function applySolidMaterial() {
 }
 
 document.querySelectorAll('.colourfull-material').forEach(btn => {
-  btn.addEventListener('click', () => {
-    isInSolidMode = false;
-    updateActiveMaterialClassByMode('colourfull');
-    fadeTransitionMaterial('colourfull');
-    
-    // Update icon opacity on selection
-    const iconSwitch = document.querySelector('.icon-switch i');
-    iconSwitch.style.transition = 'opacity 0.3s ease'; // Transisi perubahan opacity
-    iconSwitch.style.setProperty('--fa-primary-opacity', '1');
-    iconSwitch.style.setProperty('--fa-secondary-opacity', '0.4');
-  });
+    btn.addEventListener('click', () => {
+        isInSolidMode = false;
+        updateActiveMaterialClassByMode('colourfull');
+        fadeTransitionMaterial('colourfull');
+        
+        // Update semua icon switch ke mode colourfull
+        updateIconSwitchOpacity('colourfull');
+    });
 });
 
 if (isReturningCamera) {
@@ -1566,137 +1577,122 @@ function returnToCenter() {
   }
 }
 
-// 1. Deklarasi Elemen UI
+// 1. Deklarasi Elemen UI (Gunakan querySelectorAll untuk semua yang mungkin duplikat)
 const shadowToggles = document.querySelectorAll('.shadow-toggle');
-const shadowRotToggle = document.getElementById('shadow-rot');
-const lensCheckbox = document.querySelector('.cb-lens');
+const shadowRotToggles = document.querySelectorAll('#shadow-rot, .shadow-rot-class'); // Tambahkan class jika ada duplikat ID
+const lensCheckboxes = document.querySelectorAll('.cb-lens');
 
-// 2. Logic untuk Shadow Rotation Toggle
-if (shadowRotToggle) {
-  shadowRotToggle.addEventListener('change', (e) => {
-    const isEnabled = e.target.checked;
+// --- HELPER FUNCTION UNTUK SINKRONISASI ---
+const syncCheckboxes = (nodes, state) => {
+    nodes.forEach(node => { node.checked = state; });
+};
 
-    // Proteksi: Jangan biarkan rotasi nyala jika Shadow Map mati
-    if (isEnabled && !renderer.shadowMap.enabled) {
-      e.target.checked = false;
-      if (typeof showErrorToast === "function") {
-        showErrorToast("Shadow is Off", "Please enable 'Shadow Effect' first.");
-      }
-      return;
-    }
+// 2. Logic untuk Shadow Rotation Toggle (SINKRON)
+if (shadowRotToggles.length > 0) {
+    shadowRotToggles.forEach(toggle => {
+        toggle.addEventListener('change', (e) => {
+            const isEnabled = e.target.checked;
 
-    shadowRotationEnabled = isEnabled;
+            // Proteksi: Shadow Map harus aktif
+            if (isEnabled && !renderer.shadowMap.enabled) {
+                syncCheckboxes(shadowRotToggles, false);
+                if (typeof showErrorToast === "function") {
+                    showErrorToast("Shadow is Off", "Please enable 'Shadow Effect' first.");
+                }
+                return;
+            }
 
-    if (!isEnabled) {
-      // Kembalikan posisi lampu ke default jika rotasi dimatikan
-      if (shadowTween) shadowTween.kill();
-      shadowTween = gsap.to(directionalLight.position, {
-        duration: 1.5,
-        x: defaultShadowPos.x,
-        y: defaultShadowPos.y,
-        z: defaultShadowPos.z,
-        ease: "power2.inOut"
-      });
-    }
-  });
+            // Sinkronkan semua toggle rotasi
+            syncCheckboxes(shadowRotToggles, isEnabled);
+            shadowRotationEnabled = isEnabled;
+
+            if (!isEnabled) {
+                if (shadowTween) shadowTween.kill();
+                shadowTween = gsap.to(directionalLight.position, {
+                    duration: 1.5,
+                    x: defaultShadowPos.x,
+                    y: defaultShadowPos.y,
+                    z: defaultShadowPos.z,
+                    ease: "power2.inOut"
+                });
+            }
+        });
+    });
 }
 
-// 3. Logic Master Switch (Shadow Toggles)
+// 3. Logic Master Switch (Shadow Toggles - SINKRON)
 shadowToggles.forEach(toggle => {
-  toggle.checked = false;
-  toggle.addEventListener('change', (e) => {
-    const enabled = e.target.checked;
-    
-    shadowToggles.forEach(t => t.checked = enabled);
-    renderer.shadowMap.enabled = enabled;
-    directionalLight.castShadow = enabled;
+    toggle.addEventListener('change', (e) => {
+        const enabled = e.target.checked;
+        
+        // A. Sinkronkan semua master shadow checkbox
+        syncCheckboxes(shadowToggles, enabled);
+        
+        renderer.shadowMap.enabled = enabled;
+        directionalLight.castShadow = enabled;
 
-    if (enabled) {
-      // --- JIKA SHADOW ON ---
-      const res = shadowQualityMap[currentShadowQuality];
-      directionalLight.shadow.mapSize.set(res, res);
-      
-      if (directionalLight.shadow.map) {
-        directionalLight.shadow.map.dispose();
-        directionalLight.shadow.map = null;
-      }
-      
-      directionalLight.shadow.camera.updateProjectionMatrix();
-      renderer.shadowMap.needsUpdate = true;
-      renderer.compile(scene, camera);
+        if (enabled) {
+            // --- JIKA SHADOW ON ---
+            const res = shadowQualityMap[currentShadowQuality];
+            directionalLight.shadow.mapSize.set(res, res);
+            if (directionalLight.shadow.map) {
+                directionalLight.shadow.map.dispose();
+                directionalLight.shadow.map = null;
+            }
+            directionalLight.shadow.camera.updateProjectionMatrix();
+            renderer.shadowMap.needsUpdate = true;
+            renderer.compile(scene, camera);
 
-      // Jalankan animasi ke posisi default saat menyalakan
-      if (shadowTween) shadowTween.kill();
-      shadowTween = gsap.to(directionalLight.position, {
-        duration: 1.5,
-        x: defaultShadowPos.x,
-        y: defaultShadowPos.y,
-        z: defaultShadowPos.z,
-        ease: "power2.inOut"
-      });
+            if (shadowTween) shadowTween.kill();
+            shadowTween = gsap.to(directionalLight.position, {
+                duration: 1.5,
+                x: defaultShadowPos.x, y: defaultShadowPos.y, z: defaultShadowPos.z,
+                ease: "power2.inOut"
+            });
 
-      object?.traverse(child => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+            object?.traverse(child => {
+                if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; }
+            });
+
+        } else {
+            // --- JIKA SHADOW OFF ---
+            if (shadowTween) shadowTween.kill();
+            shadowTween = gsap.to(directionalLight.position, {
+                duration: 1.5,
+                x: defaultShadowPos.x, y: defaultShadowPos.y, z: defaultShadowPos.z,
+                ease: "power2.inOut"
+            });
+
+            // Matikan & Sinkronkan Rotasi
+            shadowRotationEnabled = false;
+            syncCheckboxes(shadowRotToggles, false);
+
+            // Matikan & Sinkronkan Lens Flare
+            if (lensCheckboxes) syncCheckboxes(lensCheckboxes, false);
+            if (lensflare) lensflare.visible = false;
+
+            object?.traverse(child => {
+                if (child.isMesh) { child.castShadow = false; child.receiveShadow = false; }
+            });
+            
+            if (directionalLight.shadow.map) {
+                directionalLight.shadow.map.dispose(); 
+                directionalLight.shadow.map = null;
+            }
+            renderer.shadowMap.enabled = false;
         }
-      });
-
-    } else {
-      // --- JIKA SHADOW OFF ---
-      
-      // 1. KEMBALIKAN POSISI LAMPU KE DEFAULT (Ini yang sebelumnya terlewat)
-      if (shadowTween) shadowTween.kill();
-      shadowTween = gsap.to(directionalLight.position, {
-        duration: 1.5,
-        x: defaultShadowPos.x,
-        y: defaultShadowPos.y,
-        z: defaultShadowPos.z,
-        ease: "power2.inOut"
-      });
-
-      // 2. Matikan Rotasi
-      shadowRotationEnabled = false;
-      if (shadowRotToggle) shadowRotToggle.checked = false;
-
-      // 3. Matikan Lens Flare
-      if (lensCheckbox) lensCheckbox.checked = false;
-      if (lensflare) lensflare.visible = false;
-
-      // 4. Matikan Shadow pada Mesh
-      object?.traverse(child => {
-        if (child.isMesh) {
-          child.castShadow = false;
-          child.receiveShadow = false;
-        }
-      });
-      
-      // 5. Cleanup Memory
-      if (directionalLight.shadow.map) {
-        directionalLight.shadow.map.dispose(); 
-        directionalLight.shadow.map = null;
-      }
-      renderer.shadowMap.enabled = false;
-    }
-  });
+    });
 });
 
-// 4. Logic Mandiri Lens Flare
-if (lensCheckbox) {
-  lensCheckbox.addEventListener('change', (e) => {
-    if (lensflare) {
-      lensflare.visible = e.target.checked;
-    }
-  });
-}
-
-// 4. Logic Mandiri Lens Flare
-if (lensCheckbox) {
-  lensCheckbox.addEventListener('change', (e) => {
-    if (lensflare) {
-      lensflare.visible = e.target.checked;
-    }
-  });
+// 4. Logic Mandiri Lens Flare (SINKRON)
+if (lensCheckboxes.length > 0) {
+    lensCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            syncCheckboxes(lensCheckboxes, isChecked);
+            if (lensflare) lensflare.visible = isChecked;
+        });
+    });
 }
 
 document.querySelectorAll('.vertical-level-shadow').forEach(wrapper => {
@@ -2497,36 +2493,38 @@ function setupTextureQualityControls() {
       btn.addEventListener('click', async function() {
           const selectedQuality = this.textContent.trim().toUpperCase();
           
-          // 1. If already in the same quality, do nothing
+          // 1. Jika kualitas yang sama diklik, abaikan
           if (window.currentTextureQuality === selectedQuality) return;
 
-          // 2. Check file availability if user selects HIGH
+          // 2. Cek ketersediaan file jika memilih HIGH
           if (selectedQuality === 'HIGH') {
               const targetPath = `./models/${window.currentModelName}/scene_high.glb`;
-              
               try {
                   const response = await fetch(targetPath, { method: 'HEAD' });
-                  
                   if (!response.ok) {
-                      // FILE NOT FOUND: Call your English toast
                       showErrorToast("Not Available", "High-res texture not found.");
-                      return; // Stop execution, don't change the UI button
+                      return; 
                   }
               } catch (error) {
-                  // Connection or server issue
-                  showErrorToast("Connection Error", "Failed to verify high-resolution texture availability.");
+                  showErrorToast("Connection Error", "Failed to verify texture availability.");
                   return;
               }
           }
 
-          // 3. If check passes (or LOW clicked), update UI buttons
-          qualityButtons.forEach(b => b.classList.remove('active-camera'));
-          this.classList.add('active-camera');
-          window.currentTextureQuality = selectedQuality;
+          // --- BAGIAN SINKRONISASI ---
+          // 3. Update SEMUA tombol yang ada di DOM berdasarkan teksnya
+          qualityButtons.forEach(b => {
+              if (b.textContent.trim().toUpperCase() === selectedQuality) {
+                  b.classList.add('active-camera');
+              } else {
+                  b.classList.remove('active-camera');
+              }
+          });
 
+          window.currentTextureQuality = selectedQuality;
           const targetFile = (selectedQuality === 'HIGH') ? 'scene_high.glb' : 'scene.glb';
           
-          // 4. Load the model
+          // 4. Load model baru
           if (window.currentModelName) {
               console.log(`Switching to ${selectedQuality} quality...`);
               loadNewModel(window.currentModelName, targetFile);
@@ -3116,30 +3114,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-window.addEventListener("DOMContentLoaded", () => {
-  window.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-    showErrorToast("Access denied", "Developer tools detected.");
-  });
+// window.addEventListener("DOMContentLoaded", () => {
+//   window.addEventListener("contextmenu", function (e) {
+//     e.preventDefault();
+//     showErrorToast("Access denied", "Developer tools detected.");
+//   });
 
-  document.addEventListener("keydown", function (e) {
-    if (
-      e.key === "F12" ||
-      (e.ctrlKey && e.shiftKey && e.key === "I") ||
-      (e.ctrlKey && e.key === "U") ||
-      (e.ctrlKey && e.shiftKey && e.key === "J")
-    ) {
-      e.preventDefault();
-    }
-  });
+//   document.addEventListener("keydown", function (e) {
+//     if (
+//       e.key === "F12" ||
+//       (e.ctrlKey && e.shiftKey && e.key === "I") ||
+//       (e.ctrlKey && e.key === "U") ||
+//       (e.ctrlKey && e.shiftKey && e.key === "J")
+//     ) {
+//       e.preventDefault();
+//     }
+//   });
 
-  setInterval(function () {
-    if (
-      window.outerHeight - window.innerHeight > 100 ||
-      window.outerWidth - window.innerWidth > 100
-    ) {
-      document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
-    }
-  }, 1000);
-});
+//   setInterval(function () {
+//     if (
+//       window.outerHeight - window.innerHeight > 100 ||
+//       window.outerWidth - window.innerWidth > 100
+//     ) {
+//       document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Developer tools detected. Access denied.</h1>";
+//     }
+//   }, 1000);
+// });
 

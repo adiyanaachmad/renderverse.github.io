@@ -61,36 +61,36 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const panels = {
-    mesh: {
-      container: document.querySelector(".card-mesh"),
-      toggleBtn: document.getElementById("meshDataVisible"),
-      icon: document.getElementById("meshDataVisible").querySelector("i"),
-      isExpanded: false
-    },
+    // mesh: {
+    //   container: document.querySelector(".card-mesh"),
+    //   toggleBtn: document.getElementById("meshDataVisible"),
+    //   icon: document.getElementById("meshDataVisible").querySelector("i"),
+    //   isExpanded: false
+    // },
     bloom: {
       container: document.querySelector(".bloom-card-container"),
       toggleBtn: document.getElementById("meshDataVisibleBloom"),
       icon: document.getElementById("meshDataVisibleBloom").querySelector("i"),
       isExpanded: false
     },
-    camera: {
-      container: document.querySelector(".camera-card-container"),
-      toggleBtn: document.getElementById("cameraVisible"),
-      icon: document.getElementById("cameraVisible").querySelector("i"),
-      isExpanded: false
-    },
-    material: {
-      container: document.querySelector(".material-card-container"),
-      toggleBtn: document.getElementById("materialVisible"),
-      icon: document.getElementById("materialVisible").querySelector("i"),
-      isExpanded: false
-    },
-    particle: {
-      container: document.querySelector(".particle-card-container"),
-      toggleBtn: document.getElementById("particleVisible"),
-      icon: document.getElementById("particleVisible").querySelector("i"),
-      isExpanded: false
-    },
+    // camera: {
+    //   container: document.querySelector(".camera-card-container"),
+    //   toggleBtn: document.getElementById("cameraVisible"),
+    //   icon: document.getElementById("cameraVisible").querySelector("i"),
+    //   isExpanded: false
+    // },
+    // material: {
+    //   container: document.querySelector(".material-card-container"),
+    //   toggleBtn: document.getElementById("materialVisible"),
+    //   icon: document.getElementById("materialVisible").querySelector("i"),
+    //   isExpanded: false
+    // },
+    // particle: {
+    //   container: document.querySelector(".particle-card-container"),
+    //   toggleBtn: document.getElementById("particleVisible"),
+    //   icon: document.getElementById("particleVisible").querySelector("i"),
+    //   isExpanded: false
+    // },
     single: {
       container: document.querySelector(".single-object-container"),
       toggleBtn: document.getElementById("singleVisible"),
@@ -110,12 +110,12 @@ document.addEventListener("DOMContentLoaded", function () {
   function expandPanel(key) {
     const panel = panels[key];
 
-    let height = "695px";
-    if (key === "camera") height = "165px";
+    let height = "460px";
+    if (key === "camera") height = "210px";
     if (key === "material") height = "335px";
-    if (key === "bloom") height = "440px";
-    if (key === "particle") height = "270px";
-    if (key === "single") height = "240px";
+    if (key === "bloom") height = "295px";
+    if (key === "particle") height = "540px";
+    if (key === "single") height = "295px";
 
     panel.container.style.height = height;
     panel.icon.classList.remove("fa-plus");
@@ -155,18 +155,18 @@ document.addEventListener("DOMContentLoaded", function () {
         allCardContainers.forEach(c => {
           c.classList.add("hidden");
           setTimeout(() => {
-            c.style.display = "none";
+            c.style.display = "grid";
           }, 400);
         });
       }
     }, 20);
   }
 
-  panels.mesh.toggleBtn.addEventListener("click", () => togglePanel("mesh"));
+  // panels.mesh.toggleBtn.addEventListener("click", () => togglePanel("mesh"));
   panels.bloom.toggleBtn.addEventListener("click", () => togglePanel("bloom"));
-  panels.camera.toggleBtn.addEventListener("click", () => togglePanel("camera"));
-  panels.material.toggleBtn.addEventListener("click", () => togglePanel("material"));
-  panels.particle.toggleBtn.addEventListener("click", () => togglePanel("particle"));
+  // panels.camera.toggleBtn.addEventListener("click", () => togglePanel("camera"));
+  // panels.material.toggleBtn.addEventListener("click", () => togglePanel("material"));
+  // panels.particle.toggleBtn.addEventListener("click", () => togglePanel("particle"));
   panels.single.toggleBtn.addEventListener("click", () => togglePanel("single"));
 
   openBtn.addEventListener("click", () => {
@@ -922,4 +922,77 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 3. Inisialisasi awal (State saat halaman dimuat)
   switchTab('camera');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('legendVisible');
+    const cardMesh = document.getElementById('cardMeshDesktop');
+    const legendItem = document.getElementById('legend-item');
+    const icon = btn.querySelector('i');
+
+    btn.addEventListener('click', () => {
+        // Toggle class pada container utama
+        const isOpen = cardMesh.classList.toggle('is-open');
+
+        // Logika perubahan Icon (Plus ke Minus)
+        if (isOpen) {
+            icon.classList.replace('fa-plus', 'fa-minus');
+        } else {
+            icon.classList.replace('fa-minus', 'fa-plus');
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Mapping Button ID ke Popup Class
+    const menuConfig = [
+        { btnId: 'camData', popupClass: '.popup-inf' },
+        { btnId: 'matParticle', popupClass: '.popup-inf1' },
+        { btnId: 'shaData', popupClass: '.popup-inf4' }
+    ];
+
+    const allPopups = document.querySelectorAll('.popup-inf, .popup-inf1, .popup-inf2, .popup-inf3, .popup-inf4');
+    const allBtns = menuConfig.map(item => document.getElementById(item.btnId));
+
+    function closeAll() {
+        allPopups.forEach(p => p.classList.remove('popup-active'));
+        allBtns.forEach(b => b?.classList.remove('active-popup'));
+    }
+
+    menuConfig.forEach(config => {
+        const btn = document.getElementById(config.btnId);
+        const popup = document.querySelector(config.popupClass);
+
+        if (!btn || !popup) return;
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Penting agar tidak terpicu klik luar
+            
+            const isActive = popup.classList.contains('popup-active');
+
+            // Tutup semua terlebih dahulu agar popup baru menggantikan yang lama
+            closeAll();
+
+            // Jika sebelumnya tidak aktif, maka buka (Toggle logic)
+            if (!isActive) {
+                popup.classList.add('popup-active');
+                btn.classList.add('active-popup');
+            }
+        });
+    });
+
+    // Klik di luar area popup atau button untuk menutup
+    document.addEventListener('click', (e) => {
+        const isClickInsidePopup = Array.from(allPopups).some(p => p.contains(e.target));
+        const isClickInsideBtn = allBtns.some(b => b?.contains(e.target));
+
+        if (!isClickInsidePopup && !isClickInsideBtn) {
+            closeAll();
+        }
+    });
+
+    // Tambahan: Mencegah popup tertutup saat elemen di dalam popup diklik
+    allPopups.forEach(p => {
+        p.addEventListener('click', (e) => e.stopPropagation());
+    });
 });

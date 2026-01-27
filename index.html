@@ -43,7 +43,7 @@
   <header class="header">
     <div class="header-left">
       <img src="logo/BrowserLogo.webp" alt="logo" class="logo">
-      <p class="model-name">3D VIEWER WEB <br> By decimate_vision.3d</p>
+      <p class="model-name">3D VIEWER WEB <br> V 0.2.0</p>
     </div>
     <!-- <nav class="nav-tabs">
       <button>Rendering</button>
@@ -65,9 +65,289 @@
     </div>
   </header>
 
+  <div class="btn-bottom-container">
+    <button class="menu-btn animate-btn sound-init" id="shaData">
+      <i class="fa-solid fa-eclipse"></i>
+    </button>
+    <button class="menu-btn animate-btn sound-init" id="matParticle">
+      <i class="fa-solid fa-sparkles"></i>
+    </button>
+    <button class="menu-btn animate-btn sound-init" id="camData">
+      <i class="fa-solid fa-video"></i>
+    </button>
+    <div class="camera-card sehid">
+      <button class="per-mode active-camera sound-init">Perspective</button>
+      <button class="orto-mode sound-init">Ortographic</button>
+    </div>
+  </div>
+
   <main>
     <div id="container3D"></div>
   </main>
+
+  <div class="popup-inf">
+    <div class="card-mesh card-tri margin-hid" id="cardMeshDesktop">
+      <div class="mesh-col-qc">
+        <div class="card-header-mesh">
+          <h2>STATISTICS</h2>
+          <div class="close-mesh-data sound-init sehid" id="meshDataVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+          <div class="close-mesh-data sound-init" id="legendVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+        </div>
+
+        <div class="info-data-mesh">
+          <div class="total-count">0</div>
+          <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
+        </div>
+
+        <div class="progress-bar-mesh">
+          <div class="progress-triangles"></div>
+          <div class="progress-vertices"></div>
+          <div class="progress-edges"></div>
+          <div class="progress-meshes"></div>
+        </div>
+      </div>
+
+      <div class="legend" id="legend-item">
+        <div class="legend-item">
+          <div class="legend-left">
+            <span class="dot-mesh dot-triangles"></span>
+            <p class="value">0</p>
+          </div>
+          <div class="legend-bottom-triangles">
+            <span class="label">Triangles</span>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-left">
+            <span class="dot-mesh dot-vertices"></span>
+            <p class="value">0</p>
+          </div>
+          <div class="legend-bottom-vertices">
+            <span class="label">Vertices</span>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-left">
+            <span class="dot-mesh dot-edges"></span>
+            <p class="value">0</p>
+          </div>
+          <div class="legend-bottom-edges">
+            <span class="label">Edges</span>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-left">
+            <span class="dot-mesh dot-meshes"></span>
+            <p class="value">0</p>
+          </div>
+          <div class="legend-bottom-meshes">
+            <span class="label">Objects</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="camera-card-container margin-hid" id="cameraCard">
+      <div class="camera-card-header">
+        <h2>CAMERA</h2>
+        <div class="close-mesh-data sound-init" id="cameraVisible"
+          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+      </div>
+      <div class="camera-card">
+        <button class="per-mode active-camera sound-init">PERSPECTIVE</button>
+        <button class="orto-mode sound-init">ORTOGRAPHIC</button>
+      </div>
+      <div class="camera-card-header">
+        <h2>AUTO ROTATE</h2>
+        <label class="switch">
+          <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
+          <span class="slider-cam"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="popup-inf1">
+    <div class="material-card-container margin-hid" id="materialCard">
+      <div class="mesh-col-qcw">
+        <div class="material-card-header">
+          <h2>MATERIAL</h2>
+          <div class="close-mesh-data sound-init" id="materialVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+        </div>
+        <div class="material-card">
+          <div class="card-select colourfull-material active-material sound-init">
+            <img src="img/DefaultMaterial.webp" alt="">
+          </div>
+          <div class="icon-switch">
+            <i class="fa-duotone fa-solid fa-arrow-left-arrow-right"
+              style="--fa-primary-opacity: 1; --fa-secondary-opacity: 0.4;"></i>
+          </div>
+          <div class="card-select solid-material sound-init">
+            <img src="img/PlasticMoldWorn.webp" alt="">
+          </div>
+        </div>
+      </div>
+      <div class="set-mat">
+        <div class="all-effect-item margin-hid border-top">
+          <div class="effect-left">
+            <!-- <span class="dot-mesh dot-triangles"></span> -->
+            <span class="label">GLASS</span>
+          </div>
+          <div class="checkbox-wrapper-8 glass-effect">
+            <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
+            <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-shadow"></label>
+          </div>
+        </div>
+        <div class="all-effect-item margin-hid border-bottom">
+          <div class="effect-left">
+            <!-- <span class="dot-mesh dot-triangles"></span> -->
+            <span class="label">METALLIC</span>
+          </div>
+          <div class="checkbox-wrapper-8 metalic-effect">
+            <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
+            <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-shadow"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="particle-card-container bloom-indi" id="particleCard">
+      <div class="mesh-col-qc">
+        <div class="material-card-header">
+          <h2>PARTICLE MOTION</h2>
+          <div class="close-mesh-data sound-init" id="particleVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+        </div>
+        <div class="particle-card margin-hid">
+          <div class="particle-card-header">
+            <h2>Speed</h2>
+            <span class="particle-value">5</span>
+          </div>
+          <div class="slider-bloom">
+            <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
+              value="5">
+          </div>
+        </div>
+        <div class="particle-card">
+          <div class="particle-card-header">
+            <h2>Count</h2>
+            <span class="particle-value particle-value-count">20</span>
+          </div>
+          <div class="slider-bloom">
+            <input type="range" id="bloomRadiusMobile" class="particle-count sound-init" min="10" max="100" step="10"
+              value="20">
+          </div>
+        </div>
+      </div>
+      <div class="set-par">
+        <div class="quality-card-container-bottom" id="cameraCard">
+          <div class="camera-card-particle">
+            <button class="random-btn active-particle sound-init">RANDOM</button>
+            <button class="snow-btn sound-init">SNOW</button>
+          </div>
+        </div>
+        <div class="particle-item">
+          <div class="all-particle-item border-top">
+            <div class="effect-left">
+              <!-- <span class="dot-mesh dot-triangles"></span> -->
+              <span class="label">Random Size</span>
+            </div>
+            <div class="checkbox-wrapper-8 glass-effect">
+              <input type="checkbox" id="size-random" class="tgl tgl-skewed cb-size-random">
+              <label for="size-random" data-tg-on="ON" data-tg-off="OFF" class="tgl-shadow"></label>
+            </div>
+          </div>
+          <div class="all-particle-item border-bottom">
+            <div class="effect-left">
+              <!-- <span class="dot-mesh dot-triangles"></span> -->
+              <span class="label">Line Linked</span>
+            </div>
+            <div class="checkbox-wrapper-8 metalic-effect">
+              <input type="checkbox" id="linked-line" class="tgl tgl-skewed cb-linked-line">
+              <label for="linked-line" data-tg-on="ON" data-tg-off="OFF" class="tgl-shadow"></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="popup-inf4">
+    <div class="animate-wrapper"  style=" min-width: 606px;">
+      <div class="mesh-col-qck">
+        <div class="header-animate-speed">
+          <h3>Shadow Resolution</h3>
+          <label class="switch">
+            <input type="checkbox" id="shadowToggleDesktop" class="shadow-toggle sound-init">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="vertical-level-shadow" data-default="Low">
+          <div class="v-circle-shadow sound-init" data-level="Low">L</div>
+          <div class="v-line-wrapper-shadow">
+            <div class="v-line-shadow"></div>
+          </div>
+          <div class="v-circle-shadow sound-init" data-level="Medium">M</div>
+          <div class="v-line-wrapper-shadow">
+            <div class="v-line-shadow"></div>
+          </div>
+          <div class="v-circle-shadow sound-init" data-level="High">H</div>
+          <div class="v-line-wrapper-shadow">
+            <div class="v-line-shadow"></div>
+          </div>
+          <div class="v-circle-shadow sound-init" data-level="Ultra">U</div>
+        </div>
+        <div class="quality-card-container-bottom" id="cameraCard">
+          <div class="camera-card-quality">
+            <button class="basic-shadow-btn active-qual sound-init">Basic Shadow</button>
+            <button class="soft-shadow-btn sound-init">Soft Shadow</button>
+          </div>
+        </div>
+      </div>
+      <div class="shadow-container">
+        <div class="shadow-advance">
+          <div class="all-effect-shadows">
+            <div class="effect-left">
+              <!-- <span class="dot-mesh dot-triangles"></span> -->
+              <span class="label">LENSFLARE</span>
+            </div>
+            <div class="checkbox-wrapper-8 glass-effect">
+              <input type="checkbox" id="ao-effect" class="tgl tgl-skewed cb-lens">
+              <label for="ao-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-shadow"></label>
+            </div>
+          </div>
+          <div class="all-effect-shadows">
+            <div class="effect-left">
+              <!-- <span class="dot-mesh dot-triangles"></span> -->
+              <span class="label">SHADOW ROTATION</span>
+            </div>
+            <div class="checkbox-wrapper-8 glass-effect">
+              <input type="checkbox" id="shadow-rot" class="tgl tgl-skewed cb-shadow-rot">
+              <label for="shadow-rot" data-tg-on="ON" data-tg-off="OFF" class="tgl-shadow"></label>
+            </div>
+          </div>
+        </div>
+        <div class="texture-size">
+          <div class="texture-card-container-bottom" id="cameraCard">
+            <div class="mesh-col-1">
+              <div class="camera-card-header">
+                <h2>TEXTURE QUALITY</h2>
+                <div class="close-mesh-data sound-init" id="cameraVisible"
+                  style="font-size: 20px; cursor: pointer; color: black;"><i
+                    class="fa-duotone fa-solid fa-minus"></i></div>
+              </div>
+              <div class="texture-card">
+                <button class="quality-btn active-camera sound-init">LOW</button>
+                <!-- <button class="sound-init">MEDIUM</button> -->
+                <button class="quality-btn sound-init">HIGH</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="panel-setting">
     <!-- <div class="title-model">
@@ -151,195 +431,243 @@
         </div> -->
       </div>
     </div>
-    <div class="card-mesh card-tri" id="cardMeshDesktop">
-      <div class="card-header-mesh">
-        <h2>Statistics</h2>
-        <div class="close-mesh-data sound-init" id="meshDataVisible"
-          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-      </div>
-
-      <div class="info-data-mesh">
-        <div class="total-count">0</div>
-        <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
-      </div>
-
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-left">
-            <span class="dot-mesh dot-triangles"></span>
-            <p class="value">0</p>
-          </div>
-          <div class="legend-bottom-triangles">
-            <span class="label">Triangles</span>
-          </div>
-        </div>
-        <div class="legend-item">
-          <div class="legend-left">
-            <span class="dot-mesh dot-vertices"></span>
-            <p class="value">0</p>
-          </div>
-          <div class="legend-bottom-vertices">
-            <span class="label">Vertices</span>
-          </div>
+    <div class="panel-body-all">
+      <div class="card-mesh card-tri sehid" id="cardMeshDesktop">
+        <div class="card-header-mesh">
+          <h2>Statistics</h2>
+          <div class="close-mesh-data sound-init" id="meshDataVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
         </div>
 
-        <div class="legend-item">
-          <div class="legend-left">
-            <span class="dot-mesh dot-edges"></span>
-            <p class="value">0</p>
-          </div>
-          <div class="legend-bottom-edges">
-            <span class="label">Edges</span>
-          </div>
+        <div class="info-data-mesh">
+          <div class="total-count">0</div>
+          <div class="icon-count-mesh"><i class="fa-solid fa-diagram-sankey"></i></div>
         </div>
 
-        <div class="legend-item">
-          <div class="legend-left">
-            <span class="dot-mesh dot-meshes"></span>
-            <p class="value">0</p>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-left">
+              <span class="dot-mesh dot-triangles"></span>
+              <p class="value">0</p>
+            </div>
+            <div class="legend-bottom-triangles">
+              <span class="label">Triangles</span>
+            </div>
           </div>
-          <div class="legend-bottom-meshes">
-            <span class="label">Objects</span>
+          <div class="legend-item">
+            <div class="legend-left">
+              <span class="dot-mesh dot-vertices"></span>
+              <p class="value">0</p>
+            </div>
+            <div class="legend-bottom-vertices">
+              <span class="label">Vertices</span>
+            </div>
+          </div>
+
+          <div class="legend-item">
+            <div class="legend-left">
+              <span class="dot-mesh dot-edges"></span>
+              <p class="value">0</p>
+            </div>
+            <div class="legend-bottom-edges">
+              <span class="label">Edges</span>
+            </div>
+          </div>
+
+          <div class="legend-item">
+            <div class="legend-left">
+              <span class="dot-mesh dot-meshes"></span>
+              <p class="value">0</p>
+            </div>
+            <div class="legend-bottom-meshes">
+              <span class="label">Objects</span>
+            </div>
+          </div>
+        </div>
+        <div class="progress-bar-mesh">
+          <div class="progress-triangles"></div>
+          <div class="progress-vertices"></div>
+          <div class="progress-edges"></div>
+          <div class="progress-meshes"></div>
+        </div>
+      </div>
+      <div class="bloom-card-container" id="bloomCard">
+        <div class="bloom-card-header-container">
+          <h2>Bloom Effect</h2>
+          <div class="close-mesh-data sound-init" id="meshDataVisibleBloom"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-minus"></i></div>
+        </div>
+        <!-- <div class="info-data-mesh">
+          <div class="total-fps">0</div>
+        </div> -->
+        <div class="bloom-card">
+          <div class="bloom-card-header">
+            <h2>Strength</h2>
+            <span class="bloom-value">2.5</span>
+          </div>
+          <div class="slider-bloom">
+            <input type="range" id="bloomStrengthDesktop" class="bloom-strength sound-init" min="0" max="5" step="0.5"
+              value="2.5">
+          </div>
+        </div>
+        <div class="bloom-card">
+          <div class="bloom-card-header">
+            <h2>Radius</h2>
+            <span class="bloom-value">0.5</span>
+          </div>
+          <div class="slider-bloom">
+            <input type="range" id="bloomRadiusDesktop" class="bloom-radius sound-init" min="0" max="1.5" step="0.5"
+              value="0.5">
+          </div>
+        </div>
+        <div class="bloom-card sehid">
+          <div class="bloom-card-header">
+            <h2>Threshold</h2>
+            <span class="bloom-value">0.0</span>
+          </div>
+          <div class="slider-bloom">
+            <input type="range" id="bloomThresholdDesktop" class="bloom-threshold sound-init" min="0" max="1" step="0.5"
+              value="0.5">
           </div>
         </div>
       </div>
-      <div class="progress-bar-mesh">
-        <div class="progress-triangles"></div>
-        <div class="progress-vertices"></div>
-        <div class="progress-edges"></div>
-        <div class="progress-meshes"></div>
-      </div>
-    </div>
-    <div class="bloom-card-container" id="bloomCard">
-      <div class="bloom-card-header-container">
-        <h2>Bloom Effect</h2>
-        <div class="close-mesh-data sound-init" id="meshDataVisibleBloom"
-          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-      </div>
-      <!-- <div class="info-data-mesh">
-        <div class="total-fps">0</div>
-      </div> -->
-      <div class="bloom-card">
-        <div class="bloom-card-header">
-          <h2>Strength</h2>
-          <span class="bloom-value">2.5</span>
+      <div class="camera-card-container sehid" id="cameraCard">
+        <div class="camera-card-header">
+          <h2>Camera</h2>
+          <div class="close-mesh-data sound-init" id="cameraVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
         </div>
-        <div class="slider-bloom">
-          <input type="range" id="bloomStrengthDesktop" class="bloom-strength sound-init" min="0" max="5" step="0.5"
-            value="2.5">
+        <div class="camera-card">
+          <button class="per-mode active-camera sound-init">Perspective</button>
+          <button class="orto-mode sound-init">Ortographic</button>
+        </div>
+        <div class="camera-card-header">
+          <h2>Auto Rotate</h2>
+          <label class="switch">
+            <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
+            <span class="slider-cam"></span>
+          </label>
         </div>
       </div>
-      <div class="bloom-card">
-        <div class="bloom-card-header">
-          <h2>Radius</h2>
-          <span class="bloom-value">0.5</span>
+      <div class="material-card-container sehid" id="materialCard">
+        <div class="material-card-header">
+          <h2>Material</h2>
+          <div class="close-mesh-data sound-init" id="materialVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
         </div>
-        <div class="slider-bloom">
-          <input type="range" id="bloomRadiusDesktop" class="bloom-radius sound-init" min="0" max="1.5" step="0.5"
-            value="0.5">
+        <div class="material-card">
+          <div class="card-select colourfull-material active-material sound-init">
+            <img src="img/DefaultMaterial.webp" alt="">
+          </div>
+          <div class="card-select solid-material sound-init">
+            <img src="img/PlasticMoldWorn.webp" alt="">
+          </div>
         </div>
-      </div>
-      <div class="bloom-card">
-        <div class="bloom-card-header">
-          <h2>Threshold</h2>
-          <span class="bloom-value">0.0</span>
+        <div class="all-effect-item">
+          <div class="effect-left">
+            <!-- <span class="dot-mesh dot-triangles"></span> -->
+            <span class="label">Glass</span>
+          </div>
+          <div class="checkbox-wrapper-8 glass-effect">
+            <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
+            <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+          </div>
         </div>
-        <div class="slider-bloom">
-          <input type="range" id="bloomThresholdDesktop" class="bloom-threshold sound-init" min="0" max="1" step="0.5"
-            value="0.5">
-        </div>
-      </div>
-    </div>
-    <div class="camera-card-container" id="cameraCard">
-      <div class="camera-card-header">
-        <h2>Camera</h2>
-        <div class="close-mesh-data sound-init" id="cameraVisible"
-          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-      </div>
-      <div class="camera-card">
-        <button class="per-mode active-camera sound-init">Perspective</button>
-        <button class="orto-mode sound-init">Ortographic</button>
-      </div>
-      <div class="camera-card-header">
-        <h2>Auto Rotate</h2>
-        <label class="switch">
-          <input type="checkbox" id="rotateToggle" class="rotate-toggle sound-init">
-          <span class="slider-cam"></span>
-        </label>
-      </div>
-    </div>
-    <div class="material-card-container" id="materialCard">
-      <div class="material-card-header">
-        <h2>Material</h2>
-        <div class="close-mesh-data sound-init" id="materialVisible"
-          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-      </div>
-      <div class="material-card">
-        <div class="card-select colourfull-material active-material sound-init">
-          <img src="img/DefaultMaterial.webp" alt="">
-        </div>
-        <div class="card-select solid-material sound-init">
-          <img src="img/PlasticMoldWorn.webp" alt="">
+        <div class="all-effect-item">
+          <div class="effect-left">
+            <!-- <span class="dot-mesh dot-triangles"></span> -->
+            <span class="label">Metallic</span>
+          </div>
+          <div class="checkbox-wrapper-8 metalic-effect">
+            <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
+            <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+          </div>
         </div>
       </div>
-      <div class="all-effect-item">
-        <div class="effect-left">
-          <!-- <span class="dot-mesh dot-triangles"></span> -->
-          <span class="label">Glass</span>
+      <div class="particle-card-container sehid" id="particleCard">
+        <div class="material-card-header">
+          <h2>Particle Motion</h2>
+          <div class="close-mesh-data sound-init" id="particleVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
         </div>
-        <div class="checkbox-wrapper-8 glass-effect">
-          <input type="checkbox" id="cb-glass-effect" class="tgl tgl-skewed cb-glass-effect">
-          <label for="cb-glass-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
+        <div class="particle-card">
+          <div class="particle-card-header">
+            <h2>Speed</h2>
+            <span class="particle-value">5</span>
+          </div>
+          <div class="slider-bloom">
+            <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
+              value="5">
+          </div>
         </div>
-      </div>
-      <div class="all-effect-item">
-        <div class="effect-left">
-          <!-- <span class="dot-mesh dot-triangles"></span> -->
-          <span class="label">Metallic</span>
-        </div>
-        <div class="checkbox-wrapper-8 metalic-effect">
-          <input type="checkbox" id="cb-metallic-effect" class="tgl tgl-skewed cb-metallic-effect">
-          <label for="cb-metallic-effect" data-tg-on="ON" data-tg-off="OFF" class="tgl-btn"></label>
-        </div>
-      </div>
-    </div>
-    <div class="particle-card-container" id="particleCard">
-      <div class="material-card-header">
-        <h2>Particle Motion</h2>
-        <div class="close-mesh-data sound-init" id="particleVisible"
-          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-      </div>
-      <div class="particle-card">
-        <div class="particle-card-header">
-          <h2>Speed</h2>
-          <span class="particle-value">5</span>
-        </div>
-        <div class="slider-bloom">
-          <input type="range" id="bloomRadiusMobile" class="particle-speed sound-init" min="1" max="10" step="1"
-            value="5">
+        <div class="quality-card-container-bottom" id="cameraCard">
+          <div class="camera-card-particle">
+            <button class="random-btn active-particle sound-init">RANDOM</button>
+            <button class="snow-btn sound-init">SNOW</button>
+          </div>
         </div>
       </div>
-      <div class="quality-card-container-bottom" id="cameraCard">
-        <div class="camera-card-particle">
-          <button class="random-btn active-particle sound-init">RANDOM</button>
-          <button class="snow-btn sound-init">SNOW</button>
+      <div class="single-object-container" id="singleCard">
+        <div class="material-card-header">
+          <h2>Single View</h2>
+          <div class="close-mesh-data sound-init" id="singleVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+        </div>
+        <div class="single-card">
+          <ul class="menu-by-pc">
+            <li class="active-view">Show All Object</li>
+            <li>Object 2</li>
+            <li>Object 3</li>
+            <li>Object 4</li>
+            <li>Object 5</li>
+          </ul>
         </div>
       </div>
-    </div>
-    <div class="single-object-container" id="singleCard">
-      <div class="material-card-header">
-        <h2>Single View</h2>
-        <div class="close-mesh-data sound-init" id="singleVisible"
-          style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
-      </div>
-      <div class="single-card">
-        <ul class="menu-by-pc">
-          <li class="active-view">Show All Object</li>
-          <li>Object 2</li>
-          <li>Object 3</li>
-          <li>Object 4</li>
-          <li>Object 5</li>
-        </ul>
+      <div class="setting-add-container sehid" id="settingAdd">
+        <div class="material-card-header">
+          <h2>Settings</h2>
+          <div class="close-mesh-data sound-init" id="settingVisible"
+            style="font-size: 20px; cursor: pointer; color: black;"><i class="fa-solid fa-plus"></i></div>
+        </div>
+        <div class="animate-wrapper">
+          <div class="mesh-col-qck">
+            <div class="header-view-mod">
+              <h3>Antialiasing</h3>
+              <label class="switch">
+                <input type="checkbox" id="antialiasingToggleDesktop" class="aa-toggle sound-init">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="header-view-mod">
+              <h3>Grid</h3>
+              <label class="switch">
+                <input type="checkbox" id="gridToggleDesktop" class="grid-view grid-toggle sound-init">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="header-view-mod">
+              <h3>HDRI Lighting</h3>
+              <label class="switch">
+                <input type="checkbox" id="hdriToggleDesktop" class="hdri-toggle sound-init">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="header-view-mod">
+              <h3>Bloom Effect</h3>
+              <label class="switch">
+                <input type="checkbox" id="bloomToggleDesktop" class="bloom-toggle sound-init">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="header-view-mod">
+              <h3>Particle Animation</h3>
+              <label class="switch">
+                <input type="checkbox" id="bloomToggleDesktop" class="animation-particle sound-init">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -347,101 +675,74 @@
   <div class="panel-setting-advance" id="panelSettingAdvance">
     <div class="setting-mod">
       <div class="animate-wrapper">
-        <div class="header-view-mod">
-          <h3>Antialiasing</h3>
-          <label class="switch">
-            <input type="checkbox" id="antialiasingToggleDesktop" class="aa-toggle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="header-view-mod">
-          <h3>Grid</h3>
-          <label class="switch">
-            <input type="checkbox" id="gridToggleDesktop" class="grid-view grid-toggle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="header-view-mod">
-          <h3>HDRI Lighting</h3>
-          <label class="switch">
-            <input type="checkbox" id="hdriToggleDesktop" class="hdri-toggle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="header-view-mod">
-          <h3>Bloom Effect</h3>
-          <label class="switch">
-            <input type="checkbox" id="bloomToggleDesktop" class="bloom-toggle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="header-view-mod">
-          <h3>Particle Animation</h3>
-          <label class="switch">
-            <input type="checkbox" id="bloomToggleDesktop" class="animation-particle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="animate-wrapper" style="margin-top: 14px;">
-        <div class="header-animate-speed">
-          <h3>Shadow Resolution</h3>
-          <label class="switch">
-            <input type="checkbox" id="shadowToggleDesktop" class="shadow-toggle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="vertical-level-shadow" data-default="Low">
-          <div class="v-circle-shadow sound-init" data-level="Low">L</div>
-          <div class="v-line-wrapper-shadow">
-            <div class="v-line-shadow"></div>
+        <div class="mesh-col-qck">
+          <div class="header-view-mod">
+            <h3>Antialiasing</h3>
+            <label class="switch">
+              <input type="checkbox" id="antialiasingToggleDesktop" class="aa-toggle sound-init">
+              <span class="slider"></span>
+            </label>
           </div>
-          <div class="v-circle-shadow sound-init" data-level="Medium">M</div>
-          <div class="v-line-wrapper-shadow">
-            <div class="v-line-shadow"></div>
+          <div class="header-view-mod">
+            <h3>Grid</h3>
+            <label class="switch">
+              <input type="checkbox" id="gridToggleDesktop" class="grid-view grid-toggle sound-init">
+              <span class="slider"></span>
+            </label>
           </div>
-          <div class="v-circle-shadow sound-init" data-level="High">H</div>
-          <div class="v-line-wrapper-shadow">
-            <div class="v-line-shadow"></div>
+          <div class="header-view-mod">
+            <h3>HDRI Lighting</h3>
+            <label class="switch">
+              <input type="checkbox" id="hdriToggleDesktop" class="hdri-toggle sound-init">
+              <span class="slider"></span>
+            </label>
           </div>
-          <div class="v-circle-shadow sound-init" data-level="Ultra">U</div>
-        </div>
-        <div class="quality-card-container-bottom" id="cameraCard">
-          <div class="camera-card-quality">
-            <button class="basic-shadow-btn active-qual sound-init">Basic Shadow</button>
-            <button class="soft-shadow-btn sound-init">Soft Shadow</button>
+          <div class="header-view-mod">
+            <h3>Bloom Effect</h3>
+            <label class="switch">
+              <input type="checkbox" id="bloomToggleDesktop" class="bloom-toggle sound-init">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="header-view-mod">
+            <h3>Particle Animation</h3>
+            <label class="switch">
+              <input type="checkbox" id="bloomToggleDesktop" class="animation-particle sound-init">
+              <span class="slider"></span>
+            </label>
           </div>
         </div>
       </div>
 
       <div class="animate-wrapper" style="margin-top: 14px;">
-        <div class="header-animate-speed">
-          <h3>Animation Speed</h3>
-          <label class="switch">
-            <input type="checkbox" id="animationToggleDesktop" class="animation-toggle sound-init">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="vertical-level-selector" data-default="0.5">
-          <div class="v-circle sound-init " data-level="0.5">0.5</div>
-          <div class="v-line-wrapper">
-            <div class="v-line"></div>
+        <div class="mesh-col-qck">
+          <div class="header-animate-speed">
+            <h3>Animation Speed</h3>
+            <label class="switch">
+              <input type="checkbox" id="animationToggleDesktop" class="animation-toggle sound-init">
+              <span class="slider"></span>
+            </label>
           </div>
-          <div class="v-circle sound-init" data-level="1.0">1.0</div>
-          <div class="v-line-wrapper">
-            <div class="v-line"></div>
+          <div class="vertical-level-selector" data-default="0.5">
+            <div class="v-circle sound-init " data-level="0.5">0.5</div>
+            <div class="v-line-wrapper">
+              <div class="v-line"></div>
+            </div>
+            <div class="v-circle sound-init" data-level="1.0">1.0</div>
+            <div class="v-line-wrapper">
+              <div class="v-line"></div>
+            </div>
+            <div class="v-circle sound-init" data-level="1.5">1.5</div>
+            <div class="v-line-wrapper">
+              <div class="v-line"></div>
+            </div>
+            <div class="v-circle sound-init" data-level="2.0">2.0</div>
           </div>
-          <div class="v-circle sound-init" data-level="1.5">1.5</div>
-          <div class="v-line-wrapper">
-            <div class="v-line"></div>
-          </div>
-          <div class="v-circle sound-init" data-level="2.0">2.0</div>
-        </div>
-        <div class="quality-card-container-bottom" id="cameraCard">
-          <div class="camera-card-quality">
-            <button class="turntable-btn active-unit sound-init">Swing Motion</button>
-            <button class="float-btn sound-init">Hover Motion</button>
+          <div class="quality-card-container-bottom" id="cameraCard">
+            <div class="camera-card-quality">
+              <button class="turntable-btn active-unit sound-init">Swing Motion</button>
+              <button class="float-btn sound-init">Hover Motion</button>
+            </div>
           </div>
         </div>
       </div>
@@ -719,7 +1020,8 @@
     <div class="card-cc">
       <h2 class="model-credit">
         Model: <span class="model-name-credit model-kjul">Soccer Icon</span> by <a
-          href="https://www.youtube.com/@polygonrunway" class="creator-link link-yt" target="_blank">Polygon Runway</a>
+          href="https://www.youtube.com/@polygonrunway" class="creator-link link-yt" target="_blank">Polygon
+          Runway</a>
       </h2>
     </div>
   </div>
@@ -1126,8 +1428,8 @@
                     <span class="light-value">2.5</span>
                   </div>
                   <div class="slider-bloom">
-                    <input type="range" id="lightPi" class="light-strength sound-init" min="0" max="5"
-                      step="0.5" value="2.5">
+                    <input type="range" id="lightPi" class="light-strength sound-init" min="0" max="5" step="0.5"
+                      value="2.5">
                   </div>
                 </div>
               </div>
